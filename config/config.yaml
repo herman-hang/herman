@@ -22,7 +22,7 @@ redis:
 
 log:
   level: "debug"
-  filename: "fq.log"
+  filename: "gin.log"
   max_size: 200
   max_age: 30
   max_backups: 7

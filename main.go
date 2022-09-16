@@ -6,9 +6,7 @@ import (
 	"fp-back-user/settings"
 )
 
-/*
-* 项目的主要入口文件
- */
+// main 项目入口函数
 func main() {
 	// 进行配置文件的初始化
 	if err := settings.InitConfig(); err != nil {
