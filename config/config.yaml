@@ -1,5 +1,5 @@
-app_name: "fq-community"
-version: "v0.0.1"
+app_name: "fp-gin-framework"
+version: "1.0.0"
 
 mode: "test"
 port: 7777

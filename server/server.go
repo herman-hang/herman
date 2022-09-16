@@ -33,7 +33,6 @@ type Server struct {
 
 // NewServer 初始化服务
 func NewServer(config *settings.AppConfig) (*Server, error) {
-
 	// 初始化日志
 	if err := logs.InitZapLogs(config.LogConfig, config.Mode); err != nil {
 		zap.S().Fatalf("Init ZapLog failed:%v", err)
