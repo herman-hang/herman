@@ -1,0 +1,28 @@
+app_name: "fq-community"
+version: "v0.0.1"
+
+mode: "test"
+port: 7777
+
+mysql:
+  host: 120.48.52.159
+  port: 3306
+  user: "root"
+  password: "@?!feichong$907"
+  dbname: "fp"
+  max_open_conn: 200
+  max_ids_conn: 10
+
+redis:
+  host: 120.48.52.159
+  port: 6379
+  password: "@?!feichong$907"
+  db: 3
+  pool_size: 100
+
+log:
+  level: "debug"
+  filename: "fq.log"
+  max_size: 200
+  max_age: 30
+  max_backups: 7
