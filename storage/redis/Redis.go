@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis"
 )
 
+// InitRedisConfig 初始化Redis
 func InitRedisConfig(cfg *settings.RedisConfig) (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf("%s:%d",

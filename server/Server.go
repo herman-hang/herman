@@ -3,9 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
-	"fp-back-user/app/common"
-	client "fp-back-user/app/controllers"
 	"fp-back-user/logs"
+	"fp-back-user/routers"
 	"fp-back-user/settings"
 	"fp-back-user/storage/mysql"
 	r "fp-back-user/storage/redis"
@@ -22,10 +21,9 @@ import (
 
 // Server 定义服务所需要的组件
 type Server struct {
-	config      *settings.AppConfig     // 全局的配置信息
-	engine      *gin.Engine             // 对应的gin的服务引擎
-	log         *zap.SugaredLogger      // 对应服务的log
-	controllers []common.BaseController // 对应app所有汇总的Controllers
+	config *settings.AppConfig // 全局的配置信息
+	engine *gin.Engine         // 对应的gin的服务引擎
+	log    *zap.SugaredLogger  // 对应服务的log
 
 	db  *gorm.DB      // 数据库连接db
 	rdb *redis.Client // redis
@@ -53,25 +51,17 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 	}
 	zap.S().Info("Init Redis Success!")
 
-	// 映射数据库模型
-
-	clientUserController := client.NewAppClientUserController()
-	controllers := []common.BaseController{
-		clientUserController,
-	}
-
 	gin.SetMode(config.Mode)
 	e := gin.New()
 	// 注册中间件
 	e.Use(logs.GinLogger())
 
 	return &Server{
-		config:      config,
-		engine:      e,
-		controllers: controllers,
-		log:         zap.S(),
-		db:          db,
-		rdb:         rdb,
+		config: config,
+		engine: e,
+		log:    zap.S(),
+		db:     db,
+		rdb:    rdb,
 	}, nil
 }
 
@@ -115,11 +105,5 @@ func (s *Server) Close() {
 func (s *Server) InitRouter() {
 	rootEngine := s.engine
 	api := rootEngine.Group("/api/v1")
-
-	controllers := make([]string, 0, len(s.controllers))
-	for _, router := range s.controllers {
-		router.RegisterRoute(api)
-		controllers = append(controllers, router.Name())
-	}
-	s.log.Infof("Server Init Router Success: %v", controllers)
+	routers.Router(api)
 }
