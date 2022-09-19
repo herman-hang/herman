@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"fp-back-user/app/middlewares"
 	"fp-back-user/logs"
 	"fp-back-user/routers"
 	"fp-back-user/settings"
@@ -55,6 +56,7 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 	e := gin.New()
 	// 注册中间件
 	e.Use(logs.GinLogger())
+	e.Use(middlewares.CatchError())
 
 	return &Server{
 		config: config,
@@ -68,7 +70,8 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 // Run 定义Server服务启动的方法
 func (s *Server) Run() {
 	defer s.Close()
-	s.InitRouter() //初始化路由
+	// 初始化路由
+	routers.InitRouter(s.engine)
 	serverAddr := fmt.Sprintf("%s:%d", "0.0.0.0", s.config.Port)
 	s.log.Infof("Server Start on Address: %v", serverAddr)
 	server := &http.Server{
@@ -99,11 +102,4 @@ func (s *Server) Close() {
 	if db != nil {
 		_ = db.Close()
 	}
-}
-
-// InitRouter 注册函数的相关的Controllers的路由
-func (s *Server) InitRouter() {
-	rootEngine := s.engine
-	api := rootEngine.Group("/api/v1")
-	routers.Router(api)
 }

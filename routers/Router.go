@@ -1,12 +1,20 @@
 package routers
 
 import (
+	"fp-back-user/app/middlewares"
 	"fp-back-user/routers/api/user"
 	"github.com/gin-gonic/gin"
 )
 
-func Router(router *gin.RouterGroup) {
-	userRouter := router.Group("/user")
+// InitRouter 初始化路由
+func InitRouter(rootEngine *gin.Engine) {
+	api := rootEngine.Group("/api/v1")
 
-	user.Router(userRouter)
+	api.Use(middlewares.Jwt())
+	{
+		// 用户相关路由
+		userRouter := api.Group("/user")
+
+		user.Router(userRouter)
+	}
 }

@@ -11,32 +11,40 @@ type Gin struct {
 }
 
 type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"msg"`
-	Data    interface{} `json:"data"`
+	HttpCode int         `json:"-"`
+	Code     int         `json:"code"`
+	Message  string      `json:"message"`
+	Data     interface{} `json:"data"`
 }
 
 // Option 定义配置选项函数（关键）
 type Option func(*Response)
 
-// SetCode 设置状态码
-func SetCode(code int) Option {
+// C 设置状态码
+func C(code int) Option {
 	return func(this *Response) {
 		this.Code = code
 	}
 }
 
-// SetMessage 设置响应信息
-func SetMessage(message string) Option {
+// M 设置响应信息
+func M(message string) Option {
 	return func(this *Response) {
 		this.Message = message
 	}
 }
 
-// SetData 设置响应参数
-func SetData(data interface{}) Option {
+// D 设置响应参数
+func D(data interface{}) Option {
 	return func(this *Response) {
 		this.Data = data
+	}
+}
+
+// H 设置响应状态码
+func H(HttpCode int) Option {
+	return func(this *Response) {
+		this.HttpCode = HttpCode
 	}
 }
 
@@ -44,9 +52,10 @@ func SetData(data interface{}) Option {
 func (g *Gin) Response(opts ...Option) {
 
 	defaultResponse := Response{
-		Code:    constants.SUCCESS,
-		Message: constants.GetMessage(constants.SUCCESS),
-		Data:    nil,
+		HttpCode: http.StatusOK,
+		Code:     constants.SUCCESS,
+		Message:  constants.GetMessage(constants.SUCCESS),
+		Data:     nil,
 	}
 
 	// 依次调用opts函数列表中的函数，为结构体成员赋值
@@ -54,6 +63,7 @@ func (g *Gin) Response(opts ...Option) {
 		o(&defaultResponse)
 	}
 
-	g.C.JSON(http.StatusOK, defaultResponse)
+	g.C.JSON(defaultResponse.HttpCode, defaultResponse)
+
 	return
 }
