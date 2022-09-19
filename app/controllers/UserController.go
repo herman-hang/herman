@@ -20,7 +20,7 @@ func UserLogin(ctx *gin.Context) {
 	this.Response(
 		app.C(constants.SUCCESS),
 		app.M(constants.GetMessage(constants.SUCCESS)),
-		app.D(services.UserList(data)),
+		app.D(services.UserLogin(data)),
 	)
 	return
 }

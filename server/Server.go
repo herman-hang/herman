@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"fp-back-user/app/middlewares"
+	"fp-back-user/app/models"
 	"fp-back-user/logs"
 	"fp-back-user/routers"
 	"fp-back-user/settings"
@@ -51,6 +52,9 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 		zap.S().Fatalf("Init Redis Failed:%v", err)
 	}
 	zap.S().Info("Init Redis Success!")
+
+	// 映射数据库模型
+	models.Make(db, rdb)
 
 	gin.SetMode(config.Mode)
 	e := gin.New()
