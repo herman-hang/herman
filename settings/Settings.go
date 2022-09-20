@@ -12,10 +12,11 @@ var Config = new(AppConfig)
 
 // AppConfig 项目全局的配置
 type AppConfig struct {
-	AppName string `mapstructure:"app_name"`
-	Version string `mapstructure:"version"`
-	Mode    string `mapstructure:"mode"`
-	Port    int    `mapstructure:"port"`
+	AppName   string `mapstructure:"app_name"`
+	Version   string `mapstructure:"version"`
+	Mode      string `mapstructure:"mode"`
+	Port      int    `mapstructure:"port"`
+	JwtSecret string `mapstructure:"jwt_secret"`
 
 	*MysqlConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`

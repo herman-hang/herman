@@ -7,5 +7,5 @@ import (
 
 // Router 用户相关路由
 func Router(router *gin.RouterGroup) {
-	router.GET("/login", controllers.UserLogin)
+	router.POST("/login", controllers.UserLogin)
 }

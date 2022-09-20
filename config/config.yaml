@@ -4,6 +4,9 @@ version: "1.0.0"
 mode: "test"
 port: 7777
 
+# token的SECRET
+jwt_secret: "coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc"
+
 mysql:
   host: 120.48.52.159
   port: 3306
