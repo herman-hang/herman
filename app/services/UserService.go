@@ -1,6 +1,6 @@
 package services
 
-// UserLogin 用户列表
+// UserLogin 用户登录
 func UserLogin(data map[string]interface{}) map[string]interface{} {
 	// 业务处理
 

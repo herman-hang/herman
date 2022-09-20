@@ -4,9 +4,7 @@ version: "1.0.0"
 mode: "test"
 port: 7777
 
-# token的SECRET
-jwt_secret: "coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc"
-
+# 数据库配置
 mysql:
   host: 120.48.52.159
   port: 3306
@@ -16,6 +14,7 @@ mysql:
   max_open_conn: 200
   max_ids_conn: 10
 
+# Redis配置
 redis:
   host: 120.48.52.159
   port: 6379
@@ -23,9 +22,17 @@ redis:
   db: 3
   pool_size: 100
 
+# 日志配置
 log:
   level: "debug"
   filename: "gin.log"
   max_size: 200
   max_age: 30
   max_backups: 7
+
+# JWT配置
+jwt:
+  # token的SECRET
+  jwt_secret: "coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc"
+  # token有效时间（单位：小时）
+  effect_time: 2

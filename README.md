@@ -42,7 +42,11 @@
 ```
 
 ## 2. 项目热重载启动
-
+使用 Go 的版本为 1.16 或更高:
+```bash
+go install github.com/cosmtrek/air@latest
+```
+最简单的方法是执行
 ```bash
 # 优先在当前路径查找 `.air.toml` 后缀的文件，如果没有找到，则使用默认的
 air -c .air.toml

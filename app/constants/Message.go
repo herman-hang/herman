@@ -1,8 +1,8 @@
 package constants
 
 var MessageFlags = map[int]string{
-	SUCCESS: "ok",
-	ERROR:   "fail",
+	SUCCESS: "操作成功",
+	ERROR:   "操作失败",
 }
 
 // GetMessage 根据状态码返回响应信息

@@ -6,21 +6,22 @@ import (
 	_ "github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"time"
 )
 
 var Config = new(AppConfig)
 
 // AppConfig 项目全局的配置
 type AppConfig struct {
-	AppName   string `mapstructure:"app_name"`
-	Version   string `mapstructure:"version"`
-	Mode      string `mapstructure:"mode"`
-	Port      int    `mapstructure:"port"`
-	JwtSecret string `mapstructure:"jwt_secret"`
+	AppName string `mapstructure:"app_name"`
+	Version string `mapstructure:"version"`
+	Mode    string `mapstructure:"mode"`
+	Port    int    `mapstructure:"port"`
 
 	*MysqlConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*LogConfig   `mapstructure:"log"`
+	*JwtConfig   `mapstructure:"jwt"`
 }
 
 // MysqlConfig 数据库的配置
@@ -50,6 +51,12 @@ type LogConfig struct {
 	MaxSize    int    `mapstructure:"max_size"`
 	MaxAge     int    `mapstructure:"max_age"`
 	MaxBackups int    `mapstructure:"max_backups"`
+}
+
+// JwtConfig JWT配置
+type JwtConfig struct {
+	JwtSecret  string        `mapstructure:"jwt_secret"`
+	EffectTime time.Duration `mapstructure:"effect_time"`
 }
 
 // InitConfig 初始化配置

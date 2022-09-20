@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"fp-back-user/app/middlewares"
-	"fp-back-user/app/models"
 	"fp-back-user/logs"
 	"fp-back-user/routers"
 	"fp-back-user/settings"
@@ -21,14 +20,23 @@ import (
 	"time"
 )
 
+var app = new(Server)
+
+// 全局变量
+var (
+	Db     = app.Db
+	Redis  = app.Redis
+	Log    = app.Log
+	Engine = app.Engine
+)
+
 // Server 定义服务所需要的组件
 type Server struct {
-	config *settings.AppConfig // 全局的配置信息
-	engine *gin.Engine         // 对应的gin的服务引擎
-	log    *zap.SugaredLogger  // 对应服务的log
-
-	db  *gorm.DB      // 数据库连接db
-	rdb *redis.Client // redis
+	Config *settings.AppConfig // 全局的配置信息
+	Engine *gin.Engine         // 对应的gin的服务引擎
+	Log    *zap.SugaredLogger  // 对应服务的log
+	Db     *gorm.DB            // 数据库连接db
+	Redis  *redis.Client       // redis
 }
 
 // NewServer 初始化服务
@@ -51,10 +59,8 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 	if err != nil {
 		zap.S().Fatalf("Init Redis Failed:%v", err)
 	}
-	zap.S().Info("Init Redis Success!")
 
-	// 映射数据库模型
-	models.Make(db, rdb)
+	zap.S().Info("Init Redis Success!")
 
 	gin.SetMode(config.Mode)
 	e := gin.New()
@@ -63,11 +69,11 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 	e.Use(middlewares.CatchError())
 
 	return &Server{
-		config: config,
-		engine: e,
-		log:    zap.S(),
-		db:     db,
-		rdb:    rdb,
+		Config: config,
+		Engine: e,
+		Log:    zap.S(),
+		Db:     db,
+		Redis:  rdb,
 	}, nil
 }
 
@@ -75,17 +81,17 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 func (s *Server) Run() {
 	defer s.Close()
 	// 初始化路由
-	routers.InitRouter(s.engine)
-	serverAddr := fmt.Sprintf("%s:%d", "0.0.0.0", s.config.Port)
-	s.log.Infof("Server Start on Address: %v", serverAddr)
+	routers.InitRouter(s.Engine)
+	serverAddr := fmt.Sprintf("%s:%d", "0.0.0.0", s.Config.Port)
+	s.Log.Infof("Server Start on Address: %v", serverAddr)
 	server := &http.Server{
 		Addr:    serverAddr,
-		Handler: s.engine,
+		Handler: s.Engine,
 	}
 
 	go func() {
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
-			s.log.Fatalf("Failed to start server, %v", err)
+			s.Log.Fatalf("Failed to start server, %v", err)
 		}
 	}()
 	sig := make(chan os.Signal, 1)
@@ -95,14 +101,14 @@ func (s *Server) Run() {
 		context.Background(), time.Duration(2000)*time.Second)
 	defer cancel()
 	ch := <-sig
-	s.log.Infof("Receive Signals: %v", ch)
+	s.Log.Infof("Receive Signals: %v", ch)
 	_ = server.Shutdown(ctx)
 }
 
 // Close 定义Server服务注销的方法
 func (s *Server) Close() {
-	_ = s.rdb.Close()
-	db := s.db.DB()
+	_ = s.Redis.Close()
+	db := s.Db.DB()
 	if db != nil {
 		_ = db.Close()
 	}

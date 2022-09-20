@@ -1,21 +1,22 @@
 package models
 
 import (
-	"github.com/go-redis/redis"
+	s "fp-back-user/server"
 	"github.com/jinzhu/gorm"
-)
-
-var (
-	Db    *gorm.DB
-	Redis *redis.Client
 )
 
 type Model struct {
 	gorm.Model
 }
 
-// Make 将db,rdb映射到模型中便于数据操作
-func Make(db *gorm.DB, rdb *redis.Client) {
-	Db = db
-	Redis = rdb
+// GetUserInfo 获取用户信息
+func GetUserInfo(user string) (*User, error) {
+	var users User
+	err := s.Db.Where("user = ?", user).First(&users).Error
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return &users, nil
 }

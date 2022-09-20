@@ -13,10 +13,12 @@ func main() {
 		fmt.Printf("Init Config falied: %v\n", err)
 		return
 	}
+
 	s, err := server.NewServer(settings.Config)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
 	s.Run()
 }

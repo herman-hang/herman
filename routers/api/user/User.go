@@ -6,6 +6,6 @@ import (
 )
 
 // Router 用户相关路由
-func Router(router *gin.RouterGroup) {
-	router.POST("/login", controllers.UserLogin)
+func Router(r *gin.RouterGroup) {
+	r.POST("/login", controllers.UserLogin)
 }

@@ -1,4 +1,4 @@
-package common
+package controllers
 
 import (
 	"fp-back-user/app"
