@@ -10,6 +10,7 @@ import (
 	"fp-back-user/storage/mysql"
 	r "fp-back-user/storage/redis"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
@@ -20,23 +21,26 @@ import (
 	"time"
 )
 
+// 核心
 var app = new(Server)
 
 // 全局变量
 var (
-	Db     = app.Db
-	Redis  = app.Redis
-	Log    = app.Log
-	Engine = app.Engine
+	Db       = app.Db
+	Redis    = app.Redis
+	Log      = app.Log
+	Engine   = app.Engine
+	Validate = app.Validate
 )
 
 // Server 定义服务所需要的组件
 type Server struct {
-	Config *settings.AppConfig // 全局的配置信息
-	Engine *gin.Engine         // 对应的gin的服务引擎
-	Log    *zap.SugaredLogger  // 对应服务的log
-	Db     *gorm.DB            // 数据库连接db
-	Redis  *redis.Client       // redis
+	Config   *settings.AppConfig // 全局的配置信息
+	Engine   *gin.Engine         // 对应的gin的服务引擎
+	Log      *zap.SugaredLogger  // 对应服务的log
+	Db       *gorm.DB            // 数据库连接db
+	Redis    *redis.Client       // redis
+	Validate *validator.Validate
 }
 
 // NewServer 初始化服务
@@ -62,6 +66,9 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 
 	zap.S().Info("Init Redis Success!")
 
+	// 验证器定义
+	validate := validator.New()
+
 	gin.SetMode(config.Mode)
 	e := gin.New()
 	// 注册中间件
@@ -69,11 +76,12 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 	e.Use(middlewares.CatchError())
 
 	return &Server{
-		Config: config,
-		Engine: e,
-		Log:    zap.S(),
-		Db:     db,
-		Redis:  rdb,
+		Config:   config,
+		Engine:   e,
+		Log:      zap.S(),
+		Db:       db,
+		Redis:    rdb,
+		Validate: validate,
 	}, nil
 }
 

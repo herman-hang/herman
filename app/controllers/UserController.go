@@ -4,6 +4,7 @@ import (
 	"fp-back-user/app"
 	"fp-back-user/app/constants"
 	"fp-back-user/app/services"
+	"fp-back-user/app/validates/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,6 +15,7 @@ func UserLogin(ctx *gin.Context) {
 	this, data := GetParams(ctx)
 
 	// 验证数据
+	user.LoginValidate(data)
 
 	// Response参数可以设置一个或多个，也可以不设置
 	this.Response(
