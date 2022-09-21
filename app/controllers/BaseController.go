@@ -6,6 +6,7 @@ import (
 )
 
 // GetParams 接收数据
+// 目前只支持请求体批量接收数据
 func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 
 	var params map[string]interface{}

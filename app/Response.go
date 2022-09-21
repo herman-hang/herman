@@ -41,7 +41,7 @@ func D(data interface{}) Option {
 	}
 }
 
-// H 设置响应状态码
+// H 设置HTTP响应状态码
 func H(HttpCode int) Option {
 	return func(this *Response) {
 		this.HttpCode = HttpCode

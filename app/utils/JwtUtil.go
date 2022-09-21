@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fp-back-user/app/constants/user"
 	"fp-back-user/settings"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -45,7 +46,7 @@ func JwtVerify(ctx *gin.Context) {
 	token := ctx.GetHeader("Authorization")
 
 	if token == "" {
-		panic("token not exist!")
+		panic(user.TokenNotExit)
 	}
 
 	// 验证token，并存储在请求中
@@ -65,7 +66,7 @@ func parseToken(tokenString string) *UserClaims {
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok {
-		panic("token is not valid")
+		panic(user.TokenNotValid)
 	}
 
 	return claims
@@ -87,7 +88,7 @@ func Refresh(tokenString string) string {
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok {
-		panic("token is not valid")
+		panic(user.TokenNotValid)
 	}
 
 	jwt.TimeFunc = time.Now
