@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"fp-back-user/app/common"
 	"fp-back-user/server"
 	"fp-back-user/settings"
 )
@@ -19,6 +20,8 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	common.NewContainer(s.Config, s.Engine, s.Log, s.Db, s.Redis, s.Validate)
 
 	s.Run()
 }

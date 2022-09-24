@@ -21,18 +21,6 @@ import (
 	"time"
 )
 
-// 核心
-var app = new(Server)
-
-// 全局变量
-var (
-	Db       = app.Db
-	Redis    = app.Redis
-	Log      = app.Log
-	Engine   = app.Engine
-	Validate = app.Validate
-)
-
 // Server 定义服务所需要的组件
 type Server struct {
 	Config   *settings.AppConfig // 全局的配置信息
@@ -40,7 +28,7 @@ type Server struct {
 	Log      *zap.SugaredLogger  // 对应服务的log
 	Db       *gorm.DB            // 数据库连接db
 	Redis    *redis.Client       // redis
-	Validate *validator.Validate
+	Validate *validator.Validate // 验证器
 }
 
 // NewServer 初始化服务

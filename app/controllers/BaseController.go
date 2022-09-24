@@ -10,7 +10,6 @@ import (
 func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 
 	var params map[string]interface{}
-
 	this := app.Gin{C: ctx}
 	// 接收数据
 	if err := this.C.BindJSON(&params); err != nil {

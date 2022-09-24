@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var Config = new(AppConfig)
+var Config = &AppConfig{}
 
 // AppConfig 项目全局的配置
 type AppConfig struct {
