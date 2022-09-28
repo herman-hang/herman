@@ -62,7 +62,6 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 	// 注册中间件
 	e.Use(logs.GinLogger())
 	e.Use(middlewares.CatchError())
-
 	return &Server{
 		Config:   config,
 		Engine:   e,

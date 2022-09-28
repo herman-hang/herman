@@ -17,7 +17,7 @@ func UserLogin(ctx *gin.Context) {
 	// 验证数据
 	user.LoginValidate(data)
 
-	// Response参数可以设置一个或多个，也可以不设置
+	// Response参数可以设置零个或多个
 	this.Response(
 		app.C(constants.SUCCESS),
 		app.M(constants.GetMessage(constants.SUCCESS)),

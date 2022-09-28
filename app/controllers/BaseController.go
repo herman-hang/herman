@@ -8,11 +8,14 @@ import (
 // GetParams 接收数据
 // 目前只支持请求体批量接收数据
 func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
-
 	var params map[string]interface{}
+
 	this := app.Gin{C: ctx}
+
 	// 接收数据
-	if err := this.C.BindJSON(&params); err != nil {
+	err := this.C.BindJSON(&params)
+
+	if err != nil {
 		panic(err)
 	}
 

@@ -6,10 +6,10 @@ import (
 	"sort"
 )
 
-// 该路由下不校验token
+// 以下路由不校验token
 var noVerify = []string{
 	"/api/v1/user/login",
-	"/test",
+	"/api/v1/test",
 }
 
 // Jwt 鉴权
