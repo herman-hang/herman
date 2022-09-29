@@ -17,8 +17,7 @@ func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 		break
 	case "POST":
 		// 接收数据
-		err := this.C.BindJSON(&params)
-		if err != nil {
+		if err := this.C.BindJSON(&params); err != nil {
 			panic(err.Error())
 		}
 		break
