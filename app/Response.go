@@ -53,8 +53,8 @@ func (g *Gin) Response(opts ...Option) {
 
 	defaultResponse := Response{
 		HttpCode: http.StatusOK,
-		Code:     constants.SUCCESS,
-		Message:  constants.GetMessage(constants.SUCCESS),
+		Code:     constants.Success,
+		Message:  constants.GetMessage(constants.Success),
 		Data:     nil,
 	}
 

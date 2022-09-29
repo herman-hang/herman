@@ -15,7 +15,7 @@ var noVerify = []string{
 // Jwt 鉴权
 func Jwt() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if IsPath(noVerify, ctx.Request.RequestURI) {
+		if IsPath(noVerify, ctx.Request.URL.Path) {
 			return
 		}
 		// 验证token

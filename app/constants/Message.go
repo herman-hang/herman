@@ -1,8 +1,9 @@
 package constants
 
 var MessageFlags = map[int]string{
-	SUCCESS: "操作成功",
-	ERROR:   "操作失败",
+	Success:   "操作成功",
+	Error:     "操作失败",
+	MethodBan: "HTTP请求方法被禁止",
 }
 
 // GetMessage 根据状态码返回响应信息
@@ -12,5 +13,5 @@ func GetMessage(code int) string {
 		return msg
 	}
 
-	return MessageFlags[ERROR]
+	return MessageFlags[Error]
 }

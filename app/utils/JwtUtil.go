@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"fp-back-user/app/constants/user"
+	UserConstant "fp-back-user/app/constants/user"
 	"fp-back-user/settings"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -34,7 +34,7 @@ func GenerateToken(claims *UserClaims) string {
 	//生成token
 	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(settings.Config.JwtSecret)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	return sign
@@ -46,7 +46,7 @@ func JwtVerify(ctx *gin.Context) {
 	token := ctx.GetHeader("Authorization")
 
 	if token == "" {
-		panic(user.TokenNotExit)
+		panic(UserConstant.TokenNotExit)
 	}
 
 	// 验证token，并存储在请求中
@@ -61,12 +61,12 @@ func parseToken(tokenString string) *UserClaims {
 	})
 
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok {
-		panic(user.TokenNotValid)
+		panic(UserConstant.TokenNotValid)
 	}
 
 	return claims
@@ -83,12 +83,12 @@ func Refresh(tokenString string) string {
 	})
 
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
 	if !ok {
-		panic(user.TokenNotValid)
+		panic(UserConstant.TokenNotValid)
 	}
 
 	jwt.TimeFunc = time.Now

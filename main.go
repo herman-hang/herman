@@ -21,7 +21,7 @@ func main() {
 		return
 	}
 
-	common.NewContainer(s.Config, s.Engine, s.Log, s.Db, s.Redis, s.Validate)
+	common.NewContainer(s.Config, s.Engine, s.Log, s.Db, s.Redis)
 
 	s.Run()
 }

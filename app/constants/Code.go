@@ -1,6 +1,7 @@
 package constants
 
 const (
-	SUCCESS = 200
-	ERROR   = 500
+	Success   = 200
+	Error     = 500
+	MethodBan = 405
 )
