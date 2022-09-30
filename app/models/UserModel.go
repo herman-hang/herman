@@ -1,6 +1,6 @@
 package models
 
-type User struct {
+type Users struct {
 	Model
 	User         string `json:"user"`
 	Password     string `json:"password"`

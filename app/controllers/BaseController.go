@@ -4,26 +4,34 @@ import (
 	"fp-back-user/app"
 	"fp-back-user/app/constants"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 // GetParams 接收数据
-// 目前只支持请求体批量接收数据
+// GET请求支持Query和Body接收数据
+// POST只支持Body接收数据
 func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
-	var params map[string]interface{}
-
+	params := make(map[string]interface{})
 	this := app.Gin{C: ctx}
+
 	switch this.C.Request.Method {
 	case "GET":
-		break
-	case "POST":
-		// 接收数据
+		if this.C.Request.URL.RawQuery != "" {
+			for _, value := range strings.Split(this.C.Request.URL.RawQuery, "&") {
+				paramSlice := strings.Split(value, "=")
+				params[paramSlice[0]] = paramSlice[1]
+			}
+			break
+		}
+
 		if err := this.C.BindJSON(&params); err != nil {
 			panic(err.Error())
 		}
 		break
-	case "PUT":
-		break
-	case "DELETE":
+	case "POST":
+		if err := this.C.BindJSON(&params); err != nil {
+			panic(err.Error())
+		}
 		break
 	default:
 		panic(constants.GetMessage(constants.MethodBan))

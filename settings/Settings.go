@@ -31,6 +31,7 @@ type MysqlConfig struct {
 	User        string `mapstructure:"user"`
 	Password    string `mapstructure:"password"`
 	Dbname      string `mapstructure:"dbname"`
+	Prefix      string `mapstructure:"prefix"`
 	MaxOpenConn int    `mapstructure:"max_open_conn"`
 	MaxIdsConn  int    `mapstructure:"max_ids_conn"`
 }

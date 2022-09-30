@@ -1,8 +1,25 @@
 package user
 
-// Login 用户登录
-func Login(data map[string]interface{}) map[string]interface{} {
-	// 业务处理
+import (
+	"fmt"
+	userConstant "fp-back-user/app/constants/user"
+	"fp-back-user/app/models"
+	"fp-back-user/app/utils"
+)
 
-	return data
+// Login 用户登录
+// @param map data 前端请求数据
+func Login(data map[string]interface{}) interface{} {
+	info, err := models.GetUserInfo(fmt.Sprintf("%v", data["user"]))
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// 密码验证
+	if !utils.ComparePasswords(info.Password, fmt.Sprintf("%v", data["password"])) {
+		panic(userConstant.PasswordError)
+	}
+
+	// 返回token
+	return ""
 }

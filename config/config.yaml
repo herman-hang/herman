@@ -11,6 +11,7 @@ mysql:
   user: "root"
   password: "@?!feichong$907"
   dbname: "fp"
+  prefix: "fp_"
   max_open_conn: 200
   max_ids_conn: 10
 

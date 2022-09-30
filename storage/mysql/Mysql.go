@@ -1,6 +1,5 @@
 package mysql
 
-
 import (
 	"fmt"
 	"fp-back-user/settings"
@@ -20,6 +19,10 @@ func InitGormDatabase(config *settings.MysqlConfig) (*gorm.DB, error) {
 	)
 
 	db, err := gorm.Open("mysql", dsn)
+	db.SingularTable(true) // 设置禁用表名复数形式
+	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+		return config.Prefix + defaultTableName
+	}
 	db.DB().SetMaxIdleConns(config.MaxIdsConn)
 	db.DB().SetMaxOpenConns(config.MaxOpenConn)
 	return db, err

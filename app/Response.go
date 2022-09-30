@@ -50,7 +50,6 @@ func H(HttpCode int) Option {
 
 // Response 响应函数
 func (g *Gin) Response(opts ...Option) {
-
 	defaultResponse := Response{
 		HttpCode: http.StatusOK,
 		Code:     constants.Success,

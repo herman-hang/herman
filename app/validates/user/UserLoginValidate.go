@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fp-back-user/app/utils"
 	"fp-back-user/app/validates"
 	"github.com/mitchellh/mapstructure"
 )
@@ -10,6 +11,8 @@ type LoginValidate struct {
 	Password string `json:"password" validate:"required,min=6,max=15" label:"密码"`
 }
 
+// Login 登录验证器
+// @param map 待验证数据
 func Login(data map[string]interface{}) map[string]interface{} {
 	var login LoginValidate
 
@@ -22,5 +25,10 @@ func Login(data map[string]interface{}) map[string]interface{} {
 		panic(err.Error())
 	}
 
-	return data
+	toMap, err := utils.ToMap(&login, "json")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return toMap
 }
