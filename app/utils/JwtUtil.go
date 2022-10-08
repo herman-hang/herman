@@ -10,17 +10,7 @@ import (
 
 // UserClaims 用户信息类，作为生成token的参数
 type UserClaims struct {
-	ID           string `json:"id"`
-	User         string `json:"user"`
-	Password     string `json:"password"`
-	Nickname     string `json:"nickname"`
-	Sex          string `json:"sex"`
-	Age          int    `json:"age"`
-	Region       string `json:"region"`
-	Phone        string `json:"phone"`
-	Email        string `json:"email"`
-	Introduction string `json:"introduction"`
-	Status       string `json:"status"`
+	ID uint `json:"id"`
 	// jwt-go提供的标准claim
 	jwt.StandardClaims
 }
@@ -32,7 +22,7 @@ func GenerateToken(claims *UserClaims) string {
 	//设置token有效期，也可不设置有效期，采用redis的方式
 	claims.ExpiresAt = time.Now().Add(effectTime).Unix()
 	//生成token
-	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(settings.Config.JwtSecret)
+	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(settings.Config.JwtSecret))
 	if err != nil {
 		panic(err.Error())
 	}
@@ -50,14 +40,14 @@ func JwtVerify(ctx *gin.Context) {
 	}
 
 	// 验证token，并存储在请求中
-	ctx.Set("user", parseToken(token))
+	ctx.Set("userInfo", parseToken(token))
 }
 
 // 解析Token
 func parseToken(tokenString string) *UserClaims {
 	//解析token
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return settings.Config.JwtSecret, nil
+		return []byte(settings.Config.JwtSecret), nil
 	})
 
 	if err != nil {

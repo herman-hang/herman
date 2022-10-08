@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"bytes"
 	"fp-back-user/app"
 	"fp-back-user/app/constants"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"strings"
 )
 
@@ -14,6 +16,7 @@ func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 	params := make(map[string]interface{})
 	this := app.Gin{C: ctx}
 
+	data, _ := this.C.GetRawData()
 	switch this.C.Request.Method {
 	case "GET":
 		if this.C.Request.URL.RawQuery != "" {
@@ -22,15 +25,19 @@ func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 				params[paramSlice[0]] = paramSlice[1]
 			}
 			break
-		}
-
-		if err := this.C.BindJSON(&params); err != nil {
-			panic(err.Error())
+		} else if string(data) != "" {
+			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+			if err := this.C.BindJSON(&params); err != nil {
+				panic(err.Error())
+			}
 		}
 		break
 	case "POST":
-		if err := this.C.BindJSON(&params); err != nil {
-			panic(err.Error())
+		if string(data) != "" {
+			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+			if err := this.C.BindJSON(&params); err != nil {
+				panic(err.Error())
+			}
 		}
 		break
 	default:

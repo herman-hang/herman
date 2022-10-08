@@ -9,7 +9,6 @@ import (
 // 以下路由不校验token
 var noVerify = []string{
 	"/api/v1/user/login",
-	"/api/v1/test",
 }
 
 // Jwt 鉴权
