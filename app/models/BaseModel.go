@@ -1,23 +1,23 @@
 package models
 
 import (
+	"encoding/json"
 	"fp-back-user/app/common"
 	"github.com/jinzhu/gorm"
 )
 
-type Model struct {
-	gorm.Model
-}
-
-// GetUserInfo 获取用户信息
-// @param string user 用户名
-func GetUserInfo(user string) (*Users, error) {
+// UserInfo 根据ID获取用户信息
+func UserInfo(id uint) map[string]interface{} {
 	var users Users
-	err := common.Db.Where("user = ?", user).First(&users).Error
+	err := common.Db.Where("id = ?", id).First(&users).Error
 
 	if err != nil && err != gorm.ErrRecordNotFound {
 		panic(err.Error())
 	}
 
-	return &users, nil
+	data, _ := json.Marshal(&users)
+	userMap := make(map[string]interface{})
+	_ = json.Unmarshal(data, &userMap)
+
+	return userMap
 }

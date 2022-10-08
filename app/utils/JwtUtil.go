@@ -2,6 +2,7 @@ package utils
 
 import (
 	UserConstant "fp-back-user/app/constants/user"
+	"fp-back-user/app/models"
 	"fp-back-user/settings"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,7 @@ func JwtVerify(ctx *gin.Context) {
 	}
 
 	// 验证token，并存储在请求中
-	ctx.Set("userInfo", parseToken(token))
+	ctx.Set("userInfo", models.UserInfo(parseToken(token).ID))
 }
 
 // 解析Token
