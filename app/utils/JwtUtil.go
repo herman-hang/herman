@@ -57,7 +57,7 @@ func JwtVerify(ctx *gin.Context) {
 func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 	//解析token
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return settings.Config.JwtSecret, nil
+		return []byte(settings.Config.JwtSecret), nil
 	})
 
 	if err != nil {
@@ -65,7 +65,7 @@ func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
-	if !ok {
+	if !ok || !token.Valid {
 		panic(UserConstant.TokenNotValid)
 	}
 
@@ -88,7 +88,7 @@ func Refresh(tokenString string) string {
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return settings.Config.JwtSecret, nil
+		return []byte(settings.Config.JwtSecret), nil
 	})
 
 	if err != nil {
@@ -96,7 +96,7 @@ func Refresh(tokenString string) string {
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
-	if !ok {
+	if !ok || !token.Valid {
 		panic(UserConstant.TokenNotValid)
 	}
 
