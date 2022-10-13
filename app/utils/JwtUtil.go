@@ -57,7 +57,7 @@ func JwtVerify(ctx *gin.Context) {
 func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 	//解析token
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(settings.Config.JwtSecret), nil
+		return settings.Config.JwtSecret, nil
 	})
 
 	if err != nil {
@@ -74,7 +74,7 @@ func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 	}
 
 	// token小于10分钟则刷新token
-	if ((claims.ExpiresAt - time.Now().Unix()) / 60) < 119 {
+	if ((claims.ExpiresAt - time.Now().Unix()) / 60) < 10 {
 		ctx.Header("x-new-token", Refresh(tokenString))
 	}
 
