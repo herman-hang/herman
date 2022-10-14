@@ -1,6 +1,6 @@
 app_name: "fp-gin-framework"
 version: "1.0.0"
-
+app_prefix: "/api/v1"
 mode: "test"
 port: 7777
 
