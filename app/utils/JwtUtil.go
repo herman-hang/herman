@@ -14,7 +14,7 @@ import (
 
 // UserClaims 用户信息类，作为生成token的参数
 type UserClaims struct {
-	UserId uint   `json:"user_id"`
+	Uid    uint   `json:"user_id"`
 	Issuer string `json:"user"`
 	// jwt-go提供的标准claim
 	jwt.StandardClaims
@@ -52,7 +52,7 @@ func JwtVerify(ctx *gin.Context) {
 	}
 
 	// 验证token，并存储在请求中
-	ctx.Set("userInfo", models.UserInfo(ParseToken(parts[1], ctx).UserId))
+	ctx.Set("userInfo", models.UserInfo(ParseToken(parts[1], ctx).Uid))
 }
 
 // ParseToken 解析Token
@@ -78,12 +78,12 @@ func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 	timeRecord := claims.ExpiresAt - time.Now().Unix()
 	// token小于10分钟则刷新token
 	if (timeRecord / 60) < 10 {
-		_, err := common.Redis.Get(fmt.Sprintf("%v%v", "user-token:", claims.UserId)).Result()
+		_, err := common.Redis.Get(fmt.Sprintf("%v%v", "user-token:", claims.Uid)).Result()
 		if err != nil {
 			newToken := Refresh(tokenString)
 			ctx.Header("x-new-token", newToken)
 
-			err = common.Redis.Set(fmt.Sprintf("%v%v", "user-token:", claims.UserId), newToken, time.Duration(timeRecord)*time.Second).Err()
+			err = common.Redis.Set(fmt.Sprintf("%v%v", "user-token:", claims.Uid), newToken, time.Duration(timeRecord)*time.Second).Err()
 			if err != nil {
 				panic(UserConstant.TokenSaveFail)
 			}
