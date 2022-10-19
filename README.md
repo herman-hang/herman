@@ -199,7 +199,7 @@ func Login(data map[string]interface{}) map[string]interface{} {
 
 #### （4）逻辑服务
 
-服务主要负责判断，模型调用等等一下逻辑处理，以用户登录service为例：
+服务主要负责判断，模型调用等等逻辑处理，以用户登录service为例：
 
 ```go
 package user
