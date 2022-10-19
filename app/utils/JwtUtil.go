@@ -57,7 +57,7 @@ func JwtVerify(ctx *gin.Context) {
 
 // ParseToken 解析Token
 func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
-	//解析token
+	// 解析token
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(settings.Config.JwtSecret), nil
 	})
