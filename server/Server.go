@@ -30,6 +30,8 @@ type Server struct {
 }
 
 // NewServer 初始化服务
+// @param *settings.AppConfig config // 应用配置信息
+// @return *Server error 返回服务结构体和错误信息
 func NewServer(config *settings.AppConfig) (*Server, error) {
 	// 初始化日志
 	if err := logs.InitZapLogs(config.LogConfig, config.Mode); err != nil {
@@ -68,6 +70,7 @@ func NewServer(config *settings.AppConfig) (*Server, error) {
 }
 
 // Run 定义Server服务启动的方法
+// @param *Server s 服务结构体
 func (s *Server) Run() {
 	defer s.Close()
 	// 初始化路由
@@ -96,6 +99,7 @@ func (s *Server) Run() {
 }
 
 // Close 定义Server服务注销的方法
+// @param *Server s 服务结构体
 func (s *Server) Close() {
 	_ = s.Redis.Close()
 	db := s.Db.DB()

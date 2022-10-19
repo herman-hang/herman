@@ -10,6 +10,8 @@ import (
 )
 
 // Validate 全局model数据验证器
+// @param 接收一个待数据验证的结构体
+// @return error 返回错误信息
 func Validate(dataStruct interface{}) error {
 	// 验证
 	zhCh := zh.New()

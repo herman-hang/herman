@@ -8,6 +8,7 @@ import (
 )
 
 // InitRouter 初始化路由
+// @param *gin.Engine rootEngine 路由引擎
 func InitRouter(rootEngine *gin.Engine) {
 	api := rootEngine.Group(settings.Config.AppPrefix)
 

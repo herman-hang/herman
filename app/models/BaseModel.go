@@ -7,6 +7,8 @@ import (
 )
 
 // UserInfo 根据ID获取用户信息
+// @param uint id 用户id
+// @return map[string]interface{} 返回当前用户ID的信息
 func UserInfo(id uint) map[string]interface{} {
 	var users Users
 	err := common.Db.Where("id = ?", id).First(&users).Error

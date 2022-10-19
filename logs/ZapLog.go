@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+// InitZapLogs 初始化日志配置
+// @param *settings.LogConfig cfg 日志配置信息
+// @param string mode 当前应用运行模式
+// @return err error 返回错误信息
 func InitZapLogs(cfg *settings.LogConfig, mode string) (err error) {
 	// writers
 	writersSyncers := GetLoggerWriter(cfg)
@@ -19,7 +23,7 @@ func InitZapLogs(cfg *settings.LogConfig, mode string) (err error) {
 	var l = new(zapcore.Level)
 	err = l.UnmarshalText([]byte(cfg.Level))
 	if err != nil {
-		return
+		return err
 	}
 	var core zapcore.Core
 	if mode == "test" {
@@ -40,6 +44,8 @@ func InitZapLogs(cfg *settings.LogConfig, mode string) (err error) {
 }
 
 // GetLoggerWriter return writerSyncer
+// @param *settings.LogConfig cfg 日志配置信息
+// @return zapcore.WriteSyncer 返回一个日志记录器
 func GetLoggerWriter(cfg *settings.LogConfig) zapcore.WriteSyncer {
 	lumberLoggers := &lumberjack.Logger{
 		Filename:   cfg.FileName,
@@ -51,6 +57,7 @@ func GetLoggerWriter(cfg *settings.LogConfig) zapcore.WriteSyncer {
 }
 
 // GetEncoder return encoders
+// @return zapcore.Encoder 返回Encoder
 func GetEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
@@ -62,6 +69,7 @@ func GetEncoder() zapcore.Encoder {
 }
 
 // GinLogger 接收gin框架默认的日志
+// @return gin.HandlerFunc 返回中间件上下文
 func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()

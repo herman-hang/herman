@@ -9,6 +9,7 @@ import (
 
 // Login 用户登录
 // @param map data 前端请求数据
+// @return interface{} 返回一个token值
 func Login(data map[string]interface{}) interface{} {
 	info, err := models.GetUserInfo(fmt.Sprintf("%v", data["user"]))
 	if err != nil {

@@ -21,6 +21,8 @@ type UserClaims struct {
 }
 
 // GenerateToken 生成token
+// @param UserClaims claims jwt信息结构体
+// @return string 返回token
 func GenerateToken(claims *UserClaims) string {
 	// token有效时间（纳秒）
 	var effectTime = settings.Config.EffectTime * time.Hour
@@ -37,6 +39,7 @@ func GenerateToken(claims *UserClaims) string {
 }
 
 // JwtVerify 验证token
+// @param *gin.Context ctx 上下文
 func JwtVerify(ctx *gin.Context) {
 	//过滤是否验证token
 	token := ctx.GetHeader("Authorization")
@@ -56,6 +59,9 @@ func JwtVerify(ctx *gin.Context) {
 }
 
 // ParseToken 解析Token
+// @param string tokenString 旧token
+// @param *gin.Context ctx 上下文
+// @return UserClaims 返回配置好的jwt结构体信息
 func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 	// 解析token
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -94,6 +100,8 @@ func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 }
 
 // Refresh 更新token
+// @param string tokenString 旧token
+// @return string 返回新token
 func Refresh(tokenString string) string {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)

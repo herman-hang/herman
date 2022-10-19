@@ -12,7 +12,8 @@ type LoginValidate struct {
 }
 
 // Login 登录验证器
-// @param map 待验证数据
+// @param map[string]interface{} data 待验证数据
+// @return map[string]interface{} 返回验证通过的数据
 func Login(data map[string]interface{}) map[string]interface{} {
 	var login LoginValidate
 

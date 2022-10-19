@@ -7,6 +7,7 @@ import (
 )
 
 // CatchError 异常捕捉
+// @return gin.HandlerFunc 返回一个中间件上下文
 func CatchError() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		this := app.Gin{C: ctx}
