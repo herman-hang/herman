@@ -10,7 +10,10 @@ type Users struct {
 	Id           uint       `json:"id" gorm:"primary_key"`
 	User         string     `json:"user"`
 	Password     string     `json:"password"`
+	Photo        string     `json:"photo"`
 	Nickname     string     `json:"nickname"`
+	Name         string     `json:"name"`
+	Card         string     `json:"card"`
 	Sex          string     `json:"sex"`
 	Age          int        `json:"age"`
 	Region       string     `json:"region"`
@@ -18,6 +21,9 @@ type Users struct {
 	Email        string     `json:"email"`
 	Introduction string     `json:"introduction"`
 	Status       string     `json:"status"`
+	SignOutIp    string     `json:"sign_out_ip"`
+	SignTotal    string     `json:"sign_total"`
+	SignOutAt    string     `json:"sign_out_at"`
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at"`
 	DeletedAt    *time.Time `json:"deleted_at" sql:"index"`

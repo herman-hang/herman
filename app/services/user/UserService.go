@@ -15,7 +15,6 @@ func Login(data map[string]interface{}) interface{} {
 	if err != nil {
 		panic(err.Error())
 	}
-
 	// 密码验证
 	if !utils.ComparePasswords(info.Password, fmt.Sprintf("%v", data["password"])) {
 		panic(userConstant.PasswordError)

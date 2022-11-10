@@ -6,13 +6,13 @@ import (
 
 // HashEncode 加密密码
 // @param string pwd 待加密的明文密码
-// @return string error 返回一个哈希加密后的字符串和一个错误信息
-func HashEncode(pwd string) (string, error) {
+// @return string error 返回一个哈希加密后的字符串
+func HashEncode(pwd string) string {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
 	if err != nil {
 		panic(err.Error())
 	}
-	return string(hash), nil
+	return string(hash)
 }
 
 // ComparePasswords 验证 hash 密码

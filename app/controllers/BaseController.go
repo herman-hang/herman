@@ -26,22 +26,19 @@ func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 				paramSlice := strings.Split(value, "=")
 				params[paramSlice[0]] = paramSlice[1]
 			}
-			break
 		} else if string(data) != "" {
 			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 			if err := this.C.BindJSON(&params); err != nil {
 				panic(err.Error())
 			}
 		}
-		break
-	case "POST":
+	case "POST", "PUT", "DELETE":
 		if string(data) != "" {
 			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 			if err := this.C.BindJSON(&params); err != nil {
 				panic(err.Error())
 			}
 		}
-		break
 	default:
 		panic(constants.GetMessage(constants.MethodBan))
 	}

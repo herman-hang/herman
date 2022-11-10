@@ -6,10 +6,10 @@ port: 7777
 
 # 数据库配置
 mysql:
-  host: 120.48.52.159
+  host: 204.44.94.254
   port: 3306
-  user: "root"
-  password: "@?!feichong$907"
+  user: "fp"
+  password: "LXSGD6yAT6fHJHEw"
   dbname: "fp"
   prefix: "fp_"
   max_open_conn: 200
@@ -17,9 +17,9 @@ mysql:
 
 # Redis配置
 redis:
-  host: 120.48.52.159
+  host: 127.0.0.1
   port: 6379
-  password: "@?!feichong$907"
+  password: ""
   db: 3
   pool_size: 100
 
