@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"bytes"
-	"fp-back-user/app"
-	"fp-back-user/app/constants"
+	"github.com/fp/fp-gin-framework/app"
+	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"strings"

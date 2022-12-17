@@ -1,7 +1,7 @@
 package user
 
 import (
-	UserController "fp-back-user/app/controllers/user"
+	UserController "github.com/fp/fp-gin-framework/app/controllers/user"
 	"github.com/gin-gonic/gin"
 )
 

@@ -2,9 +2,9 @@ package user
 
 import (
 	"fmt"
-	userConstant "fp-back-user/app/constants/user"
-	"fp-back-user/app/models"
-	"fp-back-user/app/utils"
+	userConstant "github.com/fp/fp-gin-framework/app/constants/user"
+	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/fp/fp-gin-framework/app/utils"
 )
 
 // Login 用户登录

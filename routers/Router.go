@@ -1,9 +1,9 @@
 package routers
 
 import (
-	"fp-back-user/app/middlewares"
-	"fp-back-user/routers/api/user"
-	"fp-back-user/settings"
+	"github.com/fp/fp-gin-framework/app/middlewares"
+	"github.com/fp/fp-gin-framework/routers/api/user"
+	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
 )
 

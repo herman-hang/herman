@@ -1,10 +1,10 @@
 package user
 
 import (
-	"fp-back-user/app"
-	base "fp-back-user/app/controllers"
-	userService "fp-back-user/app/services/user"
-	userValidate "fp-back-user/app/validates/user"
+	"github.com/fp/fp-gin-framework/app"
+	base "github.com/fp/fp-gin-framework/app/controllers"
+	userService "github.com/fp/fp-gin-framework/app/services/user"
+	userValidate "github.com/fp/fp-gin-framework/app/validates/user"
 	"github.com/gin-gonic/gin"
 )
 

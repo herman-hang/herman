@@ -1,14 +1,14 @@
-package server
+package servers
 
 import (
 	"context"
 	"fmt"
-	"fp-back-user/app/middlewares"
-	"fp-back-user/logs"
-	"fp-back-user/routers"
-	"fp-back-user/settings"
-	"fp-back-user/storage/mysql"
-	r "fp-back-user/storage/redis"
+	"github.com/fp/fp-gin-framework/app/middlewares"
+	"github.com/fp/fp-gin-framework/config"
+	"github.com/fp/fp-gin-framework/routers"
+	"github.com/fp/fp-gin-framework/servers/logs"
+	"github.com/fp/fp-gin-framework/storage/mysql"
+	r "github.com/fp/fp-gin-framework/storage/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
@@ -22,17 +22,17 @@ import (
 
 // Server 定义服务所需要的组件
 type Server struct {
-	Config *settings.AppConfig // 全局的配置信息
-	Engine *gin.Engine         // 对应的gin的服务引擎
-	Log    *zap.SugaredLogger  // 对应服务的log
-	Db     *gorm.DB            // 数据库连接db
-	Redis  *redis.Client       // redis
+	Config *config.AppConfig  // 全局的配置信息
+	Engine *gin.Engine        // 对应的gin的服务引擎
+	Log    *zap.SugaredLogger // 对应服务的log
+	Db     *gorm.DB           // 数据库连接db
+	Redis  *redis.Client      // redis
 }
 
 // NewServer 初始化服务
 // @param *settings.AppConfig config // 应用配置信息
 // @return *Server error 返回服务结构体和错误信息
-func NewServer(config *settings.AppConfig) (*Server, error) {
+func NewServer(config *config.AppConfig) (*Server, error) {
 	// 初始化日志
 	if err := logs.InitZapLogs(config.LogConfig, config.Mode); err != nil {
 		zap.S().Fatalf("Init ZapLog failed:%v", err)

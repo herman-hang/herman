@@ -2,11 +2,11 @@ package utils
 
 import (
 	"fmt"
-	"fp-back-user/app/common"
-	UserConstant "fp-back-user/app/constants/user"
-	"fp-back-user/app/models"
-	"fp-back-user/settings"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/fp/fp-gin-framework/app/common"
+	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
+	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
 	"strings"
 	"time"

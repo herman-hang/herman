@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"fp-back-user/app/utils"
+	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/gin-gonic/gin"
 	"sort"
 )

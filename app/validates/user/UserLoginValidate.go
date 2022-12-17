@@ -1,8 +1,8 @@
 package user
 
 import (
-	"fp-back-user/app/utils"
-	"fp-back-user/app/validates"
+	"github.com/fp/fp-gin-framework/app/utils"
+	"github.com/fp/fp-gin-framework/app/validates"
 	"github.com/mitchellh/mapstructure"
 )
 

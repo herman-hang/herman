@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fp-back-user/app/common"
+	"github.com/fp/fp-gin-framework/app/common"
 	"github.com/jinzhu/gorm"
 	"time"
 )

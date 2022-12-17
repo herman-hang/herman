@@ -1,7 +1,7 @@
 package logs
 
 import (
-	"fp-back-user/settings"
+	"github.com/fp/fp-gin-framework/config"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
@@ -14,7 +14,7 @@ import (
 // @param *settings.LogConfig cfg 日志配置信息
 // @param string mode 当前应用运行模式
 // @return err error 返回错误信息
-func InitZapLogs(cfg *settings.LogConfig, mode string) (err error) {
+func InitZapLogs(cfg *config.LogConfig, mode string) (err error) {
 	// writers
 	writersSyncers := GetLoggerWriter(cfg)
 	// encoder
@@ -46,12 +46,14 @@ func InitZapLogs(cfg *settings.LogConfig, mode string) (err error) {
 // GetLoggerWriter return writerSyncer
 // @param *settings.LogConfig cfg 日志配置信息
 // @return zapcore.WriteSyncer 返回一个日志记录器
-func GetLoggerWriter(cfg *settings.LogConfig) zapcore.WriteSyncer {
+func GetLoggerWriter(cfg *config.LogConfig) zapcore.WriteSyncer {
 	lumberLoggers := &lumberjack.Logger{
 		Filename:   cfg.FileName,
 		MaxSize:    cfg.MaxSize,
 		MaxBackups: cfg.MaxBackups,
 		MaxAge:     cfg.MaxAge,
+		LocalTime:  cfg.LocalTime,
+		Compress:   cfg.Compress,
 	}
 	return zapcore.AddSync(lumberLoggers)
 }

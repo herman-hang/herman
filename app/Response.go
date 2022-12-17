@@ -1,7 +1,7 @@
 package app
 
 import (
-	"fp-back-user/app/constants"
+	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

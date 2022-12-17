@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"fp-back-user/app/common"
-	"fp-back-user/server"
-	"fp-back-user/settings"
+	"github.com/fp/fp-gin-framework/app/common"
+	"github.com/fp/fp-gin-framework/servers"
+	"github.com/fp/fp-gin-framework/servers/settings"
 )
 
 // main 项目入口函数
@@ -15,7 +15,7 @@ func main() {
 		return
 	}
 
-	s, err := server.NewServer(settings.Config)
+	s, err := servers.NewServer(settings.Config)
 	if err != nil {
 		fmt.Println(err)
 		return

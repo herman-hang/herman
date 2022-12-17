@@ -1,0 +1,65 @@
+# 应用名称
+app_name: "fp-gin-framework"
+# 应用版本号
+version: "1.0.0"
+# 路由前缀
+app_prefix: "/api/v1"
+# 应用运行环境模式
+mode: "test"
+# 应用服务启动端口号
+port: 7777
+
+# 数据库配置
+mysql:
+  # 连接IP地址
+  host: 204.44.94.254
+  # 连接端口号
+  port: 3306
+  # 连接用户名
+  user: "fp"
+  # 连接密码
+  password: "LXSGD6yAT6fHJHEw"
+  # 连接数据库名称
+  dbname: "fp"
+  # 数据表前缀
+  prefix: "fp_"
+  # 最大连接数
+  max_open_conn: 10
+  # 最大连接空闲数，建议和max_open_conn一致
+  max_idle_conn: 10
+
+# Redis配置
+redis:
+  # 连接IP地址
+  host: 127.0.0.1
+  # 连接端口号
+  port: 6379
+  # 连接密码
+  password: ""
+  # 默认数据库，默认是0
+  db: 0
+  # 最大连接数
+  pool_size: 100
+
+# 日志配置
+log:
+  # 日志级别模式
+  level: "debug"
+  # 日志文件名
+  filename: "gin.log"
+  # 单个日志文件大小(MB)，日志大小到达max_size就开始backup
+  max_size: 200
+  # 旧日志保存的最大天数，默认保存所有旧日志文件
+  max_age: 90
+  # 旧日志保存的最大数量，默认保存所有旧日志文件
+  max_backups: 7
+  # backup的日志是否使用本地时间戳，默认使用UTC时间
+  local_time: true
+  # 对backup的日志是否进行压缩，默认不压缩
+  compress: true
+# JWT配置
+jwt:
+  # token的SECRET
+  jwt_secret: "coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc"
+  # token有效时间（单位：小时）
+  effect_time: 2
