@@ -12,13 +12,13 @@ port: 7777
 # 数据库配置
 mysql:
   # 连接IP地址
-  host: 204.44.94.254
+  host: 127.0.0.1
   # 连接端口号
   port: 3306
   # 连接用户名
-  user: "fp"
+  user: "root"
   # 连接密码
-  password: "LXSGD6yAT6fHJHEw"
+  password: "root"
   # 连接数据库名称
   dbname: "fp"
   # 数据表前缀
@@ -46,7 +46,7 @@ log:
   # 日志级别模式
   level: "debug"
   # 日志文件名
-  filename: "gin.log"
+  filename: "fp-gin.log"
   # 单个日志文件大小(MB)，日志大小到达max_size就开始backup
   max_size: 200
   # 旧日志保存的最大天数，默认保存所有旧日志文件
