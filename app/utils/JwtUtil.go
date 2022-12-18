@@ -5,7 +5,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fp/fp-gin-framework/app/common"
 	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
-	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -55,7 +55,7 @@ func JwtVerify(ctx *gin.Context) {
 	}
 
 	// 验证token，并存储在请求中
-	ctx.Set("userInfo", models.UserInfo(ParseToken(parts[1], ctx).Uid))
+	ctx.Set("userInfo", repositories.UserInfo(ParseToken(parts[1], ctx).Uid))
 }
 
 // ParseToken 解析Token

@@ -9,4 +9,5 @@ const (
 	TokenError       = "请求头中Token格式有误"
 	TokenRefreshFail = "Token刷新失败"
 	TokenSaveFail    = "Token保存失败"
+	GetUserInfoFail  = "获取用户信息失败"
 )

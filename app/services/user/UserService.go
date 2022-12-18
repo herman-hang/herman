@@ -3,7 +3,7 @@ package user
 import (
 	"fmt"
 	userConstant "github.com/fp/fp-gin-framework/app/constants/user"
-	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/app/utils"
 )
 
@@ -11,7 +11,7 @@ import (
 // @param map data 前端请求数据
 // @return interface{} 返回一个token值
 func Login(data map[string]interface{}) interface{} {
-	info, err := models.GetUserInfo(fmt.Sprintf("%v", data["user"]))
+	info, err := repositories.User.GetUserInfo(fmt.Sprintf("%v", data["user"]))
 	if err != nil {
 		panic(err.Error())
 	}

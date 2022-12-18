@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var Config = &config.AppConfig{}
+var Config = new(config.AppConfig)
 
 // InitConfig 初始化配置
 // @return error err 返回错误信息
