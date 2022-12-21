@@ -28,14 +28,14 @@ func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
 			}
 		} else if string(data) != "" {
 			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-			if err := this.C.BindJSON(&params); err != nil {
+			if err := this.C.ShouldBindJSON(&params); err != nil {
 				panic(err.Error())
 			}
 		}
 	case "POST", "PUT", "DELETE":
 		if string(data) != "" {
 			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-			if err := this.C.BindJSON(&params); err != nil {
+			if err := this.C.ShouldBindJSON(&params); err != nil {
 				panic(err.Error())
 			}
 		}
