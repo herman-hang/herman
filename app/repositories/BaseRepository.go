@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/fp/fp-gin-framework/app/common"
 	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
@@ -12,9 +13,9 @@ type BaseRepository struct {
 }
 
 type PageInfo struct {
-	Page     int    `json:"page" form:"page"`         // 页码
-	PageSize int    `json:"pageSize" form:"pageSize"` // 每页大小
-	Keyword  string `json:"keyword" form:"keyword"`   //关键字
+	Page     int    `json:"page"`      // 页码
+	PageSize int    `json:"page_size"` // 每页大小
+	Keyword  string `json:"keyword"`   //关键字
 }
 
 // UserInfo 根据ID获取用户信息
@@ -88,9 +89,15 @@ func (base *BaseRepository) Delete(ids []int) error {
 // @return list total pageNum err 返回列表，总条数，总页码数，错误信息
 func (base *BaseRepository) GetList(query string, field []string, order string) (list interface{}, total int, pageNum int, err error) {
 	var (
+		ctx   *gin.Context
 		page  *PageInfo
 		model []BaseRepository
 	)
+
+	// 分页结构体绑定
+	if err = ctx.ShouldBindQuery(&page); err != nil {
+		return nil, 0, 0, err
+	}
 	// 查询总页数
 	common.Db.Model(&base.Model).Count(&total)
 	pageNum = total / page.PageSize
@@ -100,7 +107,7 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 	// 示例 query = fmt.Sprintf(" dns like '%%%s' ", createDbnameInfo.DNS)
 	err = common.Db.Select(field).Where(query).Order(order).Limit(page.PageSize).Offset((page.Page - 1) * page.PageSize).Find(&model).Error
 	if err != nil {
-		return model, total, pageNum, err
+		return &model, total, pageNum, err
 	}
 	return &model, total, pageNum, nil
 }
