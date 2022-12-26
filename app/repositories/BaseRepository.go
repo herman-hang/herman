@@ -60,11 +60,11 @@ func (base *BaseRepository) Find(id uint, fields []string) (interface{}, error) 
 }
 
 // Update 批量更新
-// @param condition 查询条件
+// @param ids 查询条件
 // @param attributes 待更新数据
 // @return error 返回一个自定义错误信息
-func (base *BaseRepository) Update(condition []int, attributes map[string]interface{}) error {
-	err := common.Db.Model(&base.Model).Where("id IN (?)", condition).Updates(attributes).Error
+func (base *BaseRepository) Update(ids []int, attributes map[string]interface{}) error {
+	err := common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		pageNum++
 	}
 	// 示例 query = fmt.Sprintf(" dns like '%%%s' ", createDbnameInfo.DNS)
-	err = common.Db.Select(field).Where(query).Order(order).Limit(page.PageSize).Offset((page.Page - 1) * page.PageSize).Find(&model).Error
+	err = common.Db.Model(&base.Model).Select(field).Where(query).Order(order).Limit(page.PageSize).Offset((page.Page - 1) * page.PageSize).Find(&model).Error
 	if err != nil {
 		return &model, total, pageNum, err
 	}
