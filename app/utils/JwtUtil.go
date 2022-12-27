@@ -62,7 +62,7 @@ func JwtVerify(ctx *gin.Context) {
 // @param string tokenString 旧token
 // @param *gin.Context ctx 上下文
 // @return UserClaims 返回配置好的jwt结构体信息
-func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
+func ParseToken(tokenString string, ctx *gin.Context) (claims *UserClaims) {
 	// 解析token
 	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(settings.Config.JwtSecret), nil
@@ -102,7 +102,7 @@ func ParseToken(tokenString string, ctx *gin.Context) *UserClaims {
 // Refresh 更新token
 // @param string tokenString 旧token
 // @return string 返回新token
-func Refresh(tokenString string) string {
+func Refresh(tokenString string) (newToken string) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)
 	}
@@ -123,7 +123,7 @@ func Refresh(tokenString string) string {
 	jwt.TimeFunc = time.Now
 	claims.StandardClaims.ExpiresAt = time.Now().Add(2 * time.Hour).Unix()
 
-	newToken := GenerateToken(claims)
+	newToken = GenerateToken(claims)
 
 	if newToken == "" {
 		panic(UserConstant.TokenRefreshFail)

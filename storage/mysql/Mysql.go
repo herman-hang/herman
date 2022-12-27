@@ -11,7 +11,7 @@ import (
 // InitGormDatabase 初始化gorm数据库
 // @param *settings.MysqlConfig config Mysql配置信息
 // @return *gorm.DB error 返回一个DB对象和错误信息
-func InitGormDatabase(config *config.MysqlConfig) (*gorm.DB, error) {
+func InitGormDatabase(config *config.MysqlConfig) (db *gorm.DB, err error) {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		config.User,
@@ -21,7 +21,7 @@ func InitGormDatabase(config *config.MysqlConfig) (*gorm.DB, error) {
 		config.Dbname,
 	)
 
-	db, err := gorm.Open("mysql", dsn)
+	db, err = gorm.Open("mysql", dsn)
 	db.SingularTable(true) // 设置禁用表名复数形式
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return config.Prefix + defaultTableName

@@ -12,7 +12,7 @@ import (
 // Validate 全局model数据验证器
 // @param 接收一个待数据验证的结构体
 // @return error 返回错误信息
-func Validate(dataStruct interface{}) error {
+func Validate(dataStruct interface{}) (err error) {
 	// 验证
 	zhCh := zh.New()
 	validate := validator.New()
@@ -25,7 +25,7 @@ func Validate(dataStruct interface{}) error {
 	uni := ut.New(zhCh)
 	trans, _ := uni.GetTranslator("zh")
 	// 验证器注册翻译器
-	err := zhTrans.RegisterDefaultTranslations(validate, trans)
+	err = zhTrans.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
 		panic(err.Error())
 	}

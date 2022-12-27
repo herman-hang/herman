@@ -11,10 +11,10 @@ import (
 
 // GetParams 接收数据
 // @param *gin.Context ctx 上下文
-// @return app.Gin map[string]interface{} 返回一个二次封装上下文和接收前端数据参数
-func GetParams(ctx *gin.Context) (app.Gin, map[string]interface{}) {
-	params := make(map[string]interface{})
-	this := app.Gin{C: ctx}
+// @return this params 返回一个二次封装上下文和接收前端数据参数
+func GetParams(ctx *gin.Context) (this app.Gin, params map[string]interface{}) {
+	params = make(map[string]interface{})
+	this = app.Gin{C: ctx}
 
 	data, _ := this.C.GetRawData()
 	// GET请求支持Query和Body接收数据

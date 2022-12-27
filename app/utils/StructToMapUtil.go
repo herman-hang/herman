@@ -9,8 +9,8 @@ import (
 // @param interface in 待转结构体
 // @param string tagName 根据指定结构体标签作为key
 // @return map[string]interface{} error 返回一个结构体转换好的map值和错误信息
-func ToMap(in interface{}, tagName string) (map[string]interface{}, error) {
-	out := make(map[string]interface{})
+func ToMap(in interface{}, tagName string) (out map[string]interface{}, err error) {
+	out = make(map[string]interface{})
 	v := reflect.ValueOf(in)
 
 	if v.Kind() == reflect.Ptr {
