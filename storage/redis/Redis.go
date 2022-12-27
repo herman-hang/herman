@@ -8,7 +8,7 @@ import (
 
 // InitRedisConfig 初始化Redis
 // @param *settings.RedisConfig cfg Mysql配置信息
-// @return *redis.Client error 返回一个redis对象和错误信息
+// @return rdb err 返回一个redis对象和错误信息
 func InitRedisConfig(cfg *config.RedisConfig) (rdb *redis.Client, err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf("%s:%d",

@@ -101,7 +101,7 @@ func ParseToken(tokenString string, ctx *gin.Context) (claims *UserClaims) {
 
 // Refresh 更新token
 // @param string tokenString 旧token
-// @return string 返回新token
+// @return newToken 返回新token
 func Refresh(tokenString string) (newToken string) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)

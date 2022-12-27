@@ -10,7 +10,7 @@ import (
 
 // InitGormDatabase 初始化gorm数据库
 // @param *settings.MysqlConfig config Mysql配置信息
-// @return *gorm.DB error 返回一个DB对象和错误信息
+// @return db err 返回一个DB对象和错误信息
 func InitGormDatabase(config *config.MysqlConfig) (db *gorm.DB, err error) {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",

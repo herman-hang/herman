@@ -16,7 +16,7 @@ type UserRepository struct {
 
 // GetUserInfo 获取用户信息
 // @param string user 用户名
-// @return *Users error 返回当前user用户的信息和错误信息
+// @return users err 返回当前user用户的信息和错误信息
 func (u UserRepository) GetUserInfo(user string) (users *models.Users, err error) {
 	err = common.Db.Where("user = ?", user).First(&users).Error
 

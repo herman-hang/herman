@@ -12,7 +12,7 @@ import (
 var Config = new(config.AppConfig)
 
 // InitConfig 初始化配置
-// @return error err 返回错误信息
+// @return err 返回错误信息
 func InitConfig() (err error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -36,7 +36,7 @@ func InitConfig() (err error) {
 }
 
 // ReloadConfig 加载配置回调
-// @param fsnotify.Event in 加载配置回调
+// @param in 加载配置回调
 func ReloadConfig(in fsnotify.Event) {
 	fmt.Println("配置文件修改了.....")
 
