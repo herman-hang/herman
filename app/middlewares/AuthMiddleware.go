@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/gin-gonic/gin"
 	"sort"
@@ -18,8 +19,9 @@ func Jwt() gin.HandlerFunc {
 		if IsPath(noVerify, ctx.Request.URL.Path) {
 			return
 		}
-		// 验证token
-		utils.JwtVerify(ctx)
+		UserClaims := utils.JwtVerify(ctx)
+		// 用户信息存储在请求中
+		ctx.Set("user", repositories.UserInfo(UserClaims.Uid))
 		ctx.Next()
 	}
 }

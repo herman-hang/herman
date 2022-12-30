@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"encoding/json"
 	"github.com/fp/fp-gin-framework/app/common"
 	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
 	"github.com/fp/fp-gin-framework/app/models"
@@ -12,6 +13,24 @@ var User = &UserRepository{BaseRepository{Model: new(models.Users)}}
 
 type UserRepository struct {
 	BaseRepository
+}
+
+// UserInfo 根据ID获取用户信息
+// @param uint id 用户id
+// @return userMap 返回当前用户ID的信息
+func UserInfo(id uint) (userMap map[string]interface{}) {
+	var users models.Users
+	err := common.Db.Where("id = ?", id).First(&users).Error
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		panic(err.Error())
+	}
+
+	data, _ := json.Marshal(&users)
+	userMap = make(map[string]interface{})
+	_ = json.Unmarshal(data, &userMap)
+
+	return userMap
 }
 
 // GetUserInfo 获取用户信息

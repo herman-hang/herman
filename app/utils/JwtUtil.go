@@ -5,7 +5,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fp/fp-gin-framework/app/common"
 	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
-	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -40,7 +39,8 @@ func GenerateToken(claims *UserClaims) string {
 
 // JwtVerify 验证token
 // @param *gin.Context ctx 上下文
-func JwtVerify(ctx *gin.Context) {
+// @return map[string]interface{} 返回解析token的用户信息
+func JwtVerify(ctx *gin.Context) *UserClaims {
 	//过滤是否验证token
 	token := ctx.GetHeader("Authorization")
 
@@ -54,8 +54,7 @@ func JwtVerify(ctx *gin.Context) {
 		panic(UserConstant.TokenError)
 	}
 
-	// 验证token，并存储在请求中
-	ctx.Set("userInfo", repositories.UserInfo(ParseToken(parts[1], ctx).Uid))
+	return ParseToken(parts[1], ctx)
 }
 
 // ParseToken 解析Token

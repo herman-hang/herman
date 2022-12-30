@@ -1,11 +1,8 @@
 package repositories
 
 import (
-	"encoding/json"
 	"github.com/fp/fp-gin-framework/app/common"
-	"github.com/fp/fp-gin-framework/app/models"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 )
 
 type BaseRepository struct {
@@ -16,24 +13,6 @@ type PageInfo struct {
 	Page     int    `json:"page"`      // 页码
 	PageSize int    `json:"page_size"` // 每页大小
 	Keyword  string `json:"keyword"`   //关键字
-}
-
-// UserInfo 根据ID获取用户信息
-// @param uint id 用户id
-// @return userMap 返回当前用户ID的信息
-func UserInfo(id uint) (userMap map[string]interface{}) {
-	var users models.Users
-	err := common.Db.Where("id = ?", id).First(&users).Error
-
-	if err != nil && err != gorm.ErrRecordNotFound {
-		panic(err.Error())
-	}
-
-	data, _ := json.Marshal(&users)
-	userMap = make(map[string]interface{})
-	_ = json.Unmarshal(data, &userMap)
-
-	return userMap
 }
 
 // Add 批量新增
