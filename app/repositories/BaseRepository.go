@@ -17,48 +17,48 @@ type PageInfo struct {
 
 // Add 批量新增
 // @param []interface{} model 模型结构体
-// @return err 返回一个错误信息
-func (base *BaseRepository) Add(model []interface{}) (err error) {
-	err = common.Db.Create(&model).Error
+// @return bool 返回一个bool值
+func (base *BaseRepository) Add(model []interface{}) bool {
+	err := common.Db.Create(&model).Error
 	if err != nil {
-		return err
+		return false
 	}
-	return nil
+	return true
 }
 
 // Find 根据ID获取详情
 // @param []uint id 主键ID
 // @param []string fields 查询指定字段
-// @return data, err 详情数据，错误信息
-func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, err error) {
-	err = common.Db.Model(&base.Model).Select(fields).First(data, ids).Error
+// @return data, bool 详情数据，bool值
+func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, bool bool) {
+	err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error
 	if err != nil {
-		return data, err
+		return nil, false
 	}
-	return data, nil
+	return data, true
 }
 
 // Update 批量更新
 // @param []int ids 查询条件
 // @param map[string]interface{} attributes 待更新数据
-// @return err 返回一个自定义错误信息
-func (base *BaseRepository) Update(ids []int, attributes map[string]interface{}) (err error) {
-	err = common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error
+// @return bool 返回一个bool值
+func (base *BaseRepository) Update(ids []int, attributes map[string]interface{}) bool {
+	err := common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error
 	if err != nil {
-		return err
+		return false
 	}
-	return nil
+	return true
 }
 
 // Delete 批量删除
 // @param []int ids 主键ID
 // @return error 返回一个错误信息
-func (base *BaseRepository) Delete(ids []int) (err error) {
-	err = common.Db.Delete(&base.Model, ids).Error
+func (base *BaseRepository) Delete(ids []int) bool {
+	err := common.Db.Delete(&base.Model, ids).Error
 	if err != nil {
-		return err
+		return false
 	}
-	return nil
+	return true
 }
 
 // IsExist 查询数据是否存在
@@ -77,8 +77,8 @@ func (base *BaseRepository) IsExist(id uint) bool {
 // @param string query 查询条件
 // @param []string field 查询指定字段
 // @param string order 排序条件
-// @return list total pageNum err 返回列表，总条数，总页码数，错误信息
-func (base *BaseRepository) GetList(query string, field []string, order string) (data []map[string]interface{}, err error) {
+// @return list total pageNum bool 返回列表，总条数，总页码数，bool值
+func (base *BaseRepository) GetList(query string, field []string, order string) (data []map[string]interface{}, bool bool) {
 	var (
 		ctx     *gin.Context
 		page    *PageInfo
@@ -88,7 +88,7 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 
 	// 分页结构体绑定
 	if err := ctx.ShouldBindQuery(&page); err != nil {
-		return nil, err
+		return nil, false
 	}
 	// 总条数
 	common.Db.Model(&base.Model).Count(&total)
@@ -98,7 +98,7 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		pageNum++
 	}
 	// 示例 query = fmt.Sprintf(" dns like '%%%s' ", createDbnameInfo.DNS)
-	err = common.Db.Model(&base.Model).
+	err := common.Db.Model(&base.Model).
 		Select(field).
 		Where(query).
 		Order(order).
@@ -113,21 +113,23 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		"page":      page.Page,     // 当前页码
 	})
 	if err != nil {
-		return data, err
+		return nil, false
 	}
-	return data, nil
+	return data, true
 }
 
 // GetAllData 获取全部数据
 // @param []string field 查询指定字段
-// @return list err 返回列表，错误信息
-func (base *BaseRepository) GetAllData(field []string) (data []map[string]interface{}, err error) {
+// @return list bool 返回列表，bool值
+func (base *BaseRepository) GetAllData(field []string) (data []map[string]interface{}, bool bool) {
 	if len(field) != 0 {
-		err = common.Db.Model(&base.Model).Select(field).Find(&data).Error
+		if err := common.Db.Model(&base.Model).Select(field).Find(&data).Error; err != nil {
+			return nil, false
+		}
 	}
-	err = common.Db.Model(&base.Model).Find(&data).Error
-	if err != nil {
-		return data, err
+
+	if err := common.Db.Model(&base.Model).Find(&data).Error; err != nil {
+		return nil, false
 	}
-	return data, nil
+	return data, true
 }
