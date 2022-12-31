@@ -2,6 +2,7 @@ package settings
 
 import (
 	"fmt"
+	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/fp/fp-gin-framework/config"
 	"github.com/fsnotify/fsnotify"
 	_ "github.com/gin-gonic/gin"
@@ -38,14 +39,14 @@ func InitConfig() (err error) {
 // ReloadConfig 加载配置回调
 // @param in 加载配置回调
 func ReloadConfig(in fsnotify.Event) {
-	fmt.Println("配置文件修改了.....")
+	fmt.Println(constants.ConfigModify)
 
 	err := viper.Unmarshal(Config)
 	if err != nil {
 		zap.S().Errorf("viper unmarshal failed, err:%v\n", err)
 		return
 	} else {
-		fmt.Println("配置文件reload成功!")
+		fmt.Println(constants.ConfigReloadSuccess)
 		return
 	}
 }

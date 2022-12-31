@@ -40,7 +40,7 @@ func GetParams(ctx *gin.Context) (this app.Gin, params map[string]interface{}) {
 			}
 		}
 	default:
-		panic(constants.GetMessage(constants.MethodBan))
+		panic(constants.MethodBan)
 	}
 
 	return this, params

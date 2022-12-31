@@ -1,19 +1,10 @@
 package constants
 
-var MessageFlags = map[int]string{
-	Success:   "操作成功",
-	Error:     "操作失败",
-	MethodBan: "HTTP请求方法被禁止",
-}
-
-// GetMessage 根据状态码返回响应信息
-// @param int code 状态码
-// @return string 返回指定状态码的信息
-func GetMessage(code int) string {
-	msg, ok := MessageFlags[code]
-	if ok {
-		return msg
-	}
-
-	return MessageFlags[Error]
-}
+const (
+	Success             = "请求成功"
+	Error               = "请求失败"
+	MethodBan           = "HTTP请求方法被禁止"
+	ConfigModify        = "配置文件已修改"
+	ConfigReloadSuccess = "配置文件重新加载成功"
+	GuardError          = "Guard错误"
+)

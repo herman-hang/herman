@@ -64,8 +64,8 @@ func H(HttpCode int) Option {
 func (g *Gin) Response(opts ...Option) {
 	defaultResponse := Response{
 		HttpCode: http.StatusOK,
-		Code:     constants.Success,
-		Message:  constants.GetMessage(constants.Success),
+		Code:     constants.SuccessCode,
+		Message:  constants.Success,
 		Data:     nil,
 	}
 

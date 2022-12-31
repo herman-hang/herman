@@ -1,6 +1,7 @@
-package logs
+package log
 
 import (
+	"fmt"
 	"github.com/fp/fp-gin-framework/config"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
@@ -11,17 +12,17 @@ import (
 )
 
 // InitZapLogs 初始化日志配置
-// @param *settings.LogConfig cfg 日志配置信息
+// @param *settings.LogConfig config 日志配置信息
 // @param string mode 当前应用运行模式
 // @return err error 返回错误信息
-func InitZapLogs(cfg *config.LogConfig, mode string) (err error) {
+func InitZapLogs(config *config.LogConfig, mode string) (err error) {
 	// writers
-	writersSyncers := GetLoggerWriter(cfg)
+	writersSyncers := GetLoggerWriter(config)
 	// encoder
 	encoders := GetEncoder()
 	// 定义接受的l
 	var l = new(zapcore.Level)
-	err = l.UnmarshalText([]byte(cfg.Level))
+	err = l.UnmarshalText([]byte(config.Level))
 	if err != nil {
 		return err
 	}
@@ -44,16 +45,16 @@ func InitZapLogs(cfg *config.LogConfig, mode string) (err error) {
 }
 
 // GetLoggerWriter return writerSyncer
-// @param *settings.LogConfig cfg 日志配置信息
+// @param *settings.LogConfig config 日志配置信息
 // @return zapcore.WriteSyncer 返回一个日志记录器
-func GetLoggerWriter(cfg *config.LogConfig) zapcore.WriteSyncer {
+func GetLoggerWriter(config *config.LogConfig) zapcore.WriteSyncer {
 	lumberLoggers := &lumberjack.Logger{
-		Filename:   cfg.FileName,
-		MaxSize:    cfg.MaxSize,
-		MaxBackups: cfg.MaxBackups,
-		MaxAge:     cfg.MaxAge,
-		LocalTime:  cfg.LocalTime,
-		Compress:   cfg.Compress,
+		Filename:   fmt.Sprintf("%v%v", "runtime/logs/", config.FileName),
+		MaxSize:    config.MaxSize,
+		MaxBackups: config.MaxBackups,
+		MaxAge:     config.MaxAge,
+		LocalTime:  config.LocalTime,
+		Compress:   config.Compress,
 	}
 	return zapcore.AddSync(lumberLoggers)
 }

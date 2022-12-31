@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/fp/fp-gin-framework/app/middlewares"
+	"github.com/fp/fp-gin-framework/bootstrap/mysql"
+	r "github.com/fp/fp-gin-framework/bootstrap/redis"
 	"github.com/fp/fp-gin-framework/config"
 	"github.com/fp/fp-gin-framework/routers"
-	"github.com/fp/fp-gin-framework/servers/logs"
-	"github.com/fp/fp-gin-framework/storage/mysql"
-	r "github.com/fp/fp-gin-framework/storage/redis"
+	"github.com/fp/fp-gin-framework/servers/log"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
@@ -30,43 +30,58 @@ type Server struct {
 }
 
 // NewServer 初始化服务
-// @param *settings.AppConfig config // 应用配置信息
+// @param *settings.AppConfig config 应用配置信息
 // @return *Server error 返回服务结构体和错误信息
 func NewServer(config *config.AppConfig) (*Server, error) {
-	// 初始化日志
-	if err := logs.InitZapLogs(config.LogConfig, config.Mode); err != nil {
+	gin.SetMode(config.Mode)
+	e := gin.New()
+	// 注册中间件
+	e.Use(log.GinLogger())
+	e.Use(middlewares.CatchError())
+
+	return &Server{
+		Config: config,
+		Engine: e,
+		Log:    ZapLogs(config),
+		Db:     GormDatabase(config),
+		Redis:  Redis(config),
+	}, nil
+}
+
+// ZapLogs 初始化日志
+// @param *config.AppConfig config 应用配置信息
+// @return *zap.SugaredLogger 返回日志实例
+func ZapLogs(config *config.AppConfig) *zap.SugaredLogger {
+	if err := log.InitZapLogs(config.LogConfig, config.Mode); err != nil {
 		zap.S().Fatalf("Init ZapLog failed:%v", err)
 	}
 	zap.S().Info("Init ZapLogger Success!")
+	return zap.S()
+}
 
-	// 初始化数据库
+// GormDatabase 初始化数据库
+// @param *config.AppConfig config 应用配置信息
+// @return *gorm.DB db 返回数据库实例
+func GormDatabase(config *config.AppConfig) (db *gorm.DB) {
 	db, err := mysql.InitGormDatabase(config.MysqlConfig)
 	if err != nil {
 		zap.S().Fatalf("Init Mysql failed:%v", err)
 	}
 	zap.S().Info("Init Mysql Success!")
+	return db
+}
 
-	// 初始化redis
+// Redis 初始化redis
+// @param *config.AppConfig config 应用配置信息
+// @return *redis.Client rdb 返回Redis实例
+func Redis(config *config.AppConfig) (rdb *redis.Client) {
 	rdb, err := r.InitRedisConfig(config.RedisConfig)
 	if err != nil {
 		zap.S().Fatalf("Init Redis Failed:%v", err)
 	}
 
 	zap.S().Info("Init Redis Success!")
-
-	gin.SetMode(config.Mode)
-	e := gin.New()
-	// 注册中间件
-	e.Use(logs.GinLogger())
-	e.Use(middlewares.CatchError())
-
-	return &Server{
-		Config: config,
-		Engine: e,
-		Log:    zap.S(),
-		Db:     db,
-		Redis:  rdb,
-	}, nil
+	return rdb
 }
 
 // Run 定义Server服务启动的方法

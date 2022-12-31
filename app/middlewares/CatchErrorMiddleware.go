@@ -14,7 +14,7 @@ func CatchError() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				// 没有定义
-				this.Response(app.C(constants.Error), app.M(err.(string)))
+				this.Response(app.C(constants.ErrorCode), app.M(err.(string)))
 				this.C.Abort()
 			}
 		}()

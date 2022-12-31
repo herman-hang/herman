@@ -1,39 +1,50 @@
 package middlewares
 
 import (
+	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/app/utils"
+	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
-	"sort"
+	"strings"
 )
 
 // 以下路由不校验token
-var noVerify = []string{
-	"/api/v1/user/login",
-}
+var (
+	prefix       = settings.Config.AppPrefix // 路由版本号
+	excludeRoute = map[string]string{
+		prefix + "/user/login": "post",
+	}
+)
 
 // Jwt 鉴权
 // @return gin.HandlerFunc 返回一个中间件上下文
-func Jwt() gin.HandlerFunc {
+func Jwt(guard string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if IsPath(noVerify, ctx.Request.URL.Path) {
+		if VerifyRoute(ctx.Request.URL.Path, ctx.Request.Method) {
 			return
 		}
-		UserClaims := utils.JwtVerify(ctx)
-		// 用户信息存储在请求中
-		ctx.Set("user", repositories.UserInfo(UserClaims.Uid))
+		UserClaims := utils.JwtVerify(ctx, guard)
+		switch guard {
+		case "user":
+			// 用户信息存储在请求中
+			ctx.Set("user", repositories.User.GetUserInfo(UserClaims.Uid))
+		default:
+			panic(constants.GuardError)
+		}
 		ctx.Next()
 	}
 }
 
-// IsPath 判断访问路径是否为白名单，在白名单直接返回true不验证token
-// @param []string strArray 路由不校验token数组
-// @param string target 待校验的路由
+// VerifyRoute 判断访问路径是否为白名单，在白名单直接返回true不验证token
+// @param string route 当前请求路由
+// @param string method 当前请求的http方法
 // @return bool 返回一个路由是否存在不校验token数组路由中的值
-func IsPath(strArray []string, target string) bool {
-	sort.Strings(strArray)
-	index := sort.SearchStrings(strArray, target)
-
-	// index的取值：0 ~ (len(str_array)-1)
-	return index < len(strArray) && strArray[index] == target
+func VerifyRoute(route string, method string) bool {
+	if value, ok := excludeRoute[route]; !ok {
+		return false
+	} else if value == strings.ToUpper(method) {
+		return true
+	}
+	return false
 }

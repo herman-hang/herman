@@ -27,7 +27,7 @@ func Validate(dataStruct interface{}) (err error) {
 	// 验证器注册翻译器
 	err = zhTrans.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 
 	err = validate.Struct(dataStruct)
