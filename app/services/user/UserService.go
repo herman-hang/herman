@@ -20,5 +20,5 @@ func Login(data map[string]interface{}) interface{} {
 	}
 
 	// 返回token
-	return utils.GenerateToken(&utils.UserClaims{Uid: user.Id, Guard: "user"})
+	return utils.GenerateToken(&utils.UserClaims{Uid: user.Id, Guard: "foreground"})
 }
