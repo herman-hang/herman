@@ -62,7 +62,7 @@ func H(HttpCode int) Option {
 // @param *Gin g 上下文结构体
 // @param Option opts 接收多个配置选项函数参数，可以是C，M，D，H
 func (g *Gin) Response(opts ...Option) {
-	defaultResponse := Response{
+	defaultResponse := &Response{
 		HttpCode: http.StatusOK,
 		Code:     constants.SuccessCode,
 		Message:  constants.Success,
@@ -71,7 +71,7 @@ func (g *Gin) Response(opts ...Option) {
 
 	// 依次调用opts函数列表中的函数，为结构体成员赋值
 	for _, o := range opts {
-		o(&defaultResponse)
+		o(defaultResponse)
 	}
 
 	g.C.JSON(defaultResponse.HttpCode, defaultResponse)

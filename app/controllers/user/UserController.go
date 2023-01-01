@@ -15,5 +15,4 @@ func Login(ctx *gin.Context) {
 	this, data := base.GetParams(ctx)
 	// Response参数可以设置零个或多个
 	this.Response(app.D(userService.Login(userValidate.Login(data))))
-	return
 }

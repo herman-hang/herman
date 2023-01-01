@@ -26,12 +26,12 @@ func Jwt(guard string) gin.HandlerFunc {
 		}
 		UserClaims := utils.JwtVerify(ctx, guard)
 		switch guard {
-		case "foreground", "mobile": // 前台和移动端（用户）
+		case "user", "mobile": // 前台和移动端（用户）
 			// 用户信息存储在请求中
 			ctx.Set("user", repositories.User.GetUserInfo(UserClaims.Uid))
-		case "middleground": // 中台（管理员）
+		case "admin": // 中台（管理员）
 
-		case "background": // 后台（商家）
+		case "merchant": // 后台（商家）
 
 		default:
 			panic(constants.GuardError)

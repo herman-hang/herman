@@ -22,7 +22,7 @@ func InitRouter(rootEngine *gin.Engine) {
 	})
 	// 设置路由前缀
 	api := rootEngine.Group(settings.Config.AppPrefix)
-	api.Use(middlewares.Jwt("foreground"))
+	api.Use(middlewares.Jwt("user"))
 	{
 		// 用户相关路由
 		userRouter := api.Group("/user")
