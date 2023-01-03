@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-// Gin 上下文二次封装
-type Gin struct {
-	C *gin.Context
+// Request 上下文
+type Request struct {
+	Context *gin.Context
 }
 
 // Response 响应信息结构体
@@ -58,10 +58,10 @@ func H(HttpCode int) Option {
 	}
 }
 
-// Response 响应函数
+// Success 响应函数
 // @param *Gin g 上下文结构体
 // @param Option opts 接收多个配置选项函数参数，可以是C，M，D，H
-func (g *Gin) Response(opts ...Option) {
+func (r *Request) Success(opts ...Option) {
 	defaultResponse := &Response{
 		HttpCode: http.StatusOK,
 		Code:     constants.SuccessCode,
@@ -74,7 +74,6 @@ func (g *Gin) Response(opts ...Option) {
 		o(defaultResponse)
 	}
 
-	g.C.JSON(defaultResponse.HttpCode, defaultResponse)
-
+	r.Context.JSON(defaultResponse.HttpCode, defaultResponse)
 	return
 }

@@ -11,11 +11,10 @@ import (
 // @param map data 前端请求数据
 // @return interface{} 返回一个token值
 func Login(data map[string]interface{}) interface{} {
-	//user, err := repositories.User.GetUserInfo(fmt.Sprintf("%v", data["user"]))
-	user := repositories.User.GetUserInfo(fmt.Sprintf("%v", data["user"]))
+	user := repositories.User.GetUserInfo(fmt.Sprintf("%s", data["user"]))
 
 	// 密码验证
-	if !utils.ComparePasswords(user.Password, fmt.Sprintf("%v", data["password"])) {
+	if !utils.ComparePasswords(user.Password, fmt.Sprintf("%s", data["password"])) {
 		panic(userConstant.PasswordError)
 	}
 

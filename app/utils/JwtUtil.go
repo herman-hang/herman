@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fp/fp-gin-framework/app/common"
@@ -28,7 +29,7 @@ func GenerateToken(claims *UserClaims) string {
 	//设置token有效期
 	claims.ExpiresAt = time.Now().Add(effectTime).Unix()
 	//生成token
-	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(settings.Config.JwtSecret))
+	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(settings.Config.JwtConfig.JwtSecret))
 	if err != nil {
 		panic(UserConstant.CreateTokenFail)
 	}
@@ -65,7 +66,7 @@ func JwtVerify(ctx *gin.Context, guard string) *UserClaims {
 func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *UserClaims) {
 	// 解析token
 	token, _ := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(settings.Config.JwtSecret), nil
+		return []byte(settings.Config.JwtConfig.JwtSecret), nil
 	})
 
 	claims, ok := token.Claims.(*UserClaims)
@@ -81,7 +82,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Use
 	timeRecord := claims.ExpiresAt - time.Now().Unix()
 	// token小于10分钟则刷新token
 	if (timeRecord / 60) < 10 {
-		ttl, err := common.Redis.TTL(fmt.Sprintf("%v%v", "user-token:", claims.Uid)).Result()
+		ttl, err := common.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user-token:", claims.Uid)).Result()
 		if err != nil {
 			panic(UserConstant.TokenRefreshFail)
 		}
@@ -94,7 +95,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Use
 		newToken := Refresh(token)
 		ctx.Header("x-new-token", newToken)
 
-		err = common.Redis.Set(fmt.Sprintf("%v%v", "user-token:", claims.Uid), newToken, time.Duration(timeRecord)*time.Second).Err()
+		err = common.Redis.Set(context.Background(), fmt.Sprintf("%s%d", "user-token:", claims.Uid), newToken, time.Duration(timeRecord)*time.Second).Err()
 		if err != nil {
 			panic(UserConstant.TokenSaveFail)
 		}

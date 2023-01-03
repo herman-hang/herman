@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/fp/fp-gin-framework/app/constants"
+	captchaController "github.com/fp/fp-gin-framework/app/controllers/captcha"
 	"github.com/fp/fp-gin-framework/app/middlewares"
 	"github.com/fp/fp-gin-framework/routers/api/user"
 	"github.com/fp/fp-gin-framework/servers/settings"
@@ -22,6 +23,9 @@ func InitRouter(rootEngine *gin.Engine) {
 	})
 	// 设置路由前缀
 	api := rootEngine.Group(settings.Config.AppPrefix)
+	// 获取验证码
+	api.GET("/captcha", captchaController.GetCaptcha)
+
 	api.Use(middlewares.Jwt("user"))
 	{
 		// 用户相关路由

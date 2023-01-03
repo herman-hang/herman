@@ -34,6 +34,8 @@ redis:
   host: 127.0.0.1
   # 连接端口号
   port: 6379
+  # 连接用户名
+  user_name: ""
   # 连接密码
   password: ""
   # 默认数据库，默认是0
@@ -63,3 +65,14 @@ jwt:
   jwt_secret: "coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc"
   # token有效时间（单位：小时）
   effect_time: 2
+
+# 验证码配置
+captcha:
+  # 水印
+  text: 我的水印
+  # 验证码类型驱动（本地内存：mem，Redis：redis）
+  cache_type: redis
+  # 缓存有效时间（单位：秒）
+  cache_expire_sec: 120
+  # 项目的绝对路径: 图片、字体等
+  resource_path: ./

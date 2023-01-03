@@ -3,14 +3,16 @@ package servers
 import (
 	"context"
 	"fmt"
+	captchaService "github.com/TestsLing/aj-captcha-go/service"
 	"github.com/fp/fp-gin-framework/app/middlewares"
 	"github.com/fp/fp-gin-framework/bootstrap/mysql"
 	r "github.com/fp/fp-gin-framework/bootstrap/redis"
 	"github.com/fp/fp-gin-framework/config"
 	"github.com/fp/fp-gin-framework/routers"
+	"github.com/fp/fp-gin-framework/servers/captcha"
 	"github.com/fp/fp-gin-framework/servers/log"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
 	"net/http"
@@ -22,11 +24,12 @@ import (
 
 // Server 定义服务所需要的组件
 type Server struct {
-	Config *config.AppConfig  // 全局的配置信息
-	Engine *gin.Engine        // 对应的gin的服务引擎
-	Log    *zap.SugaredLogger // 对应服务的log
-	Db     *gorm.DB           // 数据库连接db
-	Redis  *redis.Client      // redis
+	Config  *config.AppConfig                     // 全局的配置信息
+	Engine  *gin.Engine                           // 对应的gin的服务引擎
+	Log     *zap.SugaredLogger                    // 对应服务的log
+	Db      *gorm.DB                              // 数据库连接db
+	Redis   *redis.Client                         // redis
+	Captcha *captchaService.CaptchaServiceFactory // 验证码
 }
 
 // NewServer 初始化服务
@@ -40,11 +43,12 @@ func NewServer(config *config.AppConfig) (*Server, error) {
 	e.Use(middlewares.CatchError())
 
 	return &Server{
-		Config: config,
-		Engine: e,
-		Log:    ZapLogs(config),
-		Db:     GormDatabase(config),
-		Redis:  Redis(config),
+		Config:  config,
+		Engine:  e,
+		Log:     ZapLogs(config),
+		Db:      GormDatabase(config),
+		Redis:   Redis(config),
+		Captcha: Captcha(config),
 	}, nil
 }
 
@@ -84,6 +88,15 @@ func Redis(config *config.AppConfig) (rdb *redis.Client) {
 	return rdb
 }
 
+// Captcha 初始化滑块验证码
+// @param *config.AppConfig config 应用配置信息
+// @return captchaFactory 返回验证码工厂实例
+func Captcha(config *config.AppConfig) (captchaFactory *captchaService.CaptchaServiceFactory) {
+	captchaFactory = captcha.InitCaptcha(config)
+	zap.S().Info("Init Captcha Success!")
+	return captchaFactory
+}
+
 // Run 定义Server服务启动的方法
 // @param *Server s 服务结构体
 func (s *Server) Run() {
@@ -105,8 +118,7 @@ func (s *Server) Run() {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	ctx, cancel := context.WithTimeout(
-		context.Background(), time.Duration(2000)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(2000)*time.Second)
 	defer cancel()
 	ch := <-sig
 	s.Log.Infof("Receive Signals: %v", ch)

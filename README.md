@@ -116,7 +116,7 @@ air
 ```go
 // InitRouter 初始化路由
 func InitRouter(rootEngine *gin.Engine) {
-	api := rootEngine.Group(settings.Config.AppPrefix)
+	api := rootEngine.Group(settings.ConfigJwtConfig.AppPrefix)
 
 	api.Use(middlewares.Jwt())
 	{

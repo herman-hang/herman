@@ -1,47 +1,39 @@
 package controllers
 
 import (
-	"bytes"
+	"encoding/json"
 	"github.com/fp/fp-gin-framework/app"
 	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
-	"strings"
 )
 
 // GetParams 接收数据
-// @param *gin.Context ctx 上下文
 // @return this params 返回一个二次封装上下文和接收前端数据参数
-func GetParams(ctx *gin.Context) (this app.Gin, params map[string]interface{}) {
+func GetParams(ctx *gin.Context) (params map[string]interface{}, response app.Request) {
 	params = make(map[string]interface{})
-	this = app.Gin{C: ctx}
-
-	data, _ := this.C.GetRawData()
-	// GET请求支持Query和Body接收数据
-	// POST只支持Body接收数据
-	switch this.C.Request.Method {
+	response = app.Request{Context: ctx}
+	data, _ := ctx.GetRawData()
+	switch ctx.Request.Method {
 	case "GET":
-		if this.C.Request.URL.RawQuery != "" {
-			for _, value := range strings.Split(this.C.Request.URL.RawQuery, "&") {
-				paramSlice := strings.Split(value, "=")
-				params[paramSlice[0]] = paramSlice[1]
-			}
-		} else if string(data) != "" {
-			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-			if err := this.C.ShouldBindJSON(&params); err != nil {
-				panic(err.Error())
+		// query参数处理
+		keys := ctx.Request.URL.Query()
+		if len(keys) != 0 {
+			for k, v := range keys {
+				params[k] = v[0]
 			}
 		}
+
+		// body参数处理
+		if len(data) != 0 {
+			_ = json.Unmarshal(data, &params)
+		}
 	case "POST", "PUT", "DELETE":
-		if string(data) != "" {
-			this.C.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-			if err := this.C.ShouldBindJSON(&params); err != nil {
-				panic(err.Error())
-			}
+		if len(string(data)) != 0 {
+			_ = json.Unmarshal(data, &params)
 		}
 	default:
 		panic(constants.MethodBan)
 	}
 
-	return this, params
+	return params, response
 }

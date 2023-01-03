@@ -10,14 +10,14 @@ import (
 // @return gin.HandlerFunc 返回一个中间件上下文
 func CatchError() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		this := app.Gin{C: ctx}
+		response := &app.Request{Context: ctx}
 		defer func() {
 			if err := recover(); err != nil {
 				// 没有定义
-				this.Response(app.C(constants.ErrorCode), app.M(err.(string)))
-				this.C.Abort()
+				response.Success(app.C(constants.ErrorCode), app.M(err.(string)))
+				ctx.Abort()
 			}
 		}()
-		this.C.Next()
+		ctx.Next()
 	}
 }

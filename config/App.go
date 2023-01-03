@@ -20,4 +20,6 @@ type AppConfig struct {
 	*LogConfig `mapstructure:"log"`
 	// jwt配置信息
 	*JwtConfig `mapstructure:"jwt"`
+	// 验证码配置
+	*CaptchaConfig `mapstructure:"captcha"`
 }

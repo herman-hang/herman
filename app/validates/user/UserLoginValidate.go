@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/fp/fp-gin-framework/app/validates"
 	"github.com/mitchellh/mapstructure"
@@ -13,13 +14,13 @@ type LoginValidate struct {
 
 // Login 登录验证器
 // @param map[string]interface{} data 待验证数据
-// @return map[string]interface{} 返回验证通过的数据
-func Login(data map[string]interface{}) map[string]interface{} {
+// @return toMap 返回验证通过的数据
+func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	var login LoginValidate
 
 	// map赋值给结构体
-	if err := mapstructure.Decode(data, &login); err != nil {
-		panic(err.Error())
+	if err := mapstructure.WeakDecode(data, &login); err != nil {
+		panic(constants.MapToStruct)
 	}
 
 	if err := validates.Validate(login); err != nil {
@@ -28,7 +29,7 @@ func Login(data map[string]interface{}) map[string]interface{} {
 
 	toMap, err := utils.ToMap(&login, "json")
 	if err != nil {
-		panic(err.Error())
+		panic(constants.StructToMap)
 	}
 
 	return toMap

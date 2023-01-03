@@ -12,7 +12,7 @@ import (
 // @param *gin.Context ctx 上下文
 func Login(ctx *gin.Context) {
 	// 接收gin上下文和请求数据
-	this, data := base.GetParams(ctx)
-	// Response参数可以设置零个或多个
-	this.Response(app.D(userService.Login(userValidate.Login(data))))
+	data, response := base.GetParams(ctx)
+	// Success参数可以设置零个或多个
+	response.Success(app.D(userService.Login(userValidate.Login(data))))
 }

@@ -10,12 +10,9 @@ import (
 )
 
 // 以下路由不校验token
-var (
-	prefix       = settings.Config.AppPrefix // 路由版本号
-	excludeRoute = map[string]string{
-		prefix + "/user/login": "post",
-	}
-)
+var excludeRoute = map[string]string{
+	"/user/login": "post",
+}
 
 // Jwt 鉴权
 // @return gin.HandlerFunc 返回一个中间件上下文
@@ -29,9 +26,9 @@ func Jwt(guard string) gin.HandlerFunc {
 		case "user", "mobile": // 前台和移动端（用户）
 			// 用户信息存储在请求中
 			ctx.Set("user", repositories.User.GetUserInfo(UserClaims.Uid))
-		case "admin": // 中台（管理员）
+		case "admin": // 管理员后台
 
-		case "merchant": // 后台（商家）
+		case "merchant": // 商家后台
 
 		default:
 			panic(constants.GuardError)
@@ -45,9 +42,14 @@ func Jwt(guard string) gin.HandlerFunc {
 // @param string method 当前请求的http方法
 // @return bool 返回一个路由是否存在不校验token数组路由中的值
 func VerifyRoute(route string, method string) bool {
-	if value, ok := excludeRoute[route]; !ok {
+	attributes := make(map[string]string)
+	for k, v := range excludeRoute {
+		attributes[settings.Config.AppPrefix+k] = v
+	}
+
+	if value, ok := attributes[route]; !ok {
 		return false
-	} else if value == strings.ToUpper(method) {
+	} else if method == strings.ToUpper(value) {
 		return true
 	}
 	return false

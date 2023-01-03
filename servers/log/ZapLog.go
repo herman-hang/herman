@@ -49,7 +49,7 @@ func InitZapLogs(config *config.LogConfig, mode string) (err error) {
 // @return zapcore.WriteSyncer 返回一个日志记录器
 func GetLoggerWriter(config *config.LogConfig) zapcore.WriteSyncer {
 	lumberLoggers := &lumberjack.Logger{
-		Filename:   fmt.Sprintf("%v%v", "runtime/logs/", config.FileName),
+		Filename:   fmt.Sprintf("%s%s", "runtime/logs/", config.FileName),
 		MaxSize:    config.MaxSize,
 		MaxBackups: config.MaxBackups,
 		MaxAge:     config.MaxAge,
