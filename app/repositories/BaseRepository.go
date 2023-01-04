@@ -10,9 +10,9 @@ type BaseRepository struct {
 }
 
 type PageInfo struct {
-	Page     int    `json:"page"`      // 页码
-	PageSize int    `json:"page_size"` // 每页大小
-	Keyword  string `json:"keyword"`   // 关键字
+	Page     int    `json:"page"`     // 页码
+	PageSize int    `json:"pageSize"` // 每页大小
+	Keyword  string `json:"keyword"`  // 关键字
 }
 
 // Add 批量新增

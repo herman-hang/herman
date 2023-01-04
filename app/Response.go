@@ -1,7 +1,9 @@
 package app
 
 import (
+	"fmt"
 	"github.com/fp/fp-gin-framework/app/constants"
+	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -58,13 +60,13 @@ func H(HttpCode int) Option {
 	}
 }
 
-// Success 响应函数
+// Success 方法一：响应函数
 // @param *Gin g 上下文结构体
 // @param Option opts 接收多个配置选项函数参数，可以是C，M，D，H
 func (r *Request) Success(opts ...Option) {
 	defaultResponse := &Response{
 		HttpCode: http.StatusOK,
-		Code:     constants.SuccessCode,
+		Code:     http.StatusOK,
 		Message:  constants.Success,
 		Data:     nil,
 	}
@@ -73,7 +75,23 @@ func (r *Request) Success(opts ...Option) {
 	for _, o := range opts {
 		o(defaultResponse)
 	}
-
+	// 响应http请求
 	r.Context.JSON(defaultResponse.HttpCode, defaultResponse)
+	return
+}
+
+// Json 方法二：响应函数（所有字段转小驼峰写法）
+// @param interface{} data 接收响应参数
+func (r *Request) Json(data interface{}) {
+	// 将数据转为json格式返回
+	camelJSON, _ := utils.CamelJSON(data)
+	// 响应http请求
+	r.Context.Data(http.StatusOK,
+		"application/json",
+		[]byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`,
+			http.StatusOK,
+			constants.Success,
+			camelJSON,
+		)))
 	return
 }

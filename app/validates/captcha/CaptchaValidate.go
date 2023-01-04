@@ -8,16 +8,22 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+// GetCaptchaValidate 获取验证码验证结构体
 type GetCaptchaValidate struct {
-	CaptchaType int    `json:"captcha_type" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
-	Token       string `json:"token"`
-	PointJson   string `json:"point_json"`
+	CaptchaType int `json:"captchaType" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
 }
 
-// Captcha 获取验证码验证
+// CheckCaptchaValidate 检查验证码正确性结构体
+type CheckCaptchaValidate struct {
+	CaptchaType int    `json:"captchaType" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
+	Token       string `json:"token" validate:"required" label:"验证码Token"`
+	PointJson   string `json:"PointJson" validate:"required" label:"验证码PointJson"`
+}
+
+// GetCaptcha 获取验证码验证
 // @param map[string]interface{} data 待验证数据
 // @return toMap 返回验证通过的数据
-func Captcha(data map[string]interface{}) (toMap map[string]interface{}) {
+func GetCaptcha(data map[string]interface{}) (toMap map[string]interface{}) {
 	var (
 		captcha     GetCaptchaValidate
 		CaptchaType = map[int]string{
@@ -34,13 +40,35 @@ func Captcha(data map[string]interface{}) (toMap map[string]interface{}) {
 	if err := validates.Validate(captcha); err != nil {
 		panic(err.Error())
 	}
-	toMap, err := utils.ToMap(&captcha, "json")
 
+	toMap, err := utils.ToMap(&captcha, "json")
 	if err != nil {
 		panic(constants.StructToMap)
 	}
 
 	// 从interface{}转为int类型
 	toMap["captcha_type"] = CaptchaType[captcha.CaptchaType]
+	return toMap
+}
+
+// CheckCaptcha 获取验证码验证
+// @param map[string]interface{} data 待验证数据
+// @return toMap 返回验证通过的数据
+func CheckCaptcha(data map[string]interface{}) (toMap map[string]interface{}) {
+	var captcha CheckCaptchaValidate
+	// map赋值给结构体
+	if err := mapstructure.WeakDecode(data, &captcha); err != nil {
+		panic(constants.MapToStruct)
+	}
+
+	if err := validates.Validate(captcha); err != nil {
+		panic(err.Error())
+	}
+
+	toMap, err := utils.ToMap(&captcha, "json")
+	if err != nil {
+		panic(constants.StructToMap)
+	}
+
 	return toMap
 }
