@@ -47,7 +47,7 @@ func GetCaptcha(data map[string]interface{}) (toMap map[string]interface{}) {
 	}
 
 	// 从interface{}转为int类型
-	toMap["captcha_type"] = CaptchaType[captcha.CaptchaType]
+	toMap["captchaType"] = CaptchaType[captcha.CaptchaType]
 	return toMap
 }
 

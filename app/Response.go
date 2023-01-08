@@ -1,7 +1,7 @@
 package app
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/gin-gonic/gin"
@@ -85,13 +85,14 @@ func (r *Request) Success(opts ...Option) {
 func (r *Request) Json(data interface{}) {
 	// 将数据转为json格式返回
 	camelJSON, _ := utils.CamelJSON(data)
+
+	response, _ := json.Marshal(map[string]interface{}{
+		"code":    http.StatusOK,
+		"message": constants.Success,
+		"data":    camelJSON,
+	})
+
 	// 响应http请求
-	r.Context.Data(http.StatusOK,
-		"application/json",
-		[]byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`,
-			http.StatusOK,
-			constants.Success,
-			camelJSON,
-		)))
+	r.Context.Data(http.StatusOK, "application/json", response)
 	return
 }

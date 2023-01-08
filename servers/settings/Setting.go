@@ -19,12 +19,12 @@ func InitConfig() (err error) {
 
 	err = viper.ReadInConfig()
 	if err != nil {
-		zap.S().Errorf("viper.ReadInConfig failed, err: %v\n", err)
+		zap.S().Fatalf("viper.ReadInConfig failed, err: %v\n", err)
 		return err
 	}
 	err = viper.Unmarshal(Config)
 	if err != nil {
-		zap.S().Errorf("viper unmarshal failed, err:%v\n", err)
+		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
 	}
 
 	viper.WatchConfig()
@@ -39,7 +39,7 @@ func ReloadConfig(in fsnotify.Event) {
 	zap.S().Info("Configuration modified!")
 	err := viper.Unmarshal(Config)
 	if err != nil {
-		zap.S().Errorf("viper unmarshal failed, err:%v\n", err)
+		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
 		return
 	} else {
 		zap.S().Info("Configuration reloading succeeded!")

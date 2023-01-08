@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"github.com/fp/fp-gin-framework/app"
-	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // CatchError 异常捕捉
@@ -14,7 +14,7 @@ func CatchError() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				// 没有定义
-				response.Success(app.C(constants.ErrorCode), app.M(err.(string)))
+				response.Success(app.C(http.StatusInternalServerError), app.M(err.(string)))
 				ctx.Abort()
 			}
 		}()

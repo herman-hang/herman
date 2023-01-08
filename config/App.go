@@ -22,4 +22,8 @@ type AppConfig struct {
 	*JwtConfig `mapstructure:"jwt"`
 	// 验证码配置
 	*CaptchaConfig `mapstructure:"captcha"`
+	// Kafka配置
+	*KafkaConfig `mapstructure:"kafka"`
+	// 短信配置
+	*SmsConfig `mapstructure:"sms"`
 }

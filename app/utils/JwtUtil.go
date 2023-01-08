@@ -45,7 +45,7 @@ func JwtVerify(ctx *gin.Context, guard string) *UserClaims {
 	// 过滤是否验证token
 	token := ctx.GetHeader("Authorization")
 
-	if token == "" {
+	if len(token) == 0 {
 		panic(UserConstant.TokenNotExit)
 	}
 
@@ -95,7 +95,10 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Use
 		newToken := Refresh(token)
 		ctx.Header("x-new-token", newToken)
 
-		err = common.Redis.Set(context.Background(), fmt.Sprintf("%s%d", "user-token:", claims.Uid), newToken, time.Duration(timeRecord)*time.Second).Err()
+		err = common.Redis.Set(context.Background(),
+			fmt.Sprintf("%s%d", "user-token:", claims.Uid),
+			newToken,
+			time.Duration(timeRecord)*time.Second).Err()
 		if err != nil {
 			panic(UserConstant.TokenSaveFail)
 		}
@@ -122,7 +125,7 @@ func Refresh(token *jwt.Token) (newToken string) {
 
 	newToken = GenerateToken(claims)
 
-	if newToken == "" {
+	if len(newToken) == 0 {
 		panic(UserConstant.TokenRefreshFail)
 	}
 

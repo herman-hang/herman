@@ -43,6 +43,13 @@ redis:
   # 最大连接数
   pool_size: 100
 
+# Kafka配置
+kafka:
+  # 连接IP地址
+  host: 127.0.0.1
+  # 连接端口号
+  port: 9092
+
 # 日志配置
 log:
   # 日志级别模式
@@ -76,3 +83,12 @@ captcha:
   cache_expire_sec: 120
   # 项目的绝对路径: 图片、字体等
   resource_path: ./
+
+# 短信宝配置
+sms:
+  # 短信宝接口
+  api: http://api.smsbao.com/
+  # 短信宝用户名
+  user:
+  # 短信宝密码
+  password:
