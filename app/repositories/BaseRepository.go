@@ -10,8 +10,8 @@ type BaseRepository struct {
 }
 
 type PageInfo struct {
-	Page     int    `json:"page"`     // 页码
-	PageSize int    `json:"pageSize"` // 每页大小
+	Page     int64  `json:"page"`     // 页码
+	PageSize int64  `json:"pageSize"` // 每页大小
 	Keyword  string `json:"keyword"`  // 关键字
 }
 
@@ -82,8 +82,8 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 	var (
 		ctx     *gin.Context
 		page    *PageInfo
-		total   int
-		pageNum int
+		total   int64
+		pageNum int64
 	)
 
 	// 分页结构体绑定
@@ -102,8 +102,8 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		Select(field).
 		Where(query).
 		Order(order).
-		Limit(page.PageSize).
-		Offset((page.Page - 1) * page.PageSize).
+		Limit(int(page.PageSize)).
+		Offset(int((page.Page - 1) * page.PageSize)).
 		Find(&data).Error
 	// 向切片追加数据
 	data = append(data, map[string]interface{}{

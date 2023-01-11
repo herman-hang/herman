@@ -16,13 +16,12 @@ func InitConfig() (err error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./")
-
 	err = viper.ReadInConfig()
 	if err != nil {
 		zap.S().Fatalf("viper.ReadInConfig failed, err: %v\n", err)
 		return err
 	}
-	err = viper.Unmarshal(Config)
+	err = viper.Unmarshal(&Config)
 	if err != nil {
 		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
 	}
@@ -37,7 +36,7 @@ func InitConfig() (err error) {
 // @param in 加载配置回调
 func ReloadConfig(in fsnotify.Event) {
 	zap.S().Info("Configuration modified!")
-	err := viper.Unmarshal(Config)
+	err := viper.Unmarshal(&Config)
 	if err != nil {
 		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
 		return

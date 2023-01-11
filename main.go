@@ -5,6 +5,7 @@ import (
 	"github.com/fp/fp-gin-framework/servers"
 	"github.com/fp/fp-gin-framework/servers/settings"
 	"go.uber.org/zap"
+	"sync"
 )
 
 // main 项目入口函数
@@ -19,7 +20,7 @@ func main() {
 		zap.S().Fatalf("New Server falied: %v\n", err)
 	}
 
-	common.NewContainer(s.Engine, s.Log, s.Db, s.Redis, s.Captcha)
+	common.NewContainer(s.Engine, s.Log, s.Db, s.Redis, new(sync.Once))
 
 	s.Run()
 }

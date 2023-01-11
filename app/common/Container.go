@@ -1,19 +1,19 @@
 package common
 
 import (
-	captchaService "github.com/TestsLing/aj-captcha-go/service"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
-	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"sync"
 )
 
 var (
-	Engine  *gin.Engine
-	Log     *zap.SugaredLogger
-	Db      *gorm.DB
-	Redis   *redis.Client
-	Captcha *captchaService.CaptchaServiceFactory
+	Engine *gin.Engine
+	Log    *zap.SugaredLogger
+	Db     *gorm.DB
+	Redis  *redis.Client
+	Once   *sync.Once
 )
 
 // NewContainer 全局容器
@@ -21,13 +21,12 @@ var (
 // @param *zap.SugaredLogger log 日志对象
 // @param *gorm.DB db DB对象
 // @param *redis.Client redis Redis对象
-// @param *captchaService.CaptchaServiceFactory captcha 验证码对象
 func NewContainer(
 	engine *gin.Engine,
 	log *zap.SugaredLogger,
 	db *gorm.DB,
 	redis *redis.Client,
-	captcha *captchaService.CaptchaServiceFactory,
+	once *sync.Once,
 ) {
-	Engine, Log, Db, Redis, Captcha = engine, log, db, redis, captcha
+	Engine, Log, Db, Redis, Once = engine, log, db, redis, once
 }

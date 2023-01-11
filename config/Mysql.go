@@ -12,8 +12,6 @@ type MysqlConfig struct {
 	Password string `mapstructure:"password"`
 	// 连接数据库名称
 	Dbname string `mapstructure:"dbname"`
-	// 数据表前缀
-	Prefix string `mapstructure:"prefix"`
 	// 最大连接数
 	MaxOpenConn int `mapstructure:"max_open_conn"`
 	// 最大连接空闲数，建议和max_open_conn一致

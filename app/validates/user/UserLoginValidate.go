@@ -2,7 +2,6 @@ package user
 
 import (
 	"fmt"
-	"github.com/fp/fp-gin-framework/app/common"
 	"github.com/fp/fp-gin-framework/app/constants"
 	captchaConstants "github.com/fp/fp-gin-framework/app/constants/captcha"
 	"github.com/fp/fp-gin-framework/app/utils"
@@ -34,7 +33,7 @@ func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	}
 
 	// 验证码二次验证
-	err := common.Captcha.GetService(fmt.Sprintf("%s", data["captchaType"])).Verification(fmt.Sprintf("%s", data["token"]),
+	err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Verification(fmt.Sprintf("%s", data["token"]),
 		fmt.Sprintf("%s", data["PointJson"]))
 	if err != nil {
 		panic(captchaConstants.CheckCaptchaError)

@@ -19,10 +19,15 @@ type Users struct {
 	Email        string     `json:"email" gorm:"comment:邮箱"`
 	Introduction string     `json:"introduction" gorm:"comment:简介"`
 	Status       string     `json:"status" gorm:"comment:状态(0已停用,1已启用)"`
-	SignOutIp    string     `json:"sign_out_ip" gorm:"comment:最后登录IP地址"`
-	SignTotal    string     `json:"sign_total" gorm:"comment:登录总数"`
-	SignOutAt    string     `json:"sign_out_at" gorm:"comment:最后登录时间"`
-	CreatedAt    time.Time  `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt    time.Time  `json:"updated_at" gorm:"comment:更新时间"`
-	DeletedAt    *time.Time `json:"deleted_at" sql:"index" gorm:"comment:删除时间"`
+	LoginOutIp   string     `json:"loginOutIp" gorm:"comment:最后登录IP地址"`
+	LoginTotal   string     `json:"loginTotal" gorm:"comment:登录总数"`
+	LoginOutAt   string     `json:"loginOutAt" gorm:"comment:最后登录时间"`
+	CreatedAt    time.Time  `json:"createdAt" gorm:"comment:创建时间"`
+	UpdatedAt    time.Time  `json:"updatedAt" gorm:"comment:更新时间"`
+	DeletedAt    *time.Time `json:"deletedAt" sql:"index" gorm:"comment:删除时间"`
+}
+
+// TableName 设置表名
+func (Users) TableName() string {
+	return "fp_users"
 }

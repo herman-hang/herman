@@ -21,10 +21,8 @@ mysql:
   password: "root"
   # 连接数据库名称
   dbname: "fp"
-  # 数据表前缀
-  prefix: "fp_"
   # 最大连接数
-  max_open_conn: 10
+  max_open_conn: 100
   # 最大连接空闲数，建议和max_open_conn一致
   max_idle_conn: 10
 
