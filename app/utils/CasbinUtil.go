@@ -8,7 +8,8 @@ import (
 	utilConstant "github.com/fp/fp-gin-framework/app/constants/util"
 )
 
-func Casbin() (cachedEnforcer *casbin.CachedEnforcer) {
+func Enforcer() (cachedEnforcer *casbin.CachedEnforcer) {
+	// gorm适配器
 	adapter, _ := gormAdapter.NewAdapterByDB(common.Db)
 	text := `
 		[request_definition]
