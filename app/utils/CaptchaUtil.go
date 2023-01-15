@@ -2,27 +2,27 @@ package utils
 
 import (
 	"fmt"
-	captchaConfig "github.com/TestsLing/aj-captcha-go/config"
-	constant "github.com/TestsLing/aj-captcha-go/const"
-	captchaService "github.com/TestsLing/aj-captcha-go/service"
+	CaptchaConfig "github.com/TestsLing/aj-captcha-go/config"
+	Constant "github.com/TestsLing/aj-captcha-go/const"
+	CaptchaService "github.com/TestsLing/aj-captcha-go/service"
 	"github.com/fp/fp-gin-framework/servers/settings"
 )
 
 // Factory 初始化滑块验证码
 // @return factory 返回一个验证码工厂
-func Factory() (factory *captchaService.CaptchaServiceFactory) { // 行为校验配置模块（具体参数可从业务系统配置文件自定义）
+func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验配置模块（具体参数可从业务系统配置文件自定义）
 	// 行为校验初始化
-	factory = captchaService.NewCaptchaServiceFactory(
-		captchaConfig.BuildConfig(settings.Config.CaptchaConfig.CacheType,
+	factory = CaptchaService.NewCaptchaServiceFactory(
+		CaptchaConfig.BuildConfig(settings.Config.CaptchaConfig.CacheType,
 			settings.Config.CaptchaConfig.ResourcePath,
-			&captchaConfig.WatermarkConfig{
+			&CaptchaConfig.WatermarkConfig{
 				Text: settings.Config.CaptchaConfig.Text,
 			},
 			nil, nil, settings.Config.CaptchaConfig.CacheExpireSec))
 	// 注册内存缓存
-	factory.RegisterCache(constant.MemCacheKey, captchaService.NewMemCacheService(20))
+	factory.RegisterCache(Constant.MemCacheKey, CaptchaService.NewMemCacheService(20))
 	// 注册自定义配置redis数据库
-	factory.RegisterCache(constant.RedisCacheKey, captchaService.NewConfigRedisCacheService([]string{fmt.Sprintf("%s:%d",
+	factory.RegisterCache(Constant.RedisCacheKey, CaptchaService.NewConfigRedisCacheService([]string{fmt.Sprintf("%s:%d",
 		settings.Config.RedisConfig.Host,
 		settings.Config.RedisConfig.Port,
 	)},
@@ -32,9 +32,9 @@ func Factory() (factory *captchaService.CaptchaServiceFactory) { // 行为校验
 		settings.Config.RedisConfig.Db,
 	))
 	// 注册文字点选验证码服务
-	factory.RegisterService(constant.ClickWordCaptcha, captchaService.NewClickWordCaptchaService(factory))
+	factory.RegisterService(Constant.ClickWordCaptcha, CaptchaService.NewClickWordCaptchaService(factory))
 	// 注册滑动拼图验证码服务
-	factory.RegisterService(constant.BlockPuzzleCaptcha, captchaService.NewBlockPuzzleCaptchaService(factory))
+	factory.RegisterService(Constant.BlockPuzzleCaptcha, CaptchaService.NewBlockPuzzleCaptchaService(factory))
 
 	return factory
 }

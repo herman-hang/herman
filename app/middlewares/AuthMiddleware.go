@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	middlewareConstant "github.com/fp/fp-gin-framework/app/constants/middleware"
+	MiddlewareConstant "github.com/fp/fp-gin-framework/app/constants/middleware"
 	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/fp/fp-gin-framework/servers/settings"
@@ -16,17 +16,17 @@ func Jwt(guard string) gin.HandlerFunc {
 		if VerifyRoute(ctx.Request.URL.Path, ctx.Request.Method) {
 			return
 		}
-		UserClaims := utils.JwtVerify(ctx, guard)
+		Claims := utils.JwtVerify(ctx, guard)
 		switch guard {
 		case "user", "mobile": // 前台和移动端（用户）
 			// 用户信息存储在请求中
-			ctx.Set("user", repositories.User.GetUserInfo(UserClaims.Uid))
+			ctx.Set("user", repositories.User.GetUserInfo(Claims.Uid))
 		case "admin": // 管理员后台
-
+			ctx.Set("admin", repositories.Admin.GetAdminInfo(Claims.Uid))
 		case "merchant": // 商家后台
 
 		default:
-			panic(middlewareConstant.GuardError)
+			panic(MiddlewareConstant.GuardError)
 		}
 		ctx.Next()
 	}
@@ -38,7 +38,7 @@ func Jwt(guard string) gin.HandlerFunc {
 // @return bool 返回一个路由是否存在不校验token数组路由中的值
 func VerifyRoute(route string, method string) bool {
 	attributes := make(map[string]string)
-	for k, v := range middlewareConstant.ExcludeRoute {
+	for k, v := range MiddlewareConstant.ExcludeRoute {
 		attributes[settings.Config.AppPrefix+k] = v
 	}
 

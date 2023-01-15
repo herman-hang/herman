@@ -12,9 +12,9 @@ import (
 	"time"
 )
 
-// UserClaims 用户信息类，作为生成token的参数
-type UserClaims struct {
-	Uid   uint   `json:"user_id"`
+// Claims 用户信息类，作为生成token的参数
+type Claims struct {
+	Uid   uint   `json:"uid"`
 	Guard string `json:"guard"`
 	// jwt-go提供的标准claim
 	jwt.StandardClaims
@@ -23,7 +23,7 @@ type UserClaims struct {
 // GenerateToken 生成token
 // @param UserClaims claims jwt信息结构体
 // @return string 返回token
-func GenerateToken(claims *UserClaims) string {
+func GenerateToken(claims *Claims) string {
 	// token有效时间（纳秒）
 	var effectTime = settings.Config.EffectTime * time.Hour
 	//设置token有效期
@@ -41,7 +41,7 @@ func GenerateToken(claims *UserClaims) string {
 // @param *gin.Context ctx 上下文
 // @param string guard 看守器
 // @return map[string]interface{} 返回解析token的用户信息
-func JwtVerify(ctx *gin.Context, guard string) *UserClaims {
+func JwtVerify(ctx *gin.Context, guard string) *Claims {
 	// 过滤是否验证token
 	token := ctx.GetHeader("Authorization")
 
@@ -62,14 +62,14 @@ func JwtVerify(ctx *gin.Context, guard string) *UserClaims {
 // @param string tokenString 旧token
 // @param *gin.Context ctx 上下文
 // @param string guard 看守器
-// @return UserClaims 返回配置好的jwt结构体信息
-func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *UserClaims) {
+// @return Claims 返回配置好的jwt结构体信息
+func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Claims) {
 	// 解析token
 	token, _ := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(settings.Config.JwtConfig.JwtSecret), nil
 	})
 
-	claims, ok := token.Claims.(*UserClaims)
+	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid || claims.Guard != guard {
 		panic(UserConstant.TokenNotValid)
 	}
@@ -82,7 +82,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Use
 	timeRecord := claims.ExpiresAt - time.Now().Unix()
 	// token小于10分钟则刷新token
 	if (timeRecord / 60) < 10 {
-		ttl, err := common.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user-token:", claims.Uid)).Result()
+		ttl, err := common.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user_token:", claims.Uid)).Result()
 		if err != nil {
 			panic(UserConstant.TokenRefreshFail)
 		}
@@ -96,7 +96,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Use
 		ctx.Header("x-new-token", newToken)
 
 		err = common.Redis.Set(context.Background(),
-			fmt.Sprintf("%s%d", "user-token:", claims.Uid),
+			fmt.Sprintf("%s%d", "user_token:", claims.Uid),
 			newToken,
 			time.Duration(timeRecord)*time.Second).Err()
 		if err != nil {
@@ -115,7 +115,7 @@ func Refresh(token *jwt.Token) (newToken string) {
 		return time.Unix(0, 0)
 	}
 
-	claims, ok := token.Claims.(*UserClaims)
+	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
 		panic(UserConstant.TokenNotValid)
 	}

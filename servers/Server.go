@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/fp/fp-gin-framework/app/middlewares"
 	"github.com/fp/fp-gin-framework/bootstrap/mysql"
-	r "github.com/fp/fp-gin-framework/bootstrap/redis"
+	RedisServer "github.com/fp/fp-gin-framework/bootstrap/redis"
 	"github.com/fp/fp-gin-framework/config"
 	"github.com/fp/fp-gin-framework/routers"
 	"github.com/fp/fp-gin-framework/servers/log"
@@ -75,7 +75,7 @@ func GormDatabase(config *config.AppConfig) (db *gorm.DB) {
 // @param *config.AppConfig config 应用配置信息
 // @return *redis.Client rdb 返回Redis实例
 func Redis(config *config.AppConfig) (rdb *redis.Client) {
-	rdb, err := r.InitRedisConfig(config.RedisConfig)
+	rdb, err := RedisServer.InitRedisConfig(config.RedisConfig)
 	if err != nil {
 		zap.S().Fatalf("Init Redis Failed:%v", err)
 	}

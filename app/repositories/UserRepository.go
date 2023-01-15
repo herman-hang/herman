@@ -4,7 +4,7 @@ import (
 	"github.com/fp/fp-gin-framework/app/common"
 	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
 	"github.com/fp/fp-gin-framework/app/models"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // User 实例化结构体并重写BaseRepository

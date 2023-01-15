@@ -1,4 +1,4 @@
-package user
+package admin
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// LoginValidate 用户登录验证结构体
+// LoginValidate 管理员登录验证结构体
 type LoginValidate struct {
 	User        string `json:"user" validate:"required,min=5,max=15" label:"用户名"`
 	Password    string `json:"password" validate:"required,min=6,max=15" label:"密码"`
@@ -23,7 +23,6 @@ type LoginValidate struct {
 // @return toMap 返回验证通过的数据
 func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	var login LoginValidate
-
 	// map赋值给结构体
 	if err := mapstructure.WeakDecode(data, &login); err != nil {
 		panic(constants.MapToStruct)

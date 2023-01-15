@@ -2,7 +2,7 @@ package captcha
 
 import (
 	"fmt"
-	captchaConstants "github.com/fp/fp-gin-framework/app/constants/captcha"
+	CaptchaConstant "github.com/fp/fp-gin-framework/app/constants/captcha"
 	"github.com/fp/fp-gin-framework/app/utils"
 )
 
@@ -12,7 +12,7 @@ import (
 func GetCaptcha(data map[string]interface{}) (captchaData map[string]interface{}) {
 	captchaData, err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Get()
 	if err != nil {
-		panic(captchaConstants.GetCaptchaFail)
+		panic(CaptchaConstant.GetCaptchaFail)
 	}
 	return captchaData
 }
@@ -25,7 +25,7 @@ func CheckCaptcha(data map[string]interface{}) (err error) {
 		Check(fmt.Sprintf("%s", data["Token"]),
 			fmt.Sprintf("%s", data["PointJson"]))
 	if err != nil {
-		panic(captchaConstants.CheckCaptchaError)
+		panic(CaptchaConstant.CheckCaptchaError)
 	}
 
 	return nil

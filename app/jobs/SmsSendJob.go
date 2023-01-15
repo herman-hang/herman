@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fp/fp-gin-framework/app/common"
-	smsConstant "github.com/fp/fp-gin-framework/app/constants/sms"
+	SmsConstant "github.com/fp/fp-gin-framework/app/constants/sms"
 	"github.com/fp/fp-gin-framework/servers/settings"
 	"io"
 	"io/ioutil"
@@ -56,7 +56,7 @@ func execSend(data map[string]interface{}) {
 	bodyBytes, _ := ioutil.ReadAll(response.Body)
 	// 转为字符串
 	code := string(bodyBytes)
-	if smsConstant.Status[code] != smsConstant.SendSuccess {
-		common.Log.Errorf("Sms send failed, mobile:%s content:%s err:%v", data["mobile"], data["content"], smsConstant.Status[code])
+	if SmsConstant.Status[code] != SmsConstant.SendSuccess {
+		common.Log.Errorf("Sms send failed, mobile:%s content:%s err:%v", data["mobile"], data["content"], SmsConstant.Status[code])
 	}
 }

@@ -2,8 +2,9 @@ package routers
 
 import (
 	"github.com/fp/fp-gin-framework/app"
-	captchaController "github.com/fp/fp-gin-framework/app/controllers/captcha"
+	CaptchaController "github.com/fp/fp-gin-framework/app/controllers/captcha"
 	"github.com/fp/fp-gin-framework/app/middlewares"
+	"github.com/fp/fp-gin-framework/routers/api/admin"
 	"github.com/fp/fp-gin-framework/routers/api/user"
 	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
@@ -17,22 +18,29 @@ func InitRouter(rootEngine *gin.Engine) {
 	rootEngine.GET("/", func(context *gin.Context) {
 		response := app.Request{Context: context}
 		response.Success(app.D(map[string]interface{}{
-			"test": "Hello test!",
+			"test": "Hello fp-gin-framework!",
 		}))
 	})
 	// 设置路由前缀
 	api := rootEngine.Group(settings.Config.AppPrefix)
 	// 获取验证码
-	api.GET("/captcha", captchaController.GetCaptcha)
+	api.GET("/captcha", CaptchaController.GetCaptcha)
 	// 检查验证码正确性
-	api.POST("/captcha/check", captchaController.CheckCaptcha)
+	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
 
-	// 引入登录检查中间件
+	// 用户模块
 	api.Use(middlewares.Jwt("user"))
 	{
-		// 用户相关路由
 		userRouter := api.Group("/user")
 
 		user.Router(userRouter)
+	}
+
+	// 管理员模块
+	api.Use(middlewares.Jwt("admin"))
+	{
+		adminRouter := api.Group("/admin")
+
+		admin.Router(adminRouter)
 	}
 }
