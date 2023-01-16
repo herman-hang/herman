@@ -8,6 +8,7 @@ import (
 	"github.com/fp/fp-gin-framework/app/repositories"
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
 // Login 用户登录
@@ -24,12 +25,13 @@ func Login(data map[string]interface{}) interface{} {
 	errorNumber, err := common.Redis.Get(ctx, key).Int()
 
 	// 判断是否登录次数过多
-	if err != redis.Nil && errorNumber > 3 {
+	if err != redis.Nil && errorNumber > UserConstant.LoginErrorLimitNumber {
 		panic(UserConstant.ErrorLoginOverload)
 	}
 
 	// 密码验证
 	if !utils.ComparePasswords(user.Password, fmt.Sprintf("%s", data["password"])) {
+		common.Redis.Set(ctx, key, errorNumber+UserConstant.Increment, time.Minute*UserConstant.KeyValidity)
 		panic(UserConstant.PasswordError)
 	}
 

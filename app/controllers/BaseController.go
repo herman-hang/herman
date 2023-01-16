@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/fp/fp-gin-framework/app"
 	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 )
 
 // GetParams 接收数据
@@ -17,23 +19,35 @@ func GetParams(ctx *gin.Context) (params map[string]interface{}, response app.Re
 	case "GET":
 		// query参数处理
 		keys := ctx.Request.URL.Query()
-		if len(keys) != 0 {
+		if len(keys) != constants.LengthByZero {
 			for k, v := range keys {
 				params[k] = v[0]
 			}
-		}
-
-		// body参数处理
-		if len(data) != 0 {
-			_ = json.Unmarshal(data, &params)
+		} else {
+			// body参数处理
+			params = bodyParamHandle(data, ctx)
 		}
 	case "POST", "PUT", "DELETE":
-		if len(string(data)) != 0 {
-			_ = json.Unmarshal(data, &params)
-		}
+		// body参数处理
+		params = bodyParamHandle(data, ctx)
 	default:
 		panic(constants.MethodBan)
 	}
 
 	return params, response
+}
+
+// bodyParamHandle 统一处理Body参数
+// @param []byte data 接收RawData
+// @param *gin.Context ctx 上下文
+// @return params 返回统一格式的数据
+func bodyParamHandle(data []byte, ctx *gin.Context) (params map[string]interface{}) {
+	params = make(map[string]interface{})
+	if len(string(data)) != constants.LengthByZero {
+		_ = json.Unmarshal(data, &params)
+	} else {
+		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		_ = ctx.ShouldBind(&params)
+	}
+	return params
 }

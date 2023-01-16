@@ -45,13 +45,13 @@ func JwtVerify(ctx *gin.Context, guard string) *Claims {
 	// 过滤是否验证token
 	token := ctx.GetHeader("Authorization")
 
-	if len(token) == 0 {
+	if len(token) == UserConstant.LengthByZero {
 		panic(UserConstant.TokenNotExit)
 	}
 
-	parts := strings.SplitN(token, " ", 2)
+	parts := strings.SplitN(token, " ", UserConstant.SplitByTwo)
 
-	if !(len(parts) == 2 && parts[0] == "Bearer") {
+	if !(len(parts) == UserConstant.SplitByTwo && parts[0] == "Bearer") {
 		panic(UserConstant.TokenError)
 	}
 
@@ -81,14 +81,14 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Cla
 
 	timeRecord := claims.ExpiresAt - time.Now().Unix()
 	// token小于10分钟则刷新token
-	if (timeRecord / 60) < 10 {
+	if (timeRecord / 60) < UserConstant.Minute {
 		ttl, err := common.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user_token:", claims.Uid)).Result()
 		if err != nil {
 			panic(UserConstant.TokenRefreshFail)
 		}
 
 		// 如果redis的有效期大于10分钟，说明已经刷新token，直接返回即可，避免再一次签发token
-		if ttl.Minutes() > 10 {
+		if ttl.Minutes() > UserConstant.Minute {
 			return claims
 		}
 
@@ -125,7 +125,7 @@ func Refresh(token *jwt.Token) (newToken string) {
 
 	newToken = GenerateToken(claims)
 
-	if len(newToken) == 0 {
+	if len(newToken) == UserConstant.LengthByZero {
 		panic(UserConstant.TokenRefreshFail)
 	}
 

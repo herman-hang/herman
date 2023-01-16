@@ -26,13 +26,13 @@ func Login(data map[string]interface{}) interface{} {
 	errorNumber, err := common.Redis.Get(ctx, key).Int()
 
 	// 判断是否登录次数过多
-	if err != redis.Nil && errorNumber > 3 {
+	if err != redis.Nil && errorNumber > AdminConstant.LoginErrorLimitNumber {
 		panic(AdminConstant.ErrorLoginOverload)
 	}
 
 	// 密码验证
 	if !utils.ComparePasswords(admin.Password, fmt.Sprintf("%s", data["password"])) {
-		common.Redis.Set(ctx, key, errorNumber+1, time.Minute*30)
+		common.Redis.Set(ctx, key, errorNumber+AdminConstant.Increment, time.Minute*AdminConstant.KeyValidity)
 		panic(AdminConstant.PasswordError)
 	}
 

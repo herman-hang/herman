@@ -21,7 +21,7 @@ func Enforcer(policy string) (cachedEnforcer *casbin.CachedEnforcer) {
 		panic(UtilConstant.CachedEnforcerFail)
 	}
 	// 设置过期时间为1小时
-	cachedEnforcer.SetExpireTime(60 * 60)
+	cachedEnforcer.SetExpireTime(UtilConstant.ExpireTime)
 	_ = cachedEnforcer.LoadPolicy()
 
 	return cachedEnforcer

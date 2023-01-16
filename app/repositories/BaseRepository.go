@@ -5,10 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// BaseRepository 公共仓储层
 type BaseRepository struct {
 	Model interface{}
 }
 
+// PageInfo 分页结构体
 type PageInfo struct {
 	Page     int64  `json:"page"`     // 页码
 	PageSize int64  `json:"pageSize"` // 每页大小
@@ -107,10 +109,10 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		Find(&data).Error
 	// 向切片追加数据
 	data = append(data, map[string]interface{}{
-		"total":     total,         // 总条数
-		"page_num":  pageNum,       // 总页数
-		"page_size": page.PageSize, // 每页大小
-		"page":      page.Page,     // 当前页码
+		"total":    total,         // 总条数
+		"pageNum":  pageNum,       // 总页数
+		"pageSize": page.PageSize, // 每页大小
+		"page":     page.Page,     // 当前页码
 	})
 	if err != nil {
 		return nil, false

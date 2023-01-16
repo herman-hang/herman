@@ -84,12 +84,12 @@ func (r *Request) Success(opts ...Option) {
 // @param interface{} data 接收响应参数
 func (r *Request) Json(data interface{}) {
 	// 将数据转为json格式返回
-	camelJSON, _ := utils.CamelJSON(data)
+	camelJson, _ := utils.CamelJSON(data)
 
 	response, _ := json.Marshal(map[string]interface{}{
 		"code":    http.StatusOK,
 		"message": constants.Success,
-		"data":    camelJSON,
+		"data":    camelJson,
 	})
 
 	// 响应http请求

@@ -5,6 +5,7 @@ import (
 	CaptchaConfig "github.com/TestsLing/aj-captcha-go/config"
 	Constant "github.com/TestsLing/aj-captcha-go/const"
 	CaptchaService "github.com/TestsLing/aj-captcha-go/service"
+	CaptchaConstant "github.com/fp/fp-gin-framework/app/constants/captcha"
 	"github.com/fp/fp-gin-framework/servers/settings"
 )
 
@@ -20,7 +21,7 @@ func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验
 			},
 			nil, nil, settings.Config.CaptchaConfig.CacheExpireSec))
 	// 注册内存缓存
-	factory.RegisterCache(Constant.MemCacheKey, CaptchaService.NewMemCacheService(20))
+	factory.RegisterCache(Constant.MemCacheKey, CaptchaService.NewMemCacheService(CaptchaConstant.CacheMaxNumber))
 	// 注册自定义配置redis数据库
 	factory.RegisterCache(Constant.RedisCacheKey, CaptchaService.NewConfigRedisCacheService([]string{fmt.Sprintf("%s:%d",
 		settings.Config.RedisConfig.Host,

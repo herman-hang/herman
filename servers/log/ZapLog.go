@@ -74,21 +74,21 @@ func GetEncoder() zapcore.Encoder {
 // GinLogger 接收gin框架默认的日志
 // @return gin.HandlerFunc 返回中间件上下文
 func GinLogger() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(ctx *gin.Context) {
 		start := time.Now()
-		path := c.Request.URL.Path
-		query := c.Request.URL.RawQuery
-		c.Next()
+		path := ctx.Request.URL.Path
+		query := ctx.Request.URL.RawQuery
+		ctx.Next()
 
 		cost := time.Since(start)
 		zap.L().Info(path,
-			zap.Int("status", c.Writer.Status()),
-			zap.String("method", c.Request.Method),
+			zap.Int("status", ctx.Writer.Status()),
+			zap.String("method", ctx.Request.Method),
 			zap.String("path", path),
 			zap.String("query", query),
-			zap.String("ip", c.ClientIP()),
-			zap.String("user-agent", c.Request.UserAgent()),
-			zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
+			zap.String("ip", ctx.ClientIP()),
+			zap.String("user-agent", ctx.Request.UserAgent()),
+			zap.String("errors", ctx.Errors.ByType(gin.ErrorTypePrivate).String()),
 			zap.Duration("cost", cost),
 		)
 	}
