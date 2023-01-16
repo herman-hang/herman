@@ -45,9 +45,18 @@ func bodyParamHandle(data []byte, ctx *gin.Context) (params map[string]interface
 	params = make(map[string]interface{})
 	if len(string(data)) != constants.LengthByZero {
 		_ = json.Unmarshal(data, &params)
-	} else {
+	}
+
+	if len(params) == constants.LengthByZero {
 		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		_ = ctx.ShouldBind(&params)
 	}
+
+	if len(params) == constants.LengthByZero {
+		for k, v := range ctx.Request.Form {
+			params[k] = v[0]
+		}
+	}
+
 	return params
 }
