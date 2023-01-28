@@ -28,7 +28,12 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 		settings.Config.KafkaConfig.Port,
 	)}, config)
 
-	//defer producer.Close()
+	defer func(producer sarama.SyncProducer) {
+		if err := producer.Close(); err != nil {
+			common.Log.Error("Close Producer err: %v", err)
+		}
+	}(producer)
+
 	if err != nil {
 		return nil, err
 	}
@@ -49,25 +54,40 @@ func Send(topic string, data map[string]interface{}) {
 			return
 		}
 	}
-	jsonString, err := json.Marshal(data)
-	if err != nil {
-		common.Log.Errorf("Producer json failed, err:%v", err)
-		return
-	}
-	//构建发送的消息，
-	msg := &sarama.ProducerMessage{
-		Topic: topic,
-		Key:   sarama.StringEncoder(time.Now().String()),
-		Value: sarama.StringEncoder(jsonString),
-	}
 
 	// SendMessage：该方法是生产者生产给定的消息
 	// 生产成功的时候返回该消息的分区和所在的偏移量
 	// 生产失败的时候返回error
-	partition, offset, err := syncProducer.SendMessage(msg)
+	partition, offset, err := syncProducer.SendMessage(getProducerMessageStruct(topic, data))
 	if err != nil {
 		common.Log.Errorf("Producer send message failed, err:%v", err)
 		return
 	}
 	common.Log.Infof("Partition = %d, offset=%d\n", partition, offset)
+}
+
+// getProducerMessageStruct 构造生产者消息结构体
+// @param string topic 消息主题
+// @param map[string]interface{} data 消息数据
+// @return message 返回生产者消息结构体
+func getProducerMessageStruct(topic string, data map[string]interface{}) (message *sarama.ProducerMessage) {
+	var timestamp time.Time
+	jsonString, err := json.Marshal(data)
+	if err != nil {
+		common.Log.Errorf("Producer json failed, err:%v", err)
+		return
+	}
+
+	if date, ok := data["time"].(time.Time); ok {
+		timestamp = date
+	}
+
+	message = &sarama.ProducerMessage{
+		Topic:     topic,
+		Key:       sarama.StringEncoder(time.Now().String()),
+		Value:     sarama.StringEncoder(jsonString),
+		Timestamp: timestamp,
+	}
+
+	return message
 }
