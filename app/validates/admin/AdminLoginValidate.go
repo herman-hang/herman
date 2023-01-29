@@ -9,8 +9,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// LoginValidate 管理员登录验证结构体
-type LoginValidate struct {
+// CaptchaLoginValidate 管理员登录验证结构体
+type CaptchaLoginValidate struct {
 	User        string `json:"user" validate:"required,min=5,max=15" label:"用户名"`
 	Password    string `json:"password" validate:"required,min=6,max=15" label:"密码"`
 	CaptchaType int    `json:"captchaType" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
@@ -18,11 +18,18 @@ type LoginValidate struct {
 	PointJson   string `json:"pointJson" validate:"required" label:"验证码PointJson"`
 }
 
+// ExcludeCaptchaLoginValidate 管理员登录排除验证码相关验证结构体
+type ExcludeCaptchaLoginValidate struct {
+	User     string `json:"user" validate:"required,min=5,max=15" label:"用户名"`
+	Password string `json:"password" validate:"required,min=6,max=15" label:"密码"`
+}
+
 // Login 登录验证器
 // @param map[string]interface{} data 待验证数据
 // @return toMap 返回验证通过的数据
 func Login(data map[string]interface{}) (toMap map[string]interface{}) {
-	var login LoginValidate
+	var login CaptchaLoginValidate
+
 	// map赋值给结构体
 	if err := mapstructure.WeakDecode(data, &login); err != nil {
 		panic(constants.MapToStruct)

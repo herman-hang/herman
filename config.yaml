@@ -8,6 +8,8 @@ app_prefix: "/api/v1"
 mode: "test"
 # 应用服务启动端口号
 port: 7777
+# 登录是否开启验证码
+login_captcha: false
 
 # 数据库配置
 mysql:

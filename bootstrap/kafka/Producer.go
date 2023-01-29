@@ -28,12 +28,6 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 		settings.Config.KafkaConfig.Port,
 	)}, config)
 
-	defer func(producer sarama.SyncProducer) {
-		if err := producer.Close(); err != nil {
-			common.Log.Error("Close Producer err: %v", err)
-		}
-	}(producer)
-
 	if err != nil {
 		return nil, err
 	}
