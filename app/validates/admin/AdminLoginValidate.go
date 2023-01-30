@@ -7,6 +7,7 @@ import (
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/fp/fp-gin-framework/app/validates"
 	"github.com/mitchellh/mapstructure"
+	"github.com/spf13/viper"
 )
 
 // CaptchaLoginValidate 管理员登录验证结构体
@@ -28,8 +29,18 @@ type ExcludeCaptchaLoginValidate struct {
 // @param map[string]interface{} data 待验证数据
 // @return toMap 返回验证通过的数据
 func Login(data map[string]interface{}) (toMap map[string]interface{}) {
-	var login CaptchaLoginValidate
+	// 判断是否需要验证码
+	if viper.Get("login_captcha") == false {
+		return excludeCaptchaLogin(data)
+	}
+	return captchaLogin(data)
+}
 
+// captchaLogin 验证码登录验证器
+// @param map[string]interface{} data 待验证数据
+// @return toMap 返回验证通过的数据
+func captchaLogin(data map[string]interface{}) (toMap map[string]interface{}) {
+	var login CaptchaLoginValidate
 	// map赋值给结构体
 	if err := mapstructure.WeakDecode(data, &login); err != nil {
 		panic(constants.MapToStruct)
@@ -47,6 +58,28 @@ func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	}
 
 	toMap, err = utils.ToMap(&login, "json")
+	if err != nil {
+		panic(constants.StructToMap)
+	}
+
+	return toMap
+}
+
+// excludeCaptchaLogin 排除验证码登录验证器
+// @param map[string]interface{} data 待验证数据
+// @return toMap 返回验证通过的数据
+func excludeCaptchaLogin(data map[string]interface{}) (toMap map[string]interface{}) {
+	var login ExcludeCaptchaLoginValidate
+	// map赋值给结构体
+	if err := mapstructure.WeakDecode(data, &login); err != nil {
+		panic(constants.MapToStruct)
+	}
+
+	if err := validates.Validate(login); err != nil {
+		panic(err.Error())
+	}
+
+	toMap, err := utils.ToMap(&login, "json")
 	if err != nil {
 		panic(constants.StructToMap)
 	}

@@ -26,9 +26,11 @@ func (k *Consumer) Consume() {
 		common.Log.Error("New Consumer err: %v", err)
 		return
 	}
+
 	defer func(consumer sarama.Consumer) {
 		if err := consumer.Close(); err != nil {
 			common.Log.Error("Close Consumer err: %v", err)
+			return
 		}
 	}(consumer)
 

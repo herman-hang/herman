@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-var syncProducer sarama.SyncProducer
-
 // newSyncProducer 创建一个生产者
 // @return producer err 返回一个生产者和错误信息
 func newSyncProducer() (producer sarama.SyncProducer, err error) {
@@ -32,6 +30,14 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 		return nil, err
 	}
 
+	// 关闭连接
+	defer func(producer sarama.SyncProducer) {
+		if err := producer.Close(); err != nil {
+			common.Log.Error("Close Producer err: %v", err)
+			return
+		}
+	}(producer)
+
 	return producer, nil
 }
 
@@ -40,13 +46,10 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 // @param map[string]interface{} data 消息数据
 // @return bool error 返回一个bool值和一个错误信息
 func Send(topic string, data map[string]interface{}) {
-	if syncProducer == nil {
-		var err error
-		syncProducer, err = newSyncProducer()
-		if err != nil {
-			common.Log.Errorf("New Sync Producer failed, err:%v", err)
-			return
-		}
+	syncProducer, err := newSyncProducer()
+	if err != nil {
+		common.Log.Errorf("New Sync Producer failed, err:%v", err)
+		return
 	}
 
 	// SendMessage：该方法是生产者生产给定的消息
