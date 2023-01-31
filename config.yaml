@@ -1,15 +1,13 @@
 # 应用名称
-app_name: "fp-gin-framework"
+app_name: herman
 # 应用版本号
-version: "1.0.0"
+version: 1.0.0
 # 路由前缀
-app_prefix: "/api/v1"
+app_prefix: /api/v1
 # 应用运行环境模式
-mode: "test"
+mode: test
 # 应用服务启动端口号
 port: 7777
-# 登录是否开启验证码
-login_captcha: false
 
 # 数据库配置
 mysql:
@@ -18,11 +16,11 @@ mysql:
   # 连接端口号
   port: 3306
   # 连接用户名
-  user: "root"
+  user: root
   # 连接密码
-  password: "root"
+  password: root
   # 连接数据库名称
-  dbname: "fp"
+  dbname: fp
   # 最大连接数
   max_open_conn: 100
   # 最大连接空闲数，建议和max_open_conn一致
@@ -35,9 +33,9 @@ redis:
   # 连接端口号
   port: 6379
   # 连接用户名
-  user_name: ""
+  user_name:
   # 连接密码
-  password: ""
+  password:
   # 默认数据库，默认是0
   db: 0
   # 最大连接数
@@ -53,9 +51,9 @@ kafka:
 # 日志配置
 log:
   # 日志级别模式
-  level: "debug"
+  level: debug
   # 日志文件名
-  filename: "fp-gin.log"
+  filename: herman.log
   # 单个日志文件大小(MB)，日志大小到达max_size就开始backup
   max_size: 200
   # 旧日志保存的最大天数，默认保存所有旧日志文件
@@ -69,12 +67,14 @@ log:
 # JWT配置
 jwt:
   # token的SECRET
-  jwt_secret: "coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc"
+  jwt_secret: coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc
   # token有效时间（单位：小时）
   effect_time: 2
 
 # 验证码配置
 captcha:
+  # 验证码开关
+  switch: false
   # 水印
   text: 我的水印
   # 验证码类型驱动（本地内存：mem，Redis：redis）

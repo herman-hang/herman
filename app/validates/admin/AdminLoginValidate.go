@@ -6,8 +6,8 @@ import (
 	CaptchaConstants "github.com/fp/fp-gin-framework/app/constants/captcha"
 	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/fp/fp-gin-framework/app/validates"
+	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/mitchellh/mapstructure"
-	"github.com/spf13/viper"
 )
 
 // CaptchaLoginValidate 管理员登录验证结构体
@@ -30,7 +30,7 @@ type ExcludeCaptchaLoginValidate struct {
 // @return toMap 返回验证通过的数据
 func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	// 判断是否需要验证码
-	if viper.Get("login_captcha") == false {
+	if !settings.Config.CaptchaConfig.Switch {
 		return excludeCaptchaLogin(data)
 	}
 	return captchaLogin(data)
