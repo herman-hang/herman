@@ -7,7 +7,7 @@ type RedisConfig struct {
 	// 连接端口号
 	Port uint `mapstructure:"port"`
 	// 连接用户名
-	UserName string `mapstructure:"user_name"`
+	UserName string `mapstructure:"username"`
 	// 连接密码
 	Password string `mapstructure:"password"`
 	// 默认数据库，默认是0

@@ -33,7 +33,7 @@ redis:
   # 连接端口号
   port: 6379
   # 连接用户名
-  user_name:
+  username:
   # 连接密码
   password:
   # 默认数据库，默认是0
