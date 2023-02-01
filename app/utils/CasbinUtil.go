@@ -31,19 +31,19 @@ func Enforcer(policy string) (cachedEnforcer *casbin.CachedEnforcer) {
 // @return string 返回一个策略
 func GetAdminPolicy() string {
 	return `
-		[request_definition]
-		r = sub, obj, act
-		
-		[policy_definition]
-		p = sub, obj, act
-		
-		[role_definition]
-		g = _, _
-		
-		[policy_effect]
-		e = some(where (p.eft == allow))
-		
-		[matchers]
-		m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
+			[request_definition]
+			r = sub, obj, act
+			
+			[policy_definition]
+			p = sub, obj, act
+			
+			[role_definition]
+			g = _, _
+			
+			[policy_effect]
+			e = some(where (p.eft == allow))
+			
+			[matchers]
+			m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 		`
 }

@@ -5,5 +5,5 @@ type KafkaConfig struct {
 	// 连接IP地址
 	Host string `mapstructure:"host"`
 	// 连接端口号
-	Port uint `mapstructure:"port"`
+	Port int `mapstructure:"port"`
 }
