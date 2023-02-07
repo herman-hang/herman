@@ -1,10 +1,10 @@
 package captcha
 
 import (
-	BaseController "github.com/fp/fp-gin-framework/app/controllers"
-	CaptchaService "github.com/fp/fp-gin-framework/app/services/captcha"
-	CaptchaValidate "github.com/fp/fp-gin-framework/app/validates/captcha"
 	"github.com/gin-gonic/gin"
+	BaseController "github.com/herman/app/controllers"
+	CaptchaService "github.com/herman/app/services/captcha"
+	CaptchaValidate "github.com/herman/app/validates/captcha"
 )
 
 // GetCaptcha 获取验证码（支持2钟验证码，请求参数CaptchaType为1：滑动拼图，CaptchaType为2：文字点选）

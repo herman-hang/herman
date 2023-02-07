@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// RoleModel 角色表结构体
-type RoleModel struct {
+// Role 角色表结构体
+type Role struct {
 	Id           uint           `json:"id" gorm:"column:id;type:uint(11);primary_key;comment:主键ID"`
 	Pid          uint           `json:"pid" gorm:"column:pid;type:uint;comment:父角色ID"`
 	Name         string         `json:"name" gorm:"column:name;type:varchar(20);not null;comment:角色名称"`
@@ -19,6 +19,6 @@ type RoleModel struct {
 }
 
 // TableName 设置角色表名
-func (RoleModel) TableName() string {
+func (Role) TableName() string {
 	return "roles"
 }

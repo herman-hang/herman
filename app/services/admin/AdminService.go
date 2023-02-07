@@ -3,11 +3,11 @@ package admin
 import (
 	"context"
 	"fmt"
-	"github.com/fp/fp-gin-framework/app/common"
-	AdminConstant "github.com/fp/fp-gin-framework/app/constants/admin"
-	"github.com/fp/fp-gin-framework/app/repositories"
-	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/go-redis/redis/v8"
+	"github.com/herman/app/common"
+	AdminConstant "github.com/herman/app/constants/admin"
+	"github.com/herman/app/repositories"
+	"github.com/herman/app/utils"
 	"time"
 )
 

@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
@@ -14,6 +15,7 @@ var (
 	Db     *gorm.DB
 	Redis  *redis.Client
 	Once   *sync.Once
+	Casbin *casbin.CachedEnforcer
 )
 
 // NewContainer 全局容器
@@ -27,6 +29,7 @@ func NewContainer(
 	db *gorm.DB,
 	redis *redis.Client,
 	once *sync.Once,
+	casbin *casbin.CachedEnforcer,
 ) {
-	Engine, Log, Db, Redis, Once = engine, log, db, redis, once
+	Engine, Log, Db, Redis, Once, Casbin = engine, log, db, redis, once, casbin
 }

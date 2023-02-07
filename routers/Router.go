@@ -1,13 +1,12 @@
 package routers
 
 import (
-	"github.com/fp/fp-gin-framework/app"
-	CaptchaController "github.com/fp/fp-gin-framework/app/controllers/captcha"
-	"github.com/fp/fp-gin-framework/app/middlewares"
-	"github.com/fp/fp-gin-framework/routers/api/admin"
-	"github.com/fp/fp-gin-framework/routers/api/user"
-	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
+	"github.com/herman/app"
+	CaptchaController "github.com/herman/app/controllers/captcha"
+	"github.com/herman/routers/api/admin"
+	"github.com/herman/routers/api/user"
+	"github.com/herman/servers/settings"
 )
 
 // InitRouter 初始化路由
@@ -29,18 +28,10 @@ func InitRouter(rootEngine *gin.Engine) {
 	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
 
 	// 用户模块
-	api.Use(middlewares.Jwt("user"))
-	{
-		userRouter := api.Group("/user")
+	userRouter := api.Group("/user")
+	// 后台模块
+	adminRouter := api.Group("/admin")
 
-		user.Router(userRouter)
-	}
-
-	// 管理员模块
-	api.Use(middlewares.Jwt("admin"))
-	{
-		adminRouter := api.Group("/admin")
-
-		admin.Router(adminRouter)
-	}
+	user.Router(userRouter)
+	admin.Router(adminRouter)
 }

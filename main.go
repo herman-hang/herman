@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/fp/fp-gin-framework/app/common"
-	"github.com/fp/fp-gin-framework/servers"
-	"github.com/fp/fp-gin-framework/servers/settings"
+	"github.com/herman/app/common"
+	"github.com/herman/servers"
+	"github.com/herman/servers/settings"
 	"go.uber.org/zap"
 	"sync"
 )
@@ -20,7 +20,7 @@ func main() {
 		zap.S().Fatalf("New Server falied: %v\n", err)
 	}
 
-	common.NewContainer(s.Engine, s.Log, s.Db, s.Redis, new(sync.Once))
+	common.NewContainer(s.Engine, s.Log, s.Db, s.Redis, new(sync.Once), s.Casbin)
 
 	s.Run()
 }

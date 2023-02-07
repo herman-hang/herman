@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/fp/fp-gin-framework/app/common"
-	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
-	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
+	"github.com/herman/app/common"
+	UserConstant "github.com/herman/app/constants/user"
+	"github.com/herman/servers/settings"
 	"strings"
 	"time"
 )
@@ -63,13 +63,17 @@ func JwtVerify(ctx *gin.Context, guard string) *Claims {
 // @param *gin.Context ctx 上下文
 // @param string guard 看守器
 // @return Claims 返回配置好的jwt结构体信息
-func ParseToken(tokenString string, ctx *gin.Context, guard string) (claims *Claims) {
+func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 	// 解析token
-	token, _ := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(settings.Config.JwtConfig.JwtSecret), nil
 	})
+	if err != nil {
+		panic(UserConstant.ParseTokenFail)
+	}
 
 	claims, ok := token.Claims.(*Claims)
+
 	if !ok || !token.Valid || claims.Guard != guard {
 		panic(UserConstant.TokenNotValid)
 	}

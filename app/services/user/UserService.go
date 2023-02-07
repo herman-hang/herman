@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 	"fmt"
-	"github.com/fp/fp-gin-framework/app/common"
-	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
-	"github.com/fp/fp-gin-framework/app/repositories"
-	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/go-redis/redis/v8"
+	"github.com/herman/app/common"
+	UserConstant "github.com/herman/app/constants/user"
+	"github.com/herman/app/repositories"
+	"github.com/herman/app/utils"
 	"time"
 )
 

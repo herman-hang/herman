@@ -1,11 +1,11 @@
 package middlewares
 
 import (
-	MiddlewareConstant "github.com/fp/fp-gin-framework/app/constants/middleware"
-	"github.com/fp/fp-gin-framework/app/repositories"
-	"github.com/fp/fp-gin-framework/app/utils"
-	"github.com/fp/fp-gin-framework/servers/settings"
 	"github.com/gin-gonic/gin"
+	MiddlewareConstant "github.com/herman/app/constants/middleware"
+	"github.com/herman/app/repositories"
+	"github.com/herman/app/utils"
+	"github.com/herman/servers/settings"
 	"strings"
 )
 

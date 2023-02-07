@@ -3,8 +3,8 @@ package kafka
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
-	"github.com/fp/fp-gin-framework/app/common"
-	"github.com/fp/fp-gin-framework/servers/settings"
+	"github.com/herman/app/common"
+	"github.com/herman/servers/settings"
 	"sync"
 )
 

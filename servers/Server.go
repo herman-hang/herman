@@ -3,14 +3,16 @@ package servers
 import (
 	"context"
 	"fmt"
-	"github.com/fp/fp-gin-framework/app/middlewares"
-	"github.com/fp/fp-gin-framework/bootstrap/mysql"
-	RedisServer "github.com/fp/fp-gin-framework/bootstrap/redis"
-	"github.com/fp/fp-gin-framework/config"
-	"github.com/fp/fp-gin-framework/routers"
-	"github.com/fp/fp-gin-framework/servers/log"
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	"github.com/herman/app/middlewares"
+	CasbinServer "github.com/herman/bootstrap/casbin"
+	"github.com/herman/bootstrap/log"
+	"github.com/herman/bootstrap/mysql"
+	RedisServer "github.com/herman/bootstrap/redis"
+	"github.com/herman/config"
+	"github.com/herman/routers"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"net/http"
@@ -22,11 +24,12 @@ import (
 
 // Server 定义服务所需要的组件
 type Server struct {
-	Config *config.AppConfig  // 全局的配置信息
-	Engine *gin.Engine        // 对应的gin的服务引擎
-	Log    *zap.SugaredLogger // 对应服务的log
-	Db     *gorm.DB           // 数据库连接db
-	Redis  *redis.Client      // redis
+	Config *config.AppConfig      // 全局的配置信息
+	Engine *gin.Engine            // 对应的gin的服务引擎
+	Log    *zap.SugaredLogger     // 对应服务的log
+	Db     *gorm.DB               // 数据库连接db
+	Redis  *redis.Client          // redis
+	Casbin *casbin.CachedEnforcer // casbin模型
 }
 
 // NewServer 初始化服务
@@ -39,12 +42,18 @@ func NewServer(config *config.AppConfig) (*Server, error) {
 	e.Use(log.GinLogger())
 	e.Use(middlewares.CatchError())
 
+	zapLog := ZapLogs(config)
+	db := GormDatabase(config)
+	rdb := Redis(config)
+	enforcer := Casbin(db)
+
 	return &Server{
 		Config: config,
 		Engine: e,
-		Log:    ZapLogs(config),
-		Db:     GormDatabase(config),
-		Redis:  Redis(config),
+		Log:    zapLog,
+		Db:     db,
+		Redis:  rdb,
+		Casbin: enforcer,
 	}, nil
 }
 
@@ -82,6 +91,17 @@ func Redis(config *config.AppConfig) (rdb *redis.Client) {
 
 	zap.S().Info("Init Redis Success!")
 	return rdb
+}
+
+// Casbin 初始化Casbin模型
+// @param db *gorm.DB 数据库对象
+// @return cachedEnforcer 返回一个casbin对象
+func Casbin(db *gorm.DB) (cachedEnforcer *casbin.CachedEnforcer) {
+	cachedEnforcer, err := CasbinServer.InitEnforcer(CasbinServer.GetAdminPolicy(), db)
+	if err != nil {
+		zap.S().Fatalf("Init Casbin Failed:%v", err)
+	}
+	return cachedEnforcer
 }
 
 // Run 定义Server服务启动的方法

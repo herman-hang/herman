@@ -2,11 +2,11 @@ package admin
 
 import (
 	"fmt"
-	"github.com/fp/fp-gin-framework/app/constants"
-	CaptchaConstants "github.com/fp/fp-gin-framework/app/constants/captcha"
-	"github.com/fp/fp-gin-framework/app/utils"
-	"github.com/fp/fp-gin-framework/app/validates"
-	"github.com/fp/fp-gin-framework/servers/settings"
+	"github.com/herman/app/constants"
+	CaptchaConstant "github.com/herman/app/constants/captcha"
+	"github.com/herman/app/utils"
+	"github.com/herman/app/validates"
+	"github.com/herman/servers/settings"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -54,7 +54,7 @@ func captchaLogin(data map[string]interface{}) (toMap map[string]interface{}) {
 	err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Verification(fmt.Sprintf("%s", data["token"]),
 		fmt.Sprintf("%s", data["PointJson"]))
 	if err != nil {
-		panic(CaptchaConstants.CheckCaptchaError)
+		panic(CaptchaConstant.CheckCaptchaError)
 	}
 
 	toMap, err = utils.ToMap(&login, "json")

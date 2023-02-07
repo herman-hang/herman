@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/fp/fp-gin-framework/app/constants"
+	"github.com/herman/app/constants"
 	"regexp"
 	"strconv"
 	"strings"

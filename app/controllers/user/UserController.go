@@ -1,10 +1,10 @@
 package user
 
 import (
-	BaseController "github.com/fp/fp-gin-framework/app/controllers"
-	UserService "github.com/fp/fp-gin-framework/app/services/user"
-	UserValidate "github.com/fp/fp-gin-framework/app/validates/user"
 	"github.com/gin-gonic/gin"
+	BaseController "github.com/herman/app/controllers"
+	UserService "github.com/herman/app/services/user"
+	UserValidate "github.com/herman/app/validates/user"
 )
 
 // Login 用户登录

@@ -1,4 +1,4 @@
-module github.com/fp/fp-gin-framework
+module github.com/herman
 
 go 1.18
 

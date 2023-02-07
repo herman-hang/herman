@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/fp/fp-gin-framework/app/common"
 	"github.com/gin-gonic/gin"
+	"github.com/herman/app/common"
 )
 
 // BaseRepository 公共仓储层

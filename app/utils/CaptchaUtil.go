@@ -5,8 +5,8 @@ import (
 	CaptchaConfig "github.com/TestsLing/aj-captcha-go/config"
 	Constant "github.com/TestsLing/aj-captcha-go/const"
 	CaptchaService "github.com/TestsLing/aj-captcha-go/service"
-	CaptchaConstant "github.com/fp/fp-gin-framework/app/constants/captcha"
-	"github.com/fp/fp-gin-framework/servers/settings"
+	CaptchaConstant "github.com/herman/app/constants/captcha"
+	"github.com/herman/servers/settings"
 )
 
 // Factory 初始化滑块验证码

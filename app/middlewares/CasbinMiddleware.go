@@ -1,10 +1,10 @@
 package middlewares
 
 import (
-	middlewareConstants "github.com/fp/fp-gin-framework/app/constants/middleware"
-	"github.com/fp/fp-gin-framework/app/models"
-	"github.com/fp/fp-gin-framework/app/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/herman/app/common"
+	middlewareConstant "github.com/herman/app/constants/middleware"
+	"github.com/herman/app/models"
 )
 
 // CheckPermission 权限检测
@@ -13,10 +13,9 @@ func CheckPermission() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		admin, _ := ctx.Get("admin")
 		waitUse := admin.(*models.Admin)
-		cachedEnforcer := utils.Enforcer(utils.GetAdminPolicy())
-		success, _ := cachedEnforcer.Enforce(waitUse.Role, ctx.Request.URL.Path, ctx.Request.Method)
+		success, _ := common.Casbin.Enforce(waitUse.Role, ctx.Request.URL.Path, ctx.Request.Method)
 		if !success {
-			panic(middlewareConstants.PermissionDenied)
+			panic(middlewareConstant.PermissionDenied)
 		}
 		ctx.Next()
 	}

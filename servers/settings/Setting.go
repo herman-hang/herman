@@ -1,9 +1,9 @@
 package settings
 
 import (
-	"github.com/fp/fp-gin-framework/config"
 	"github.com/fsnotify/fsnotify"
 	_ "github.com/gin-gonic/gin"
+	"github.com/herman/config"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )

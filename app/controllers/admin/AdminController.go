@@ -1,10 +1,10 @@
 package admin
 
 import (
-	BaseController "github.com/fp/fp-gin-framework/app/controllers"
-	AdminService "github.com/fp/fp-gin-framework/app/services/admin"
-	AdminValidate "github.com/fp/fp-gin-framework/app/validates/admin"
 	"github.com/gin-gonic/gin"
+	BaseController "github.com/herman/app/controllers"
+	AdminService "github.com/herman/app/services/admin"
+	AdminValidate "github.com/herman/app/validates/admin"
 )
 
 // Login 管理员登录

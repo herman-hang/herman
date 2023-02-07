@@ -1,10 +1,10 @@
 package captcha
 
 import (
-	"github.com/fp/fp-gin-framework/app/constants"
-	captchaConstant "github.com/fp/fp-gin-framework/app/constants/captcha"
-	"github.com/fp/fp-gin-framework/app/utils"
-	"github.com/fp/fp-gin-framework/app/validates"
+	"github.com/herman/app/constants"
+	captchaConstant "github.com/herman/app/constants/captcha"
+	"github.com/herman/app/utils"
+	"github.com/herman/app/validates"
 	"github.com/mitchellh/mapstructure"
 )
 

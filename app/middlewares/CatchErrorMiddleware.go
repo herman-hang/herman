@@ -1,8 +1,10 @@
 package middlewares
 
 import (
-	"github.com/fp/fp-gin-framework/app"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/herman/app"
+	"github.com/herman/app/common"
 	"net/http"
 )
 
@@ -13,8 +15,11 @@ func CatchError() gin.HandlerFunc {
 		response := &app.Request{Context: ctx}
 		defer func() {
 			if err := recover(); err != nil {
+				errorMessage := fmt.Sprintf("%s", err)
+				// 日志记录
+				common.Log.Errorf(errorMessage)
 				// 没有定义
-				response.Success(app.C(http.StatusInternalServerError), app.M(err.(string)))
+				response.Success(app.C(http.StatusInternalServerError), app.M(errorMessage))
 				ctx.Abort()
 			}
 		}()

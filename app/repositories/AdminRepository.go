@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/fp/fp-gin-framework/app/common"
-	AdminConstant "github.com/fp/fp-gin-framework/app/constants/admin"
-	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/herman/app/common"
+	AdminConstant "github.com/herman/app/constants/admin"
+	"github.com/herman/app/models"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +18,7 @@ type AdminRepository struct {
 // GetAdminInfo 获取管理员信息
 // @param interface{} attributes 管理员id或者管理员user
 // @return admin 返回当前管理员的信息
-func (u AdminRepository) GetAdminInfo(attributes interface{}) (admin models.Admin) {
+func (u AdminRepository) GetAdminInfo(attributes interface{}) (admin *models.Admin) {
 	err := common.Db.Where("id = ?", attributes).Or("user = ?", attributes).Find(&admin).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		panic(AdminConstant.GetAdminInfoFail)

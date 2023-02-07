@@ -3,9 +3,9 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/fp/fp-gin-framework/app"
-	"github.com/fp/fp-gin-framework/app/constants"
 	"github.com/gin-gonic/gin"
+	"github.com/herman/app"
+	"github.com/herman/app/constants"
 	"io/ioutil"
 )
 

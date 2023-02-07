@@ -2,8 +2,8 @@ package captcha
 
 import (
 	"fmt"
-	CaptchaConstant "github.com/fp/fp-gin-framework/app/constants/captcha"
-	"github.com/fp/fp-gin-framework/app/utils"
+	CaptchaConstant "github.com/herman/app/constants/captcha"
+	"github.com/herman/app/utils"
 )
 
 // GetCaptcha 获取验证码
@@ -17,7 +17,7 @@ func GetCaptcha(data map[string]interface{}) (captchaData map[string]interface{}
 	return captchaData
 }
 
-// CheckCaptcha 获取验证码
+// CheckCaptcha 检查验证码
 // @param map data 前端请求数据
 // @return captchaData 返回验证码相关信息
 func CheckCaptcha(data map[string]interface{}) (err error) {

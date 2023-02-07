@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/fp/fp-gin-framework/app/common"
-	UserConstant "github.com/fp/fp-gin-framework/app/constants/user"
-	"github.com/fp/fp-gin-framework/app/models"
+	"github.com/herman/app/common"
+	UserConstant "github.com/herman/app/constants/user"
+	"github.com/herman/app/models"
 	"gorm.io/gorm"
 )
 

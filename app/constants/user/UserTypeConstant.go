@@ -4,6 +4,7 @@ const (
 	TokenNotExit          = "Token不存在"
 	TokenNotValid         = "Token无效"
 	CreateTokenFail       = "创建Token失败"
+	ParseTokenFail        = "解析Token失败"
 	TokenExpires          = "Token已过期"
 	PasswordError         = "密码错误"
 	TokenError            = "请求头中Authorization格式有误"

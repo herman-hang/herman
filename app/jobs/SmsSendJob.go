@@ -3,9 +3,9 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fp/fp-gin-framework/app/common"
-	SmsConstant "github.com/fp/fp-gin-framework/app/constants/sms"
-	"github.com/fp/fp-gin-framework/servers/settings"
+	"github.com/herman/app/common"
+	SmsConstant "github.com/herman/app/constants/sms"
+	"github.com/herman/servers/settings"
 	"io"
 	"io/ioutil"
 	"net/http"

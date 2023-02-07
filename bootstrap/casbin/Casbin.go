@@ -1,30 +1,41 @@
-package utils
+package casbin
 
 import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	GormAdapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/fp/fp-gin-framework/app/common"
-	UtilConstant "github.com/fp/fp-gin-framework/app/constants/util"
+	"github.com/herman/app/common"
+	UtilConstant "github.com/herman/app/constants/util"
+	"gorm.io/gorm"
 )
 
-func Enforcer(policy string) (cachedEnforcer *casbin.CachedEnforcer) {
+// InitEnforcer 初始化Casbin模型
+// @param string policy 策略
+// @param *gorm.DB db 数据库对象
+// @return cachedEnforcer err 返回Casbin对象和一个错误信息
+func InitEnforcer(policy string, db *gorm.DB) (cachedEnforcer *casbin.CachedEnforcer, err error) {
 	// gorm适配器
-	adapter, _ := GormAdapter.NewAdapterByDB(common.Db)
+	adapter, err := GormAdapter.NewAdapterByDB(db)
+	if err != nil {
+		common.Log.Error("New Adapter err: %v", err)
+		return nil, err
+	}
 
 	m, err := model.NewModelFromString(policy)
 	if err != nil {
-		panic(UtilConstant.StringModelLoadFail)
+		common.Log.Error("New Model From String err: %v", err)
+		return nil, err
 	}
 	cachedEnforcer, err = casbin.NewCachedEnforcer(m, adapter)
 	if err != nil {
-		panic(UtilConstant.CachedEnforcerFail)
+		common.Log.Error("New Cached Enforcer err: %v", err)
+		return nil, err
 	}
 	// 设置过期时间为1小时
 	cachedEnforcer.SetExpireTime(UtilConstant.ExpireTime)
 	_ = cachedEnforcer.LoadPolicy()
 
-	return cachedEnforcer
+	return cachedEnforcer, nil
 }
 
 // GetAdminPolicy 管理员策略

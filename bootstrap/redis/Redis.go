@@ -3,8 +3,8 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/fp/fp-gin-framework/config"
 	"github.com/go-redis/redis/v8"
+	"github.com/herman/config"
 	"time"
 )
 

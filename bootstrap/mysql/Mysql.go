@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"github.com/fp/fp-gin-framework/config"
+	"github.com/herman/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"time"

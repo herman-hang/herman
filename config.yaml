@@ -20,7 +20,7 @@ mysql:
   # 连接密码
   password: root
   # 连接数据库名称
-  dbname: fp
+  dbname: herman
   # 最大连接数
   max_open_conn: 100
   # 最大连接空闲数，建议和max_open_conn一致
