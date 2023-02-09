@@ -8,11 +8,12 @@ import (
 )
 
 type AddValidate struct {
-	Pid          uint   `json:"pid" validate:"numeric" label:"角色父ID"`
-	Name         string `json:"name" validate:"required,max:20" label:"角色名称"`
-	Role         string `json:"role" validate:"required,max:20" label:"角色KEY"`
-	Status       uint8  `json:"status" validate:"required,oneof=1 2" label:"状态"`
-	Introduction string `json:"introduction" validate:"excludesall" label:"简介"`
+	Pid          uint       `json:"pid" validate:"omitempty,numeric" label:"角色父ID"`
+	Name         string     `json:"name" validate:"required,max=20" label:"角色名称"`
+	Role         string     `json:"role" validate:"required,max=20" label:"角色KEY"`
+	Status       uint8      `json:"status" validate:"required,oneof=1 2" label:"状态"`
+	Introduction string     `json:"introduction" validate:"omitempty" label:"简介"`
+	Rules        [][]string `json:"rules" validate:"omitempty" label:"权限"`
 }
 
 // Add 添加角色验证码

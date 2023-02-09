@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// Request 上下文
+// Request 请求结构体
 type Request struct {
 	Context *gin.Context
 }

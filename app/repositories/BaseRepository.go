@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman/app/common"
+	"github.com/mitchellh/mapstructure"
 )
 
 // BaseRepository 公共仓储层
@@ -18,11 +19,14 @@ type PageInfo struct {
 }
 
 // Add 批量新增
-// @param []interface{} model 模型结构体
+// @param map[string]interface{} data 待添加数据
 // @return bool 返回一个bool值
-func (base *BaseRepository) Add(model []interface{}) bool {
-	err := common.Db.Create(&model).Error
-	if err != nil {
+func (base *BaseRepository) Add(data map[string]interface{}) bool {
+	if err := mapstructure.Decode(data, &base.Model); err != nil {
+		return false
+	}
+
+	if err := common.Db.Create(base.Model).Error; err != nil {
 		return false
 	}
 	return true
@@ -33,6 +37,7 @@ func (base *BaseRepository) Add(model []interface{}) bool {
 // @param []string fields 查询指定字段
 // @return data, bool 详情数据，bool值
 func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, bool bool) {
+	data = make(map[string]interface{})
 	err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error
 	if err != nil {
 		return nil, false
@@ -67,7 +72,7 @@ func (base *BaseRepository) Delete(ids []int) bool {
 // @param uint id 条件ID
 // @return bool 返回一个bool值
 func (base *BaseRepository) IsExist(id uint) bool {
-	result := map[string]interface{}{}
+	result := make(map[string]interface{})
 	common.Db.Model(&base.Model).First(&result, id)
 	if result != nil {
 		return true
@@ -87,7 +92,6 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		total   int64
 		pageNum int64
 	)
-
 	// 分页结构体绑定
 	if err := ctx.ShouldBindQuery(&page); err != nil {
 		return nil, false
