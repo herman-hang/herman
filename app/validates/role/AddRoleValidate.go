@@ -7,8 +7,9 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+// AddValidate 添加角色验证器
 type AddValidate struct {
-	Pid          uint       `json:"pid" validate:"omitempty,numeric" label:"角色父ID"`
+	Roles        [][]string `json:"roles" validate:"omitempty" label:"父角色KEY"`
 	Name         string     `json:"name" validate:"required,max=20" label:"角色名称"`
 	Role         string     `json:"role" validate:"required,max=20" label:"角色KEY"`
 	Status       uint8      `json:"status" validate:"required,oneof=1 2" label:"状态"`
@@ -16,7 +17,7 @@ type AddValidate struct {
 	Rules        [][]string `json:"rules" validate:"omitempty" label:"权限"`
 }
 
-// Add 添加角色验证码
+// Add 添加角色验证器
 // @param map[string]interface{} data 待验证数据
 // @return toMap 返回验证通过的数据
 func Add(data map[string]interface{}) (toMap map[string]interface{}) {

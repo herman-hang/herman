@@ -33,7 +33,6 @@ func GetParams(ctx *gin.Context) (params map[string]interface{}, response app.Re
 	default:
 		panic(constants.MethodBan)
 	}
-
 	return params, response
 }
 
@@ -43,7 +42,8 @@ func GetParams(ctx *gin.Context) (params map[string]interface{}, response app.Re
 // @return params 返回统一格式的数据
 func bodyParamHandle(data []byte, ctx *gin.Context) (params map[string]interface{}) {
 	params = make(map[string]interface{})
-	if len(string(data)) != constants.LengthByZero {
+
+	if len(data) != constants.LengthByZero {
 		_ = json.Unmarshal(data, &params)
 	}
 

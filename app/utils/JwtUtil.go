@@ -68,19 +68,14 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(settings.Config.JwtConfig.JwtSecret), nil
 	})
-	if err != nil {
-		panic(UserConstant.ParseTokenFail)
+	if !token.Valid || err != nil {
+		panic(UserConstant.TokenExpires)
 	}
 
 	claims, ok := token.Claims.(*Claims)
 
-	if !ok || !token.Valid || claims.Guard != guard {
+	if !ok || claims.Guard != guard {
 		panic(UserConstant.TokenNotValid)
-	}
-
-	// 验证过期时间
-	if !claims.VerifyExpiresAt(time.Now().Unix(), false) {
-		panic(UserConstant.TokenExpires)
 	}
 
 	timeRecord := claims.ExpiresAt - time.Now().Unix()

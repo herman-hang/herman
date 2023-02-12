@@ -4,8 +4,8 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	GormAdapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/herman/app/common"
 	UtilConstant "github.com/herman/app/constants/util"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -17,18 +17,18 @@ func InitEnforcer(policy string, db *gorm.DB) (cachedEnforcer *casbin.CachedEnfo
 	// gorm适配器
 	adapter, err := GormAdapter.NewAdapterByDB(db)
 	if err != nil {
-		common.Log.Error("New Adapter err: %v", err)
+		zap.S().Fatalf("New Adapter err: %v\n", err)
 		return nil, err
 	}
 
 	m, err := model.NewModelFromString(policy)
 	if err != nil {
-		common.Log.Error("New Model From String err: %v", err)
+		zap.S().Fatalf("New Model From String err: %v\n", err)
 		return nil, err
 	}
 	cachedEnforcer, err = casbin.NewCachedEnforcer(m, adapter)
 	if err != nil {
-		common.Log.Error("New Cached Enforcer err: %v", err)
+		zap.S().Fatalf("New Cached Enforcer err: %v\n", err)
 		return nil, err
 	}
 	// 设置过期时间为1小时

@@ -3,6 +3,8 @@ package repositories
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman/app/common"
+	"github.com/herman/app/constants"
+	"github.com/herman/app/utils"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -18,74 +20,77 @@ type PageInfo struct {
 	Keyword  string `json:"keyword"`  // 关键字
 }
 
-// Add 批量新增
+// Add 新增
 // @param map[string]interface{} data 待添加数据
-// @return bool 返回一个bool值
-func (base *BaseRepository) Add(data map[string]interface{}) bool {
-	if err := mapstructure.Decode(data, &base.Model); err != nil {
-		return false
+// @return toMap err 查询数据，错误信息
+func (base *BaseRepository) Add(data map[string]interface{}) (toMap map[string]interface{}, err error) {
+	data["id"] = constants.InitId
+	if err := mapstructure.Decode(data, base.Model); err != nil {
+		return nil, err
 	}
-
 	if err := common.Db.Create(base.Model).Error; err != nil {
-		return false
+		return nil, err
 	}
-	return true
+	// 模型拷贝
+	structData := base.Model
+	toMap, err = utils.ToMap(structData, "json")
+	if err != nil {
+		return nil, err
+	}
+	return toMap, nil
 }
 
 // Find 根据ID获取详情
 // @param []uint id 主键ID
 // @param []string fields 查询指定字段
-// @return data, bool 详情数据，bool值
-func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, bool bool) {
+// @return data err 详情数据，错误信息
+func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, err error) {
 	data = make(map[string]interface{})
-	err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error
-	if err != nil {
-		return nil, false
+	if err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error; err != nil {
+		return nil, err
 	}
-	return data, true
+	return data, nil
 }
 
-// Update 批量更新
+// Update 更新
 // @param []int ids 查询条件
 // @param map[string]interface{} attributes 待更新数据
-// @return bool 返回一个bool值
-func (base *BaseRepository) Update(ids []int, attributes map[string]interface{}) bool {
-	err := common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error
-	if err != nil {
-		return false
+// @return error 错误信息
+func (base *BaseRepository) Update(ids []int, attributes map[string]interface{}) error {
+	if err := common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
+		return err
 	}
-	return true
+	return nil
 }
 
-// Delete 批量删除
+// Delete 删除
 // @param []int ids 主键ID
-// @return error 返回一个错误信息
-func (base *BaseRepository) Delete(ids []int) bool {
-	err := common.Db.Delete(&base.Model, ids).Error
-	if err != nil {
-		return false
+// @return error 错误信息
+func (base *BaseRepository) Delete(ids []int) error {
+	if err := common.Db.Delete(&base.Model, ids).Error; err != nil {
+		return err
 	}
-	return true
+	return nil
 }
 
 // IsExist 查询数据是否存在
 // @param uint id 条件ID
-// @return bool 返回一个bool值
-func (base *BaseRepository) IsExist(id uint) bool {
+// @return bool error 返回一个错误信息
+func (base *BaseRepository) IsExist(id uint) (bool bool, err error) {
 	result := make(map[string]interface{})
-	common.Db.Model(&base.Model).First(&result, id)
-	if result != nil {
-		return true
+	err = common.Db.Model(&base.Model).Find(&result, id).Error
+	if len(result) != constants.LengthByZero {
+		return true, nil
 	}
-	return false
+	return false, err
 }
 
 // GetList 获取列表数据
 // @param string query 查询条件
 // @param []string field 查询指定字段
 // @param string order 排序条件
-// @return list total pageNum bool 返回列表，总条数，总页码数，bool值
-func (base *BaseRepository) GetList(query string, field []string, order string) (data []map[string]interface{}, bool bool) {
+// @return list total pageNum err 返回列表，总条数，总页码数，错误信息
+func (base *BaseRepository) GetList(query string, field []string, order string) (data []map[string]interface{}, err error) {
 	var (
 		ctx     *gin.Context
 		page    *PageInfo
@@ -94,7 +99,7 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 	)
 	// 分页结构体绑定
 	if err := ctx.ShouldBindQuery(&page); err != nil {
-		return nil, false
+		return nil, err
 	}
 	// 总条数
 	common.Db.Model(&base.Model).Count(&total)
@@ -104,7 +109,7 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		pageNum++
 	}
 	// 示例 query = fmt.Sprintf(" dns like '%%%s' ", createDbnameInfo.DNS)
-	err := common.Db.Model(&base.Model).
+	err = common.Db.Model(&base.Model).
 		Select(field).
 		Where(query).
 		Order(order).
@@ -119,23 +124,23 @@ func (base *BaseRepository) GetList(query string, field []string, order string) 
 		"page":     page.Page,     // 当前页码
 	})
 	if err != nil {
-		return nil, false
+		return nil, err
 	}
-	return data, true
+	return data, nil
 }
 
 // GetAllData 获取全部数据
 // @param []string field 查询指定字段
-// @return list bool 返回列表，bool值
-func (base *BaseRepository) GetAllData(field []string) (data []map[string]interface{}, bool bool) {
+// @return list err 返回列表，错误信息
+func (base *BaseRepository) GetAllData(field []string) (data []map[string]interface{}, err error) {
 	if len(field) != 0 {
 		if err := common.Db.Model(&base.Model).Select(field).Find(&data).Error; err != nil {
-			return nil, false
+			return nil, err
 		}
 	}
 
 	if err := common.Db.Model(&base.Model).Find(&data).Error; err != nil {
-		return nil, false
+		return nil, err
 	}
-	return data, true
+	return data, nil
 }

@@ -39,8 +39,7 @@ func NewServer(config *config.AppConfig) (*Server, error) {
 	gin.SetMode(config.Mode)
 	e := gin.New()
 	// 注册中间件
-	e.Use(log.GinLogger())
-	e.Use(middlewares.CatchError())
+	e.Use(log.GinLogger()).Use(middlewares.CatchError())
 
 	zapLog := ZapLogs(config)
 	db := GormDatabase(config)
@@ -76,6 +75,7 @@ func GormDatabase(config *config.AppConfig) (db *gorm.DB) {
 	if err != nil {
 		zap.S().Fatalf("Init Mysql failed:%v", err)
 	}
+
 	zap.S().Info("Init Mysql Success!")
 	return db
 }
