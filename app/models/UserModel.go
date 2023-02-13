@@ -14,13 +14,14 @@ type Users struct {
 	Nickname     string         `json:"nickname" gorm:"column:nickname;type:varchar(20);comment:昵称"`
 	Name         string         `json:"name" gorm:"column:name;type:varchar(10);comment:真实姓名"`
 	Card         string         `json:"card" gorm:"column:card;type:char(20);comment:身份证号码"`
-	Sex          uint8          `json:"sex" gorm:"column:sex;type:tinyint(4);default:2;not null;comment:性别(0为女,1为男，2为保密)"`
+	Sex          uint8          `json:"sex" gorm:"column:sex;type:tinyint(4);default:3;not null;comment:性别(1为女,2为男，3为保密)"`
 	Age          uint8          `json:"age" gorm:"column:age;type:tinyint(4);default:0;not null;comment:年龄"`
 	Region       string         `json:"region" gorm:"column:region;type:varchar(255);comment:地区"`
 	Phone        string         `json:"phone" gorm:"column:phone;type:varchar(16);comment:手机号码"`
 	Email        string         `json:"email" gorm:"column:email;type:varchar(32);comment:邮箱"`
 	Introduction string         `json:"introduction" gorm:"column:introduction;type:text;comment:简介"`
-	Status       uint8          `json:"status" gorm:"column:status;type:tinyint(4);default:1;not null;comment:状态(0已停用,1已启用)"`
+	State        uint8          `json:"state" gorm:"column:state;type:tinyint(4);default:2;not null;comment:状态(1已停用,2已启用)"`
+	Sort         uint           `json:"sort" gorm:"column:sort;type:uint(11);default:0;not null;comment:排序"`
 	LoginOutIp   string         `json:"loginOutIp" gorm:"column:login_out_ip;type:varchar(32);comment:上一次登录IP地址"`
 	LoginTotal   string         `json:"loginTotal" gorm:"column:login_total;type:int(11);default:0,not null;comment:登录总数"`
 	LoginOutAt   string         `json:"loginOutAt" gorm:"column:login_out_at;type:time;comment:上一次登录时间"`

@@ -39,7 +39,7 @@ func NewServer(config *config.AppConfig) (*Server, error) {
 	gin.SetMode(config.Mode)
 	e := gin.New()
 	// 注册中间件
-	e.Use(log.GinLogger()).Use(middlewares.CatchError())
+	e.Use(log.GinLogger()).Use(middlewares.CatchError()).Use(middlewares.DbTransactionAfter())
 
 	zapLog := ZapLogs(config)
 	db := GormDatabase(config)

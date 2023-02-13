@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/herman/app"
+	"github.com/herman/app/common"
 	"github.com/herman/app/constants"
 	"io/ioutil"
 )
@@ -14,6 +15,7 @@ import (
 func GetParams(ctx *gin.Context) (params map[string]interface{}, response app.Request) {
 	params = make(map[string]interface{})
 	response = app.Request{Context: ctx}
+	common.Context = ctx
 	data, _ := ctx.GetRawData()
 	switch ctx.Request.Method {
 	case "GET":

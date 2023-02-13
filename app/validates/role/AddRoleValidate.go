@@ -12,7 +12,7 @@ type AddValidate struct {
 	Roles        [][]string `json:"roles" validate:"omitempty" label:"父角色KEY"`
 	Name         string     `json:"name" validate:"required,max=20" label:"角色名称"`
 	Role         string     `json:"role" validate:"required,max=20" label:"角色KEY"`
-	Status       uint8      `json:"status" validate:"required,oneof=1 2" label:"状态"`
+	State        uint8      `json:"state" validate:"required,oneof=1 2" label:"状态"`
 	Introduction string     `json:"introduction" validate:"omitempty" label:"简介"`
 	Rules        [][]string `json:"rules" validate:"omitempty" label:"权限"`
 }

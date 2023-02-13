@@ -19,12 +19,12 @@ func Router(router *gin.RouterGroup) {
 		// 添加角色
 		router.POST("/role", RoleController.AddRole)
 		// 删除角色
-		router.DELETE("/role")
+		router.DELETE("/role", RoleController.DeleteRole)
 		// 修改角色
-		router.PUT("/role")
+		router.PUT("/role", RoleController.ModifyRole)
 		// 根据ID获取角色详情
-		router.GET("/role")
+		router.GET("/role", RoleController.FindRole)
 		// 角色列表
-		router.GET("/roles")
+		router.GET("/roles", RoleController.ListRole)
 	}
 }

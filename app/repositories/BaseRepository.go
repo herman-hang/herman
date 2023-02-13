@@ -17,7 +17,7 @@ type BaseRepository struct {
 type PageInfo struct {
 	Page     int64  `json:"page"`     // 页码
 	PageSize int64  `json:"pageSize"` // 每页大小
-	Keyword  string `json:"keyword"`  // 关键字
+	Keywords string `json:"keywords"` // 关键字
 }
 
 // Add 新增

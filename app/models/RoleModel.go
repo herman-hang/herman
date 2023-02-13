@@ -10,7 +10,8 @@ type Role struct {
 	Id           uint           `json:"id" gorm:"column:id;primary_key;type:uint(11);not null;comment:主键ID"`
 	Name         string         `json:"name" gorm:"column:name;type:varchar(20);not null;comment:角色名称"`
 	Role         string         `json:"role" gorm:"column:role;type:varchar(20);unique;not null;comment:角色KEY"`
-	Status       uint8          `json:"status" gorm:"column:status;type:tinyint(4);not null;comment:状态"`
+	State        uint8          `json:"state" gorm:"column:state;type:tinyint(4);default:2;not null;comment:状态(1已停用,2已启用)"`
+	Sort         uint           `json:"sort" gorm:"column:sort;type:uint(11);default:0;not null;comment:排序"`
 	Introduction string         `json:"introduction" gorm:"column:introduction;type:text;comment:简介"`
 	CreatedAt    time.Time      `json:"createdAt" gorm:"column:created_at;type:time;not null;comment:创建时间"`
 	UpdatedAt    time.Time      `json:"updatedAt" gorm:"column:updated_at;type:time;not null;comment:更新时间"`

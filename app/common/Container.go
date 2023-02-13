@@ -10,12 +10,13 @@ import (
 )
 
 var (
-	Engine *gin.Engine
-	Log    *zap.SugaredLogger
-	Db     *gorm.DB
-	Redis  *redis.Client
-	Once   *sync.Once
-	Casbin *casbin.CachedEnforcer
+	Engine  *gin.Engine
+	Log     *zap.SugaredLogger
+	Db      *gorm.DB
+	Redis   *redis.Client
+	Once    *sync.Once
+	Casbin  *casbin.CachedEnforcer
+	Context *gin.Context
 )
 
 // NewContainer 全局容器
