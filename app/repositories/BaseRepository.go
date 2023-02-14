@@ -25,7 +25,7 @@ type PageInfo struct {
 // @return toMap err 查询数据，错误信息
 func (base *BaseRepository) Add(data map[string]interface{}) (toMap map[string]interface{}, err error) {
 	data["id"] = constants.InitId
-	if err := mapstructure.Decode(data, base.Model); err != nil {
+	if err := mapstructure.WeakDecode(data, base.Model); err != nil {
 		return nil, err
 	}
 	if err := common.Db.Create(base.Model).Error; err != nil {

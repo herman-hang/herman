@@ -19,13 +19,17 @@ func Add(data map[string]interface{}) {
 		if isExist, err := repositories.Role.KeyIsExist(data["role"].(string)); isExist {
 			return err
 		}
+		roles := data["roles"]
+		rules := data["rules"]
+		delete(data, "roles")
+		delete(data, "rules")
 		// 添加角色信息
 		roleInfo, err := repositories.Role.Add(data)
 		if err != nil {
 			return err
 		}
 		// 添加策略
-		if err := AddPolicies(data, roleInfo); err != nil {
+		if err := AddPolicies(roles.([]interface{}), rules.([]interface{}), roleInfo); err != nil {
 			return err
 		}
 

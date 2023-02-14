@@ -2,16 +2,10 @@ package app
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/herman/app/constants"
 	"github.com/herman/app/utils"
 	"net/http"
 )
-
-// Request 请求结构体
-type Request struct {
-	Context *gin.Context
-}
 
 // Response 响应信息结构体
 type Response struct {

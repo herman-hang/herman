@@ -2,7 +2,7 @@ package role
 
 import (
 	"github.com/gin-gonic/gin"
-	BaseController "github.com/herman/app/controllers"
+	"github.com/herman/app"
 	RoleService "github.com/herman/app/services/role"
 	RoleValidate "github.com/herman/app/validates/role"
 )
@@ -11,28 +11,28 @@ import (
 // @param *gin.Context ctx 上下文
 // @return void
 func AddRole(ctx *gin.Context) {
-	// 接收gin上下文和请求数据
-	data, response := BaseController.GetParams(ctx)
+	context := app.Request{Context: ctx}
+	data := context.Params()
 	RoleService.Add(RoleValidate.Add(data))
-	response.Json(nil)
+	context.Json(nil)
 }
 
 func ModifyRole(ctx *gin.Context) {
-	_, response := BaseController.GetParams(ctx)
-	response.Json(nil)
+	context := app.Request{Context: ctx}
+	context.Json(nil)
 }
 
 func FindRole(ctx *gin.Context) {
-	_, response := BaseController.GetParams(ctx)
-	response.Json(nil)
+	context := app.Request{Context: ctx}
+	context.Json(nil)
 }
 
 func DeleteRole(ctx *gin.Context) {
-	_, response := BaseController.GetParams(ctx)
-	response.Json(nil)
+	context := app.Request{Context: ctx}
+	context.Json(nil)
 }
 
 func ListRole(ctx *gin.Context) {
-	_, response := BaseController.GetParams(ctx)
-	response.Json(nil)
+	context := app.Request{Context: ctx}
+	context.Json(nil)
 }

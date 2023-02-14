@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	BaseController "github.com/herman/app/controllers"
+	"github.com/herman/app"
 	UserService "github.com/herman/app/services/user"
 	UserValidate "github.com/herman/app/validates/user"
 )
@@ -10,7 +10,7 @@ import (
 // Login 用户登录
 // @param *gin.Context ctx 上下文
 func Login(ctx *gin.Context) {
-	// 接收gin上下文和请求数据
-	data, response := BaseController.GetParams(ctx)
-	response.Json(UserService.Login(UserValidate.Login(data)))
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	context.Json(UserService.Login(UserValidate.Login(data)))
 }
