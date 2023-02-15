@@ -158,6 +158,8 @@ func Login(ctx *gin.Context) {
 
 #### （3）验证器
 
+验证规则文档：https://juejin.cn/post/6847902214279659533
+
 以用户登录验证器为例：
 
 ```go

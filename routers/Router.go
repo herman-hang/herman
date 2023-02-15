@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman/app"
 	CaptchaController "github.com/herman/app/controllers/captcha"
+	"github.com/herman/app/middlewares"
 	"github.com/herman/routers/api/admin"
 	"github.com/herman/routers/api/user"
 	"github.com/herman/servers/settings"
@@ -17,7 +18,7 @@ func InitRouter(rootEngine *gin.Engine) {
 	rootEngine.GET("/", func(context *gin.Context) {
 		response := app.Request{Context: context}
 		response.Success(app.D(map[string]interface{}{
-			"welcome": "Hello fp-gin-framework!",
+			"welcome": "Hello Herman!",
 		}))
 	})
 	// 设置路由前缀
@@ -28,10 +29,14 @@ func InitRouter(rootEngine *gin.Engine) {
 	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
 
 	// 用户模块
-	userRouter := api.Group("/user")
-	// 后台模块
-	adminRouter := api.Group("/admin")
+	userRouter := api.Group("/user", middlewares.Jwt("user"))
+	{
+		user.Router(userRouter)
+	}
 
-	user.Router(userRouter)
-	admin.Router(adminRouter)
+	// 后台模块
+	adminRouter := api.Group("/admin", middlewares.Jwt("admin"))
+	{
+		admin.Router(adminRouter)
+	}
 }

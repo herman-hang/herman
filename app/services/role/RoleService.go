@@ -4,6 +4,7 @@ import (
 	"github.com/herman/app/common"
 	RoleConstant "github.com/herman/app/constants/role"
 	"github.com/herman/app/repositories"
+	"github.com/herman/app/validates/role"
 	"github.com/herman/bootstrap/casbin"
 	"gorm.io/gorm"
 )
@@ -29,15 +30,13 @@ func Add(data map[string]interface{}) {
 			return err
 		}
 		// 添加策略
-		if err := AddPolicies(roles.([]interface{}), rules.([]interface{}), roleInfo); err != nil {
+		if err := AddPolicies(roles.([]role.Roles), rules.([]role.Rules), roleInfo); err != nil {
 			return err
 		}
-
 		return nil
 	})
 
 	if err != nil {
 		panic(RoleConstant.AddFail)
 	}
-
 }

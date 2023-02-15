@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app/common"
 	"github.com/herman/app/constants"
 	"io/ioutil"
 )
@@ -19,7 +18,6 @@ type Request struct {
 // @return params 返回一个二次封装上下文和响应对象
 func (r *Request) Params() (params map[string]interface{}) {
 	params = make(map[string]interface{})
-	common.Context = r.Context
 	data, _ := r.Context.GetRawData()
 	switch r.Context.Request.Method {
 	case "GET":
@@ -31,11 +29,11 @@ func (r *Request) Params() (params map[string]interface{}) {
 			}
 		} else {
 			// body参数处理
-			params = bodyParamHandle(data, r.Context)
+			params = bodyParam(data, r.Context)
 		}
 	case "POST", "PUT", "DELETE":
 		// body参数处理
-		params = bodyParamHandle(data, r.Context)
+		params = bodyParam(data, r.Context)
 	default:
 		panic(constants.MethodBan)
 	}
@@ -46,7 +44,7 @@ func (r *Request) Params() (params map[string]interface{}) {
 // @param []byte data 接收RawData
 // @param *gin.Context ctx 上下文
 // @return params 返回统一格式的数据
-func bodyParamHandle(data []byte, ctx *gin.Context) (params map[string]interface{}) {
+func bodyParam(data []byte, ctx *gin.Context) (params map[string]interface{}) {
 	params = make(map[string]interface{})
 
 	if len(data) != constants.LengthByZero {

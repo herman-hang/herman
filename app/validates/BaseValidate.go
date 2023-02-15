@@ -6,8 +6,36 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	zhTrans "github.com/go-playground/validator/v10/translations/zh"
+	"github.com/herman/app/constants"
+	"github.com/herman/app/utils"
+	"github.com/mitchellh/mapstructure"
 	"reflect"
 )
+
+// Validates 全局验证器
+type Validates struct {
+	Validate interface{}
+}
+
+// Check 验证方法
+// @param map[string]interface{} data 待验证数据
+// @return void
+func (base Validates) Check(data map[string]interface{}) (toMap map[string]interface{}) {
+	// map赋值给结构体
+	if err := mapstructure.WeakDecode(data, &base.Validate); err != nil {
+		panic(constants.MapToStruct)
+	}
+	if err := Validate(base.Validate); err != nil {
+		panic(err.Error())
+	}
+
+	toMap, err := utils.ToMap(base.Validate, "json")
+
+	if err != nil {
+		panic(constants.StructToMap)
+	}
+	return toMap
+}
 
 // Validate 全局model数据验证器
 // @param 接收一个待数据验证的结构体

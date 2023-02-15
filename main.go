@@ -5,7 +5,6 @@ import (
 	"github.com/herman/servers"
 	"github.com/herman/servers/settings"
 	"go.uber.org/zap"
-	"sync"
 )
 
 // main 项目入口函数
@@ -20,7 +19,7 @@ func main() {
 		zap.S().Fatalf("New Server falied: %v\n", err)
 	}
 
-	common.NewContainer(s.Engine, s.Log, s.Db, s.Redis, new(sync.Once), s.Casbin)
+	common.NewContainer(s.Engine, s.Log)
 
 	s.Run()
 }

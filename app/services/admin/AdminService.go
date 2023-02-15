@@ -21,15 +21,12 @@ func Login(data map[string]interface{}) interface{} {
 	ctx := context.Background()
 	// 设置Redis错误密码的key
 	key := fmt.Sprintf("admin_password_error:%d", admin.Id)
-
 	// 获取错误登录次数
 	errorNumber, err := common.Redis.Get(ctx, key).Int()
-
 	// 判断是否登录次数过多
 	if err != redis.Nil && errorNumber > AdminConstant.LoginErrorLimitNumber {
 		panic(AdminConstant.ErrorLoginOverload)
 	}
-
 	// 密码验证
 	if !utils.ComparePasswords(admin.Password, fmt.Sprintf("%s", data["password"])) {
 		common.Redis.Set(ctx, key, errorNumber+AdminConstant.Increment, time.Minute*AdminConstant.KeyValidity)
@@ -38,4 +35,8 @@ func Login(data map[string]interface{}) interface{} {
 
 	// 返回token
 	return utils.GenerateToken(&utils.Claims{Uid: admin.Id, Guard: "admin"})
+}
+
+func Add(data map[string]interface{}) {
+	fmt.Println(data)
 }

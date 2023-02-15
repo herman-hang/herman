@@ -23,7 +23,7 @@ func (k *Consumer) Consume() {
 		settings.Config.KafkaConfig.Port,
 	)}, config)
 	if err != nil {
-		common.Log.Error("New Consumer err: %v", err)
+		common.Log.Errorf("New Consumer err: %v", err)
 		return
 	}
 
@@ -37,7 +37,7 @@ func (k *Consumer) Consume() {
 	// 先查询该 topic 有多少分区
 	partitions, err := consumer.Partitions(k.Topic)
 	if err != nil {
-		common.Log.Error("Partitions err: %v", err)
+		common.Log.Errorf("Partitions err: %v", err)
 		return
 	}
 	var wg sync.WaitGroup

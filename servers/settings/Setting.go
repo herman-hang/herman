@@ -16,13 +16,12 @@ func InitConfig() (err error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./")
-	err = viper.ReadInConfig()
-	if err != nil {
-		zap.S().Fatalf("viper.ReadInConfig failed, err: %v\n", err)
+	if err = viper.ReadInConfig(); err != nil {
+		zap.S().Fatalf("viper ReadInConfig failed, err: %v\n", err)
 		return err
 	}
-	err = viper.Unmarshal(&Config)
-	if err != nil {
+
+	if err = viper.Unmarshal(&Config); err != nil {
 		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
 	}
 

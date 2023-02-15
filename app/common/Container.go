@@ -6,7 +6,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"sync"
 )
 
 var (
@@ -14,7 +13,6 @@ var (
 	Log     *zap.SugaredLogger
 	Db      *gorm.DB
 	Redis   *redis.Client
-	Once    *sync.Once
 	Casbin  *casbin.CachedEnforcer
 	Context *gin.Context
 )
@@ -27,10 +25,6 @@ var (
 func NewContainer(
 	engine *gin.Engine,
 	log *zap.SugaredLogger,
-	db *gorm.DB,
-	redis *redis.Client,
-	once *sync.Once,
-	casbin *casbin.CachedEnforcer,
 ) {
-	Engine, Log, Db, Redis, Once, Casbin = engine, log, db, redis, once, casbin
+	Engine, Log = engine, log
 }

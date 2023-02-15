@@ -9,8 +9,19 @@ import (
 
 // Login 管理员登录
 // @param *gin.Context ctx 上下文
+// @return void
 func Login(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
 	context.Json(AdminService.Login(AdminValidate.Login(data)))
+}
+
+// AddAdmin 管理员添加
+// @param *gin.Context ctx 上下文
+// @return void
+func AddAdmin(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	AdminService.Add(AdminValidate.Add.Check(data))
+	context.Json(nil)
 }

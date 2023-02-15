@@ -13,7 +13,7 @@ import (
 func AddRole(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	RoleService.Add(RoleValidate.Add(data))
+	RoleService.Add(RoleValidate.Add.Check(data))
 	context.Json(nil)
 }
 

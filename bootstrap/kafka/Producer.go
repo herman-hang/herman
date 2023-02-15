@@ -32,7 +32,7 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 	// 关闭连接
 	defer func(producer sarama.SyncProducer) {
 		if err := producer.Close(); err != nil {
-			common.Log.Error("Close Producer err: %v", err)
+			common.Log.Errorf("Close Producer err: %v", err)
 			return
 		}
 	}(producer)
