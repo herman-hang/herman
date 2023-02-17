@@ -14,6 +14,8 @@ func Router(router *gin.RouterGroup) {
 	router.POST("/login", AdminController.Login)
 	// 管理员添加
 	router.POST("/admin", AdminController.AddAdmin)
+	// 管理员修改
+	router.PUT("/admin", AdminController.ModifyAdmin)
 
 	// 添加角色
 	router.POST("/role", RoleController.AddRole)

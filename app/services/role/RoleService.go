@@ -25,7 +25,7 @@ func Add(data map[string]interface{}) {
 		delete(data, "roles")
 		delete(data, "rules")
 		// 添加角色信息
-		roleInfo, err := repositories.Role.Add(data)
+		roleInfo, err := repositories.Role.Insert(data)
 		if err != nil {
 			return err
 		}

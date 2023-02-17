@@ -7,7 +7,7 @@ import (
 )
 
 // Admin 实例化结构体并重写BaseRepository
-var Admin = &AdminRepository{BaseRepository{Model: new(models.Admin)}}
+var Admin = AdminRepository{BaseRepository{Model: new(models.Admin)}}
 
 // AdminRepository 管理员表仓储层
 type AdminRepository struct {

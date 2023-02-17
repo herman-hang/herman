@@ -4,11 +4,12 @@ import (
 	"github.com/herman/app/validates"
 )
 
-var Add = &validates.Validates{Validate: new(AddValidate)}
+// Add 重写验证器结构体，切记不使用引用，而是拷贝
+var Add = validates.Validates{Validate: AddValidate{}}
 
 // AddValidate 添加角色验证规则
 type AddValidate struct {
-	Roles        []Roles `json:"roles" validate:"omitempty" label:"父角色KEY"`
+	Roles        []Roles `json:"roles" validate:"omitempty" label:"父角色"`
 	Name         string  `json:"name" validate:"required,max=20" label:"角色名称"`
 	Role         string  `json:"role" validate:"required,max=20" label:"角色KEY"`
 	State        uint8   `json:"state" validate:"required,oneof=1 2" label:"状态"`
@@ -18,8 +19,8 @@ type AddValidate struct {
 
 // Roles 父角色验证规则
 type Roles struct {
-	Name string `json:"name" validate:"max=20" label:"父角色名称"`
-	Role string `json:"role" validate:"max:20" label:"父角色KEY"`
+	Name string `json:"name" validate:"max=20" label:"角色名称"`
+	Role string `json:"role" validate:"max:20" label:"角色KEY"`
 }
 
 // Rules 权限规则验证

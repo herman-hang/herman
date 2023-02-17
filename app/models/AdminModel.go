@@ -7,7 +7,7 @@ import (
 
 // Admin 管理员结构体
 type Admin struct {
-	Id           uint           `json:"id" gorm:"column:id;type:uint(11);primary_key;comment:管理员ID"`
+	Id           uint           `json:"id" gorm:"column:id;type:uint(11);primary_key;not null;comment:管理员ID"`
 	User         string         `json:"user" gorm:"column:user;type:varchar(20);unique;not null;comment:管理员用户名"`
 	Password     string         `json:"password" gorm:"column:password;type:char(60);not null;comment:管理员密码"`
 	Photo        string         `json:"photo" gorm:"column:photo;type:varchar(255);comment:管理员头像"`
@@ -23,8 +23,8 @@ type Admin struct {
 	Role         uint8          `json:"role" gorm:"column:role;type:varchar(4);not null;comment:角色英文KEY"`
 	Sort         uint           `json:"sort" gorm:"column:sort;type:uint(1);default:0;not null;comment:排序"`
 	LoginOutIp   string         `json:"loginOutIp" gorm:"column:login_out_ip;type:varchar(32);comment:上一次登录IP地址"`
-	LoginTotal   string         `json:"loginTotal" gorm:"column:login_total;type:int(11);default:0,not null;comment:登录总数"`
-	LoginOutAt   string         `json:"loginOutAt" gorm:"column:login_out_at;type:time;comment:上一次登录时间"`
+	LoginTotal   uint           `json:"loginTotal" gorm:"column:login_total;type:uint(11);default:0;not null;comment:登录总数"`
+	LoginOutAt   string         `json:"loginOutAt" gorm:"column:login_out_at;type:time;default:1970-01-01 00:00:00;comment:上一次登录时间"`
 	CreatedAt    time.Time      `json:"createdAt" gorm:"column:created_at;type:time;not null;comment:创建时间"`
 	UpdatedAt    time.Time      `json:"updatedAt" gorm:"column:updated_at;type:time;not null;comment:更新时间"`
 	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;type:time;index;comment:删除时间"`
