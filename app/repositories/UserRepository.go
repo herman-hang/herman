@@ -8,7 +8,7 @@ import (
 )
 
 // User 实例化结构体并重写BaseRepository
-var User = &UserRepository{BaseRepository{Model: new(models.Users)}}
+var User = UserRepository{BaseRepository{Model: new(models.Users)}}
 
 // UserRepository 用户表仓储层
 type UserRepository struct {

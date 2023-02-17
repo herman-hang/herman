@@ -25,3 +25,13 @@ func AddAdmin(ctx *gin.Context) {
 	AdminService.Add(AdminValidate.Add.Check(data))
 	context.Json(nil)
 }
+
+// ModifyAdmin 管理员修改
+// @param *gin.Context ctx 上下文
+// @return void
+func ModifyAdmin(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	AdminService.Modify(AdminValidate.Modify.Check(data))
+	context.Json(nil)
+}

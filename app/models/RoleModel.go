@@ -7,7 +7,7 @@ import (
 
 // Role 角色表结构体
 type Role struct {
-	Id           uint           `json:"id" gorm:"column:id;primary_key;type:uint(11);not null;comment:主键ID"`
+	Id           uint           `json:"id" gorm:"column:id;primary_key;type:uint(11);not null;comment:角色ID"`
 	Name         string         `json:"name" gorm:"column:name;type:varchar(20);not null;comment:角色名称"`
 	Role         string         `json:"role" gorm:"column:role;type:varchar(20);unique;not null;comment:角色KEY"`
 	State        uint8          `json:"state" gorm:"column:state;type:tinyint(4);default:2;not null;comment:状态(1已停用,2已启用)"`

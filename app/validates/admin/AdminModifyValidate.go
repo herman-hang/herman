@@ -5,13 +5,13 @@ import (
 	"github.com/herman/app/validates/role"
 )
 
-// Add 重写验证器结构体，切记不使用引用，而是拷贝
-var Add = validates.Validates{Validate: AddValidate{}}
+// Modify 重写验证器结构体，切记不使用引用，而是拷贝
+var Modify = validates.Validates{Validate: ModifyValidate{}}
 
-// AddValidate 管理员添加验证规则
-type AddValidate struct {
-	User         string       `json:"user" validate:"required,min=5,max=15" label:"用户名"`
-	Password     string       `json:"password" validate:"required,min=6,max=15" label:"密码"`
+// ModifyValidate 管理员修改验证规则
+type ModifyValidate struct {
+	Id           uint         `json:"id" validate:"required,numeric" label:"管理员ID"`
+	Password     string       `json:"password" validate:"omitempty,min=6,max=15" label:"密码"`
 	Roles        []role.Roles `json:"roles" validate:"required" label:"选择角色"`
 	Photo        string       `json:"photo" validate:"omitempty,url,max=255" label:"头像"`
 	Name         string       `json:"name" validate:"omitempty,max=20" label:"真实姓名"`

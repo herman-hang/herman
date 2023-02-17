@@ -1,11 +1,13 @@
 package repositories
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/herman/app/common"
 	"github.com/herman/app/constants"
 	"github.com/herman/app/utils"
 	"github.com/mitchellh/mapstructure"
+	"gorm.io/gorm"
 )
 
 // BaseRepository 公共仓储层
@@ -20,20 +22,23 @@ type PageInfo struct {
 	Keywords string `json:"keywords"` // 关键字
 }
 
-// Add 新增
+// Insert 新增
 // @param map[string]interface{} data 待添加数据
 // @return toMap err 查询数据，错误信息
-func (base *BaseRepository) Add(data map[string]interface{}) (toMap map[string]interface{}, err error) {
+func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[string]interface{}, err error) {
+	// 初始化ID，让ID持续自增
 	data["id"] = constants.InitId
 	if err := mapstructure.WeakDecode(data, base.Model); err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 	if err := common.Db.Create(base.Model).Error; err != nil {
 		return nil, err
 	}
 	// 模型拷贝
-	structData := base.Model
-	toMap, err = utils.ToMap(structData, "json")
+	tempStruct := base.Model
+	toMap, err = utils.ToMap(tempStruct, "json")
+
 	if err != nil {
 		return nil, err
 	}
@@ -46,17 +51,17 @@ func (base *BaseRepository) Add(data map[string]interface{}) (toMap map[string]i
 // @return data err 详情数据，错误信息
 func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, err error) {
 	data = make(map[string]interface{})
-	if err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error; err != nil {
+	if err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error; err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return data, nil
 }
 
 // Update 更新
-// @param []int ids 查询条件
+// @param []uint ids 查询条件
 // @param map[string]interface{} attributes 待更新数据
 // @return error 错误信息
-func (base *BaseRepository) Update(ids []int, attributes map[string]interface{}) error {
+func (base *BaseRepository) Update(ids []uint, attributes map[string]interface{}) error {
 	if err := common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
 		return err
 	}
@@ -64,9 +69,9 @@ func (base *BaseRepository) Update(ids []int, attributes map[string]interface{})
 }
 
 // Delete 删除
-// @param []int ids 主键ID
+// @param []uint ids 主键ID
 // @return error 错误信息
-func (base *BaseRepository) Delete(ids []int) error {
+func (base *BaseRepository) Delete(ids []uint) error {
 	if err := common.Db.Delete(&base.Model, ids).Error; err != nil {
 		return err
 	}
