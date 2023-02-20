@@ -16,7 +16,7 @@ import (
 )
 
 // Login 管理员登录
-// @param map data 前端请求数据
+// @param map[string]interface{} data 前端请求数据
 // @return interface{} 返回一个token值
 func Login(data map[string]interface{}) interface{} {
 	// 获取管理员信息
@@ -45,7 +45,7 @@ func Login(data map[string]interface{}) interface{} {
 }
 
 // Add 管理员添加
-// @param map data 前端请求数据
+// @param map[string]interface{} data 前端请求数据
 // @return void
 func Add(data map[string]interface{}) {
 	err := common.Db.Transaction(func(tx *gorm.DB) error {
@@ -72,7 +72,7 @@ func Add(data map[string]interface{}) {
 }
 
 // Modify 管理员修改
-// @param map data 前端请求数据
+// @param map[string]interface{} data 前端请求数据
 // @return void
 func Modify(data map[string]interface{}) {
 	// 过滤密码数据
@@ -105,4 +105,35 @@ func Modify(data map[string]interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// Find 根据ID获取管理员信息
+// @param map[string]interface{} data 前端请求数据
+func Find(data map[string]interface{}) map[string]interface{} {
+	ids := []uint{data["id"].(uint)}
+	fields := []string{
+		"id",
+		"user",
+		"photo",
+		"name",
+		"card",
+		"sex",
+		"age",
+		"region",
+		"phone",
+		"email",
+		"state",
+		"introduction",
+		"role",
+		"sort",
+		"loginOutIp",
+		"loginOutAt",
+		"createdAt",
+	}
+	info, err := repositories.Admin.Find(ids, fields)
+	info["roles"] = FindRole(ids)
+	if err != nil {
+		panic(AdminConstant.GetAdminInfoFail)
+	}
+	return info
 }

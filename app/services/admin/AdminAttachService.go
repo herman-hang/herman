@@ -46,3 +46,7 @@ func JoinRole(admin map[string]interface{}, roles []role.Roles) error {
 	}
 	return nil
 }
+
+func FindRole(ids []uint) []map[string]interface{} {
+	return []map[string]interface{}{}
+}

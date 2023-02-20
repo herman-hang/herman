@@ -1,7 +1,7 @@
-# fp-gin-framework
+# Herman框架
 
 ## 1. 序言
-基于Gin框架二次搭建的Web项目基础框架。
+基于Gin框架开发，专注于后端快速上手的脚手架。
 
 ## 2. 项目结构
 
@@ -18,6 +18,7 @@
 │  ├─services ------------------------------------------------- 服务处理目录
 │  ├─utils ---------------------------------------------------- 工具类目录
 │  ├─validates ------------------------------------------------ 验证器目录
+│  ├─Request.go ----------------------------------------------- 请求对象库
 │  └─Response.go ---------------------------------------------- 响应对象库
 ├─bootstrap --------------------------------------------------- 辅助程序目录
 ├─config ------------------------------------------------------ 配置文件目录
@@ -29,6 +30,8 @@
 │  └─logs ----------------------------------------------------- 日志记录目录
 ├─resources --------------------------------------------------- 资源目录
 │  ├─css ------------------------------------------------------ CSS文件目录
+│  ├─defaultImages -------------------------------------------- 验证码资源目录
+│  ├─fonts ---------------------------------------------------- 验证码字体目录
 │  ├─images --------------------------------------------------- 图片文件目录
 │  ├─js ------------------------------------------------------- JS文件目录
 │  └─views ---------------------------------------------------- 视图文件目录
@@ -71,7 +74,7 @@ air
 
 ## 4. 项目开发规范
 #### （1）目录与文件命名
-- 目录名称采用大驼峰命名（首字母大写）
+- 目录名称采用小驼峰命名（首字母小写）
 - .go文件采用大驼峰命名（首字母大写），例如：`User`，`UserController`
 - 配置文件采用大驼峰命名（首字母大写），例如：`SmsConfig.go`
 - .sql文件以更新版本号命名，例如：`init.sql`，`1.0.0.sql`，`1.1.0.sql`
@@ -80,7 +83,7 @@ air
 #### （2）函数、方法、结构体
 - 函数和方法命名可以大驼峰（首字母大写）和小驼峰（首字母小写）命名，具体看业务需求，如果只需在本包调用则小驼峰即可，否则需要大驼峰
 
-- 结构体名称、字段名一律使用大驼峰命名，标签一律使用蛇形命名，示例：
+- 结构体名称、字段名、json标签一律使用大驼峰命名，示例：
 
   ```
   type Users struct {
@@ -95,9 +98,9 @@ air
      Email        string     `json:"email"`
      Introduction string     `json:"introduction"`
      Status       string     `json:"status"`
-     CreatedAt    time.Time  `json:"created_at"`
-     UpdatedAt    time.Time  `json:"updated_at"`
-     DeletedAt    *time.Time `json:"deleted_at" sql:"index"`
+     CreatedAt    time.Time  `json:"createdAt"`
+     UpdatedAt    time.Time  `json:"updatedAt"`
+     DeletedAt    *time.Time `json:"deletedAt" sql:"index"`
   }
   ```
 
@@ -106,7 +109,7 @@ air
 - 常量使用大驼峰命名（首字母大写），例如：`Success`，`TokenNotExit`
 
 #### （4）数据表与字段
-- 数据表名采用前缀_表名的形式，而且表名必须蛇形命名，不能出现大写字母，例如：`fp_user`，`fp_user_role`
+- 数据表名没有前缀，表名不能出现大写字母，建议以蛇形定义，例如：`user`，`user_role`
 - 字段名称采用蛇形命名，不能出现大写字母，例如：`user_id`，`user_name`
 
 ## 5. 编码示例
@@ -146,13 +149,14 @@ func Router(router *gin.RouterGroup) {
 控制器主要负责**数据接收，数据验证，函数调用，响应数据返回**，其他业务逻辑全部在service进行，例如：
 
 ```go
-// Login 用户列表
+// 用户登录
 func Login(ctx *gin.Context) {
-	// 接收gin上下文和请求数据
-	this, data := base.GetParams(ctx)
-	// Response参数可以设置零个或多个
-	this.Response(app.D(userService.Login(userValidate.Login(data))))
-	return
+    // 二次封装上下文
+	context := app.Request{Context: ctx}
+    // 接收数据
+	data := context.Params()
+    // 响应数据，并以json格式返回
+	context.Json(UserService.Login(UserValidate.Login(data)))
 }
 ```
 
