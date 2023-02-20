@@ -1,6 +1,7 @@
 package admin
 
 import (
+	AdminConstant "github.com/herman/app/constants/admin"
 	"github.com/herman/app/repositories"
 	"github.com/herman/app/utils"
 	"github.com/herman/app/validates/role"
@@ -47,6 +48,24 @@ func JoinRole(admin map[string]interface{}, roles []role.Roles) error {
 	return nil
 }
 
-func FindRole(ids []uint) []map[string]interface{} {
-	return []map[string]interface{}{}
+// FindRole 获取角色信息
+// @param uint adminId 管理员ID
+// @return data 返回角色数据
+func FindRole(adminId uint) []map[string]interface{} {
+	info, err := repositories.AdminRole.GetRoles(adminId, []string{"role_key"})
+	if err != nil {
+		panic(AdminConstant.GetRoleFail)
+	}
+	if len(info) == 0 {
+		return nil
+	}
+	for k, v := range info {
+		data, err := repositories.Role.Find(map[string]interface{}{"role": v["role_key"]}, []string{"name"})
+		if err != nil {
+			panic(AdminConstant.GetRoleFail)
+		}
+		info[k]["name"] = data["name"]
+	}
+
+	return info
 }

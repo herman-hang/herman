@@ -16,6 +16,8 @@ func Router(router *gin.RouterGroup) {
 	router.POST("/admin", AdminController.AddAdmin)
 	// 管理员修改
 	router.PUT("/admin", AdminController.ModifyAdmin)
+	// 根据ID查询管理员详情
+	router.GET("/admin", AdminController.FindAdmin)
 
 	// 添加角色
 	router.POST("/role", RoleController.AddRole)

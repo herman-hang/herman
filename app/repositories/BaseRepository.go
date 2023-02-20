@@ -7,7 +7,6 @@ import (
 	"github.com/herman/app/constants"
 	"github.com/herman/app/utils"
 	"github.com/mitchellh/mapstructure"
-	"gorm.io/gorm"
 )
 
 // BaseRepository 公共仓储层
@@ -46,13 +45,19 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 }
 
 // Find 根据ID获取详情
-// @param []uint id 主键ID
+// @param map[string]interface{} condition 查询条件
 // @param []string fields 查询指定字段
 // @return data err 详情数据，错误信息
-func (base *BaseRepository) Find(ids []uint, fields []string) (data map[string]interface{}, err error) {
+func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]string) (data map[string]interface{}, err error) {
 	data = make(map[string]interface{})
-	if err := common.Db.Model(&base.Model).Select(fields).First(data, ids).Error; err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
+	if len(fields) > 0 {
+		if err := common.Db.Model(&base.Model).Where(condition).Select(fields[0]).Find(&data).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err := common.Db.Model(&base.Model).Where(condition).Find(&data).Error; err != nil {
+			return nil, err
+		}
 	}
 	return data, nil
 }

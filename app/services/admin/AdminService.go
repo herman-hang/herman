@@ -110,7 +110,7 @@ func Modify(data map[string]interface{}) {
 // Find 根据ID获取管理员信息
 // @param map[string]interface{} data 前端请求数据
 func Find(data map[string]interface{}) map[string]interface{} {
-	ids := []uint{data["id"].(uint)}
+	id := data["id"].(uint)
 	fields := []string{
 		"id",
 		"user",
@@ -124,14 +124,13 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		"email",
 		"state",
 		"introduction",
-		"role",
 		"sort",
-		"loginOutIp",
-		"loginOutAt",
-		"createdAt",
+		"login_out_ip",
+		"login_out_at",
+		"created_at",
 	}
-	info, err := repositories.Admin.Find(ids, fields)
-	info["roles"] = FindRole(ids)
+	info, err := repositories.Admin.Find(map[string]interface{}{"id": id}, fields)
+	info["roles"] = FindRole(id)
 	if err != nil {
 		panic(AdminConstant.GetAdminInfoFail)
 	}

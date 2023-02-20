@@ -12,5 +12,5 @@ const (
 	AddRoleFail           = "添加角色失败"
 	UpdateFail            = "更新失败"
 	DeleteFail            = "删除角色失败"
-	GetInfoFail           = "获取信息失败"
+	GetRoleFail           = "获取角色信息失败"
 )

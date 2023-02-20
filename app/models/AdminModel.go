@@ -20,11 +20,10 @@ type Admin struct {
 	Email        string         `json:"email" gorm:"column:email;type:varchar(32);comment:邮箱"`
 	Introduction string         `json:"introduction" gorm:"column:introduction;type:text;comment:简介"`
 	State        uint8          `json:"state" gorm:"column:state;type:tinyint(4);default:2;not null;comment:状态(1已停用,2已启用)"`
-	Role         uint8          `json:"role" gorm:"column:role;type:varchar(4);not null;comment:角色英文KEY"`
 	Sort         uint           `json:"sort" gorm:"column:sort;type:uint(1);default:0;not null;comment:排序"`
 	LoginOutIp   string         `json:"loginOutIp" gorm:"column:login_out_ip;type:varchar(32);comment:上一次登录IP地址"`
 	LoginTotal   uint           `json:"loginTotal" gorm:"column:login_total;type:uint(11);default:0;not null;comment:登录总数"`
-	LoginOutAt   string         `json:"loginOutAt" gorm:"column:login_out_at;type:time;default:1970-01-01 00:00:00;comment:上一次登录时间"`
+	LoginOutAt   time.Time      `json:"loginOutAt" gorm:"column:login_out_at;type:time;default:1970-01-01 00:00:00;comment:上一次登录时间"`
 	CreatedAt    time.Time      `json:"createdAt" gorm:"column:created_at;type:time;not null;comment:创建时间"`
 	UpdatedAt    time.Time      `json:"updatedAt" gorm:"column:updated_at;type:time;not null;comment:更新时间"`
 	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;type:time;index;comment:删除时间"`

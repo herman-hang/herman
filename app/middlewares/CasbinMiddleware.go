@@ -12,8 +12,8 @@ import (
 func CheckPermission() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		admin, _ := ctx.Get("admin")
-		waitUse := admin.(*models.Admin)
-		success, _ := common.Casbin.Enforce(waitUse.Role, ctx.Request.URL.Path, ctx.Request.Method)
+		_ = admin.(*models.Admin)
+		success, _ := common.Casbin.Enforce("admin", ctx.Request.URL.Path, ctx.Request.Method)
 		if !success {
 			panic(middlewareConstant.PermissionDenied)
 		}
