@@ -44,3 +44,22 @@ func FindAdmin(ctx *gin.Context) {
 	data := context.Params()
 	context.Json(AdminService.Find(AdminValidate.Find.Check(data)))
 }
+
+// RemoveAdmin 删除管理员
+// @param *gin.Context ctx 上下文
+// @return json
+func RemoveAdmin(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	AdminService.Remove(AdminValidate.Delete.Check(data))
+	context.Json(nil)
+}
+
+// ListAdmin 删除管理员
+// @param *gin.Context ctx 上下文
+// @return json
+func ListAdmin(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	context.Json(AdminService.List(AdminValidate.List.Check(data)))
+}

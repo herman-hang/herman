@@ -18,6 +18,10 @@ func Router(router *gin.RouterGroup) {
 	router.PUT("/admin", AdminController.ModifyAdmin)
 	// 根据ID查询管理员详情
 	router.GET("/admin", AdminController.FindAdmin)
+	// 管理员删除
+	router.DELETE("/admin", AdminController.RemoveAdmin)
+	// 管理员列表
+	router.GET("/admin/list", AdminController.ListAdmin)
 
 	// 添加角色
 	router.POST("/role", RoleController.AddRole)

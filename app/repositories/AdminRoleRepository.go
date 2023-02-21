@@ -29,7 +29,10 @@ func (base AdminRoleRepository) DeleteByAdminId(id uint) error {
 // @param []string fields 查询指定字段
 // @return data 返回角色数据
 func (base AdminRoleRepository) GetRoles(adminId uint, fields []string) (data []map[string]interface{}, err error) {
-	err = common.Db.Model(&base.Model).Where("admin_id = ?", adminId).Select(fields).Find(&data).Error
+	err = common.Db.Model(&base.Model).
+		Select(fields).
+		Joins("JOIN roles ON roles.role = admin_role.role_key AND admin_role.admin_id = ?", adminId).
+		Find(&data).Error
 	if err != nil {
 		return nil, err
 	}

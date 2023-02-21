@@ -52,20 +52,9 @@ func JoinRole(admin map[string]interface{}, roles []role.Roles) error {
 // @param uint adminId 管理员ID
 // @return data 返回角色数据
 func FindRole(adminId uint) []map[string]interface{} {
-	info, err := repositories.AdminRole.GetRoles(adminId, []string{"role_key"})
+	info, err := repositories.AdminRole.GetRoles(adminId, []string{"roles.role", "roles.name"})
 	if err != nil {
 		panic(AdminConstant.GetRoleFail)
 	}
-	if len(info) == 0 {
-		return nil
-	}
-	for k, v := range info {
-		data, err := repositories.Role.Find(map[string]interface{}{"role": v["role_key"]}, []string{"name"})
-		if err != nil {
-			panic(AdminConstant.GetRoleFail)
-		}
-		info[k]["name"] = data["name"]
-	}
-
 	return info
 }

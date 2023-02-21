@@ -109,6 +109,7 @@ func Modify(data map[string]interface{}) {
 
 // Find 根据ID获取管理员信息
 // @param map[string]interface{} data 前端请求数据
+// @return void
 func Find(data map[string]interface{}) map[string]interface{} {
 	id := data["id"].(uint)
 	fields := []string{
@@ -135,4 +136,45 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		panic(AdminConstant.GetAdminInfoFail)
 	}
 	return info
+}
+
+// Remove 删除管理员
+// @param map[string]interface{} data 前端请求数据
+// @return void
+func Remove(data map[string]interface{}) {
+	if err := repositories.Admin.Delete(data["id"].([]uint)); err != nil {
+		panic(AdminConstant.DeleteAdminFail)
+	}
+}
+
+// List 管理员列表
+// @param map[string]interface{} data 前端请求数据
+// @return map[string]interface{} 返回列表数据
+func List(data map[string]interface{}) map[string]interface{} {
+	// 模糊查询条件拼接
+	query := fmt.Sprintf(" user like '%%%s%%'", data["Keywords"])
+	// 查询指定字段
+	fields := []string{
+		"id",
+		"user",
+		"photo",
+		"sort",
+		"state",
+		"phone",
+		"email",
+		"name",
+		"card",
+		"sex",
+		"age",
+		"region",
+		"created_at",
+	}
+	// 排序
+	order := "created_at desc"
+	// 执行查询
+	list, err := repositories.Admin.GetList(query, fields, order, data)
+	if err != nil {
+		panic(AdminConstant.GetAdminListFail)
+	}
+	return list
 }

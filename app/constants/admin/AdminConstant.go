@@ -13,4 +13,6 @@ const (
 	UpdateFail            = "更新失败"
 	DeleteFail            = "删除角色失败"
 	GetRoleFail           = "获取角色信息失败"
+	DeleteAdminFail       = "删除失败"
+	GetAdminListFail      = "获取列表失败"
 )
