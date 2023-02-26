@@ -2,12 +2,12 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app"
-	CaptchaController "github.com/herman/app/controllers/captcha"
-	"github.com/herman/app/middlewares"
-	"github.com/herman/routers/api/admin"
-	"github.com/herman/routers/api/user"
-	"github.com/herman/servers/settings"
+	"github.com/herman-hang/herman/app"
+	CaptchaController "github.com/herman-hang/herman/app/controllers/captcha"
+	"github.com/herman-hang/herman/app/middlewares"
+	"github.com/herman-hang/herman/routers/api/admin"
+	"github.com/herman-hang/herman/routers/api/user"
+	"github.com/herman-hang/herman/servers/settings"
 )
 
 // InitRouter 初始化路由

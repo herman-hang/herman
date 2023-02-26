@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	MiddlewareConstant "github.com/herman/app/constants/middleware"
-	"github.com/herman/app/repositories"
-	"github.com/herman/app/utils"
-	"github.com/herman/servers/settings"
+	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
+	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/app/utils"
+	"github.com/herman-hang/herman/servers/settings"
 	"strings"
 )
 

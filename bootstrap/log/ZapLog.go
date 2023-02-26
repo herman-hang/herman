@@ -3,7 +3,7 @@ package log
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/herman/config"
+	"github.com/herman-hang/herman/config"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

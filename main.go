@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/herman/app/common"
-	"github.com/herman/servers"
-	"github.com/herman/servers/settings"
+	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/servers"
+	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
 )
 

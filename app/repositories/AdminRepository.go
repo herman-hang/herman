@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/herman/app/common"
-	AdminConstant "github.com/herman/app/constants/admin"
-	"github.com/herman/app/models"
+	"github.com/herman-hang/herman/app/common"
+	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
+	"github.com/herman-hang/herman/app/models"
 )
 
 // Admin 实例化结构体并重写BaseRepository

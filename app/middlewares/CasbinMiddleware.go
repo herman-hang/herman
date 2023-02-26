@@ -2,9 +2,9 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app/common"
-	middlewareConstant "github.com/herman/app/constants/middleware"
-	"github.com/herman/app/models"
+	"github.com/herman-hang/herman/app/common"
+	middlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
+	"github.com/herman-hang/herman/app/models"
 )
 
 // CheckPermission 权限检测

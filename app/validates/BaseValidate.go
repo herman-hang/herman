@@ -6,8 +6,8 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	zhTrans "github.com/go-playground/validator/v10/translations/zh"
-	"github.com/herman/app/constants"
-	"github.com/herman/app/utils"
+	"github.com/herman-hang/herman/app/constants"
+	"github.com/herman-hang/herman/app/utils"
 	"github.com/mitchellh/mapstructure"
 	"reflect"
 )

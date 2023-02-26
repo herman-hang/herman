@@ -1,6 +1,6 @@
 package admin
 
-import "github.com/herman/app/validates"
+import "github.com/herman-hang/herman/app/validates"
 
 // Delete 重写验证器结构体，切记不使用引用，而是拷贝
 var Delete = validates.Validates{Validate: DeleteValidate{}}

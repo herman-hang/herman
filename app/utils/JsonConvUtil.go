@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/herman/app/constants"
+	"github.com/herman-hang/herman/app/constants"
 	"regexp"
 	"strconv"
 	"strings"

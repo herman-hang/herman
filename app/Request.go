@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app/constants"
+	"github.com/herman-hang/herman/app/constants"
 	"io/ioutil"
 )
 

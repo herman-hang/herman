@@ -2,8 +2,8 @@ package captcha
 
 import (
 	"fmt"
-	CaptchaConstant "github.com/herman/app/constants/captcha"
-	"github.com/herman/app/utils"
+	CaptchaConstant "github.com/herman-hang/herman/app/constants/captcha"
+	"github.com/herman-hang/herman/app/utils"
 )
 
 // GetCaptcha 获取验证码

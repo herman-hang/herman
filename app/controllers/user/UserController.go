@@ -2,9 +2,9 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app"
-	UserService "github.com/herman/app/services/user"
-	UserValidate "github.com/herman/app/validates/user"
+	"github.com/herman-hang/herman/app"
+	UserService "github.com/herman-hang/herman/app/services/user"
+	UserValidate "github.com/herman-hang/herman/app/validates/user"
 )
 
 // Login 用户登录

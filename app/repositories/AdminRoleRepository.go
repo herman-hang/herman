@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/herman/app/common"
-	"github.com/herman/app/models"
+	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/app/models"
 )
 
 // AdminRole 实例化结构体并重写BaseRepository

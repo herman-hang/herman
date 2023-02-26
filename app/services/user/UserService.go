@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/herman/app/common"
-	UserConstant "github.com/herman/app/constants/user"
-	"github.com/herman/app/repositories"
-	"github.com/herman/app/utils"
+	"github.com/herman-hang/herman/app/common"
+	UserConstant "github.com/herman-hang/herman/app/constants/user"
+	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/app/utils"
 	"time"
 )
 

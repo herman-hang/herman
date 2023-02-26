@@ -3,8 +3,8 @@ package middlewares
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app"
-	"github.com/herman/app/common"
+	"github.com/herman-hang/herman/app"
+	"github.com/herman-hang/herman/app/common"
 	"net/http"
 )
 

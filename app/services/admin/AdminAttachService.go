@@ -1,10 +1,10 @@
 package admin
 
 import (
-	AdminConstant "github.com/herman/app/constants/admin"
-	"github.com/herman/app/repositories"
-	"github.com/herman/app/utils"
-	"github.com/herman/app/validates/role"
+	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
+	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/app/utils"
+	"github.com/herman-hang/herman/app/validates/role"
 )
 
 // FilterPassword 过滤密码数据

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
-	"github.com/herman/app/common"
-	"github.com/herman/servers/settings"
+	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/servers/settings"
 	"time"
 )
 

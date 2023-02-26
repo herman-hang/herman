@@ -2,11 +2,11 @@ package user
 
 import (
 	"fmt"
-	"github.com/herman/app/constants"
-	CaptchaConstant "github.com/herman/app/constants/captcha"
-	"github.com/herman/app/utils"
-	"github.com/herman/app/validates"
-	"github.com/herman/servers/settings"
+	"github.com/herman-hang/herman/app/constants"
+	CaptchaConstant "github.com/herman-hang/herman/app/constants/captcha"
+	"github.com/herman-hang/herman/app/utils"
+	"github.com/herman-hang/herman/app/validates"
+	"github.com/herman-hang/herman/servers/settings"
 	"github.com/mitchellh/mapstructure"
 )
 

@@ -2,8 +2,8 @@ package app
 
 import (
 	"fmt"
-	"github.com/herman/app/constants"
-	"github.com/herman/app/utils"
+	"github.com/herman-hang/herman/app/constants"
+	"github.com/herman-hang/herman/app/utils"
 	"net/http"
 )
 

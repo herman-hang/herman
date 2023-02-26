@@ -1,7 +1,7 @@
 package role
 
 import (
-	"github.com/herman/app/validates"
+	"github.com/herman-hang/herman/app/validates"
 )
 
 // Add 重写验证器结构体，切记不使用引用，而是拷贝

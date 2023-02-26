@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	UserController "github.com/herman/app/controllers/user"
+	UserController "github.com/herman-hang/herman/app/controllers/user"
 )
 
 // Router 用户相关路由

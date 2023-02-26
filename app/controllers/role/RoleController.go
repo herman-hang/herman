@@ -2,9 +2,9 @@ package role
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app"
-	RoleService "github.com/herman/app/services/role"
-	RoleValidate "github.com/herman/app/validates/role"
+	"github.com/herman-hang/herman/app"
+	RoleService "github.com/herman-hang/herman/app/services/role"
+	RoleValidate "github.com/herman-hang/herman/app/validates/role"
 )
 
 // AddRole 添加角色
@@ -17,8 +17,13 @@ func AddRole(ctx *gin.Context) {
 	context.Json(nil)
 }
 
+// ModifyRole 修改角色
+// @param *gin.Context ctx 上下文
+// @return void
 func ModifyRole(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
+	data := context.Params()
+	RoleService.Modify(RoleValidate.Modify.Check(data))
 	context.Json(nil)
 }
 
@@ -27,7 +32,7 @@ func FindRole(ctx *gin.Context) {
 	context.Json(nil)
 }
 
-func DeleteRole(ctx *gin.Context) {
+func RemoveRole(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	context.Json(nil)
 }

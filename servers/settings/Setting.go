@@ -3,7 +3,7 @@ package settings
 import (
 	"github.com/fsnotify/fsnotify"
 	_ "github.com/gin-gonic/gin"
-	"github.com/herman/config"
+	"github.com/herman-hang/herman/config"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )

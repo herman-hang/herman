@@ -1,4 +1,4 @@
-module github.com/herman
+module github.com/herman-hang/herman
 
 go 1.18
 

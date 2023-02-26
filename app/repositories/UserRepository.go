@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/herman/app/common"
-	UserConstant "github.com/herman/app/constants/user"
-	"github.com/herman/app/models"
+	"github.com/herman-hang/herman/app/common"
+	UserConstant "github.com/herman-hang/herman/app/constants/user"
+	"github.com/herman-hang/herman/app/models"
 	"gorm.io/gorm"
 )
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/herman/config"
+	"github.com/herman-hang/herman/config"
 	"time"
 )
 

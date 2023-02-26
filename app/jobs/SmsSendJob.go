@@ -3,9 +3,9 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/herman/app/common"
-	SmsConstant "github.com/herman/app/constants/sms"
-	"github.com/herman/servers/settings"
+	"github.com/herman-hang/herman/app/common"
+	SmsConstant "github.com/herman-hang/herman/app/constants/sms"
+	"github.com/herman-hang/herman/servers/settings"
 	"io"
 	"io/ioutil"
 	"net/http"

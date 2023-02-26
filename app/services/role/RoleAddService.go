@@ -1,11 +1,12 @@
 package role
 
 import (
+	"errors"
 	"fmt"
-	"github.com/herman/app/common"
-	RoleConstant "github.com/herman/app/constants/role"
-	"github.com/herman/app/repositories"
-	"github.com/herman/app/validates/role"
+	"github.com/herman-hang/herman/app/common"
+	RoleConstant "github.com/herman-hang/herman/app/constants/role"
+	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/app/validates/role"
 )
 
 // AddPolicies 角色添加策略
@@ -16,10 +17,14 @@ import (
 func AddPolicies(roles []role.Roles, rules []role.Rules, roleInfo map[string]interface{}) error {
 	// 添加继承父角色
 	if roles != nil && len(roles) != RoleConstant.ProleNotExist {
-		extendRoles := extend(roles, roleInfo)
-		// 添加角色
-		if _, err := common.Casbin.AddGroupingPolicies(extendRoles); err != nil {
+		// 判断父角色是否存在
+		addExtendRoles, err := extend(roles, roleInfo)
+		if err != nil {
 			return err
+		}
+		// 添加角色
+		if _, err := common.Casbin.AddGroupingPolicies(addExtendRoles); err != nil {
+			return errors.New(RoleConstant.AddFail)
 		}
 	}
 	// 添加策略规则
@@ -27,27 +32,27 @@ func AddPolicies(roles []role.Roles, rules []role.Rules, roleInfo map[string]int
 		newRole := roleInfo["role"].(string)
 		for _, v := range rules {
 			if _, err := common.Casbin.AddPolicy(newRole, v.Path, v.Method); err != nil {
-				return err
+				return errors.New(fmt.Sprintf(RoleConstant.AddRulesFail, v.Name))
 			}
 		}
 	}
 	return nil
 }
 
-// extend 判断角色是否存在
+// extend 判断父角色是否存在
 // @param []role.Roles data 角色数据
 // @param map[string]interface{} roleInfo 当前新增的角色数据
-// @return roles 返回一位数组的角色继承关系
-func extend(data []role.Roles, roleInfo map[string]interface{}) (roles [][]string) {
+// @return roles err 返回一位数组的角色继承关系，错误信息
+func extend(data []role.Roles, roleInfo map[string]interface{}) (roles [][]string, err error) {
 	var newRole = roleInfo["role"].(string)
 	for _, v := range data {
 		prole := v.Role
 		isExist, _ := repositories.Role.KeyIsExist(prole)
 		if !isExist {
-			panic(fmt.Sprintf(RoleConstant.NotExist, prole))
+			return nil, errors.New(fmt.Sprintf(RoleConstant.PRoleNotExist, prole))
 		}
 		roles = append(roles, []string{newRole, prole})
 	}
 
-	return roles
+	return roles, nil
 }

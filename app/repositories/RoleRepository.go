@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/herman/app/common"
-	"github.com/herman/app/constants"
-	"github.com/herman/app/models"
+	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/app/constants"
+	"github.com/herman-hang/herman/app/models"
 )
 
 var Role = RoleRepository{BaseRepository{Model: new(models.Role)}}

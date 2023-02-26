@@ -2,11 +2,11 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app/common"
-	CasbinServer "github.com/herman/bootstrap/casbin"
-	"github.com/herman/bootstrap/mysql"
-	RedisServer "github.com/herman/bootstrap/redis"
-	"github.com/herman/servers/settings"
+	"github.com/herman-hang/herman/app/common"
+	CasbinServer "github.com/herman-hang/herman/bootstrap/casbin"
+	"github.com/herman-hang/herman/bootstrap/mysql"
+	RedisServer "github.com/herman-hang/herman/bootstrap/redis"
+	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
 )
 

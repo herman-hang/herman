@@ -2,14 +2,14 @@ package admin
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman/app"
-	AdminService "github.com/herman/app/services/admin"
-	AdminValidate "github.com/herman/app/validates/admin"
+	"github.com/herman-hang/herman/app"
+	AdminService "github.com/herman-hang/herman/app/services/admin"
+	AdminValidate "github.com/herman-hang/herman/app/validates/admin"
 )
 
 // Login 管理员登录
 // @param *gin.Context ctx 上下文
-// @return json
+// @return void
 func Login(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
@@ -18,7 +18,7 @@ func Login(ctx *gin.Context) {
 
 // AddAdmin 管理员添加
 // @param *gin.Context ctx 上下文
-// @return json
+// @return void
 func AddAdmin(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
@@ -28,7 +28,7 @@ func AddAdmin(ctx *gin.Context) {
 
 // ModifyAdmin 管理员修改
 // @param *gin.Context ctx 上下文
-// @return json
+// @return void
 func ModifyAdmin(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
@@ -38,7 +38,7 @@ func ModifyAdmin(ctx *gin.Context) {
 
 // FindAdmin 根据ID查询管理员详情
 // @param *gin.Context ctx 上下文
-// @return json
+// @return void
 func FindAdmin(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
@@ -47,7 +47,7 @@ func FindAdmin(ctx *gin.Context) {
 
 // RemoveAdmin 删除管理员
 // @param *gin.Context ctx 上下文
-// @return json
+// @return void
 func RemoveAdmin(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
@@ -57,7 +57,7 @@ func RemoveAdmin(ctx *gin.Context) {
 
 // ListAdmin 删除管理员
 // @param *gin.Context ctx 上下文
-// @return json
+// @return void
 func ListAdmin(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()

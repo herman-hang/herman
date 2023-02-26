@@ -2,8 +2,8 @@ package admin
 
 import (
 	"github.com/gin-gonic/gin"
-	AdminController "github.com/herman/app/controllers/admin"
-	RoleController "github.com/herman/app/controllers/role"
+	AdminController "github.com/herman-hang/herman/app/controllers/admin"
+	RoleController "github.com/herman-hang/herman/app/controllers/role"
 )
 
 // Router 后台相关路由
@@ -26,7 +26,7 @@ func Router(router *gin.RouterGroup) {
 	// 添加角色
 	router.POST("/role", RoleController.AddRole)
 	// 删除角色
-	router.DELETE("/role", RoleController.DeleteRole)
+	router.DELETE("/role", RoleController.RemoveRole)
 	// 修改角色
 	router.PUT("/role", RoleController.ModifyRole)
 	// 根据ID获取角色详情

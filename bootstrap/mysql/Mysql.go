@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"fmt"
-	"github.com/herman/config"
+	"github.com/herman-hang/herman/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"time"
