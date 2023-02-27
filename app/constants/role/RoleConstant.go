@@ -10,4 +10,6 @@ const (
 	ModifyFail    = "修改失败"
 	NotExist      = "角色不存在"
 	DeleteFail    = "删除角色失败"
+	FindFail      = "获取角色信息失败"
+	GetListFail   = "获取列表失败"
 )

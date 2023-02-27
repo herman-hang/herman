@@ -32,5 +32,5 @@ func Router(router *gin.RouterGroup) {
 	// 根据ID获取角色详情
 	router.GET("/role", RoleController.FindRole)
 	// 角色列表
-	router.GET("/roles", RoleController.ListRole)
+	router.GET("/role/list", RoleController.ListRole)
 }

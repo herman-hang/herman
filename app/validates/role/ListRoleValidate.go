@@ -1,4 +1,4 @@
-package admin
+package role
 
 import "github.com/herman-hang/herman/app/validates"
 

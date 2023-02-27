@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// Menus 菜单表结构体
-type Menus struct {
+// Menu 菜单表结构体
+type Menu struct {
 	Id        uint           `json:"id" gorm:"column:id;type:uint(11);primary_key;not null;comment:菜单ID"`
 	Pid       uint           `json:"pid" gorm:"column:pid;type:uint(11);not null;comment:菜单PID"`
 	Name      string         `json:"name" gorm:"column:name;type:varchar(20);not null;comment:菜单名称"`
@@ -20,6 +20,6 @@ type Menus struct {
 }
 
 // TableName 设置菜单表名
-func (Menus) TableName() string {
+func (Menu) TableName() string {
 	return "menus"
 }

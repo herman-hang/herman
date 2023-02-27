@@ -27,17 +27,31 @@ func ModifyRole(ctx *gin.Context) {
 	context.Json(nil)
 }
 
+// FindRole 根据ID获取角色详情
+// @param *gin.Context ctx 上下文
+// @return void
 func FindRole(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
-	context.Json(nil)
+	data := context.Params()
+	context.Json(RoleService.Find(RoleValidate.Find.Check(data)))
 }
 
+// RemoveRole 删除角色
+// @param *gin.Context ctx 上下文
+// @return void
 func RemoveRole(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
+	data := context.Params()
+	RoleService.Remove(RoleValidate.Delete.Check(data))
 	context.Json(nil)
 }
 
+// ListRole 角色列表
+// @param *gin.Context ctx 上下文
+// @return void
 func ListRole(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
-	context.Json(nil)
+	data := context.Params()
+	RoleService.List(data)
+	context.Json(RoleService.List(RoleValidate.List.Check(data)))
 }

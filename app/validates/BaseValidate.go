@@ -17,6 +17,13 @@ type Validates struct {
 	Validate interface{}
 }
 
+// ListValidate 管理员列表验证规则
+type ListValidate struct {
+	Page     uint   `json:"page" validate:"numeric" label:"页码"`
+	PageSize uint   `json:"pageSize" validate:"numeric" label:"每页大小"`
+	Keywords string `json:"keywords" validate:"omitempty,max=20" label:"每页大小"`
+}
+
 // Check 验证方法
 // @param map[string]interface{} data 待验证数据
 // @return void

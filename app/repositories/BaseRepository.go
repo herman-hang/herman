@@ -41,7 +41,7 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 	return toMap, nil
 }
 
-// Find 根据ID获取详情
+// Find 根据查询条件获取详情
 // @param map[string]interface{} condition 查询条件
 // @param []string fields 查询指定字段
 // @return data err 详情数据，错误信息

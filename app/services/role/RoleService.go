@@ -2,6 +2,7 @@ package role
 
 import (
 	"errors"
+	"fmt"
 	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/app/constants"
 	RoleConstant "github.com/herman-hang/herman/app/constants/role"
@@ -78,4 +79,84 @@ func Modify(data map[string]interface{}) {
 	if err != nil {
 		panic(err.Error())
 	}
+}
+
+// Find 根据ID获取角色详情
+// @param map[string]interface{} data 带处理数据
+// @return void
+func Find(data map[string]interface{}) map[string]interface{} {
+	// 查询角色信息
+	fields := []string{"id", "name", "role", "state", "introduction"}
+	roleInfo, err := repositories.Role.Find(map[string]interface{}{"id": data["id"]}, fields)
+	if err != nil {
+		panic(RoleConstant.FindFail)
+	}
+	roles, err := common.Casbin.GetRolesForUser(roleInfo["role"].(string))
+	if err != nil {
+		panic(RoleConstant.FindFail)
+	}
+	roleInfo["roles"], err = repositories.Role.FindRoles(roles)
+	if err != nil {
+		panic(RoleConstant.FindFail)
+	}
+	// 查询菜单
+	roleInfo["rules"], err = repositories.Menu.GetAllData([]string{"path", "method", "name"})
+	if err != nil {
+		panic(RoleConstant.FindFail)
+	}
+	return roleInfo
+}
+
+// Remove 删除角色
+// @param map[string]interface{} data 带处理数据
+// @return void
+func Remove(data map[string]interface{}) {
+	fmt.Println(data)
+	err := common.Db.Transaction(func(tx *gorm.DB) error {
+		common.Db = tx
+		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
+		// 查询角色信息
+		for _, id := range data["id"].([]uint) {
+			roleInfo, err := repositories.Role.Find(map[string]interface{}{"id": id}, []string{"id", "role"})
+			if err != nil {
+				return errors.New(RoleConstant.DeleteFail)
+			}
+			if err := repositories.Role.Delete([]uint{id}); err != nil {
+				return errors.New(RoleConstant.DeleteFail)
+			}
+			// 删除所有角色和权限
+			if err := DeleteRole(roleInfo); err != nil {
+				return errors.New(RoleConstant.DeleteFail)
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+// List 角色列表
+// @param map[string]interface{} data 带处理数据
+// @return void
+func List(data map[string]interface{}) map[string]interface{} {
+	// 模糊查询条件拼接
+	query := fmt.Sprintf(" role like '%%%s%%' or name like '%%%s%%'", data["keywords"], data["keywords"])
+	fields := []string{
+		"id",
+		"name",
+		"role",
+		"state",
+		"sort",
+		"introduction",
+		"created_at",
+	}
+	// 排序
+	order := "created_at desc"
+	list, err := repositories.Role.GetList(query, fields, order, data)
+	if err != nil {
+		panic(RoleConstant.GetListFail)
+	}
+	return list
 }
