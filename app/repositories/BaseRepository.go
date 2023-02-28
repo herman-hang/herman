@@ -146,10 +146,10 @@ func (base *BaseRepository) GetAllData(fields []string) (data []map[string]inter
 		if err := common.Db.Model(&base.Model).Select(fields).Find(&data).Error; err != nil {
 			return nil, err
 		}
-	}
-
-	if err := common.Db.Model(&base.Model).Find(&data).Error; err != nil {
-		return nil, err
+	} else {
+		if err := common.Db.Model(&base.Model).Find(&data).Error; err != nil {
+			return nil, err
+		}
 	}
 	return data, nil
 }

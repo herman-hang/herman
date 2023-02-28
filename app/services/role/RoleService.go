@@ -100,10 +100,20 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		panic(RoleConstant.FindFail)
 	}
 	// 查询菜单
-	roleInfo["rules"], err = repositories.Menu.GetAllData([]string{"path", "method", "name"})
+	rules, err := repositories.Menu.GetAllData([]string{"path", "method", "name"})
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
+	for i, rule := range rules {
+		enforce, _ := common.Casbin.Enforce(roleInfo["role"].(string), rule["path"], rule["method"])
+		fmt.Println(rule["path"].(string))
+		if enforce {
+			rules[i]["isPermission"] = RoleConstant.HaveAuthority
+		} else {
+			rules[i]["isPermission"] = RoleConstant.NotHaveAuthority
+		}
+	}
+	roleInfo["rules"] = rules
 	return roleInfo
 }
 
