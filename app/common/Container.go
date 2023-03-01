@@ -18,10 +18,8 @@ var (
 )
 
 // NewContainer 全局容器
-// @param *gin.Engine engine 上下文
+// @param *gin.Engine engine Engine
 // @param *zap.SugaredLogger log 日志对象
-// @param *gorm.DB db DB对象
-// @param *redis.Client redis Redis对象
 func NewContainer(
 	engine *gin.Engine,
 	log *zap.SugaredLogger,

@@ -4,7 +4,7 @@ app_name: herman
 version: 1.0.0
 # 路由前缀
 app_prefix: /api/v1
-# 应用运行环境模式
+# 应用运行环境模式(develop/test/product)
 mode: test
 # 应用服务启动端口号
 port: 7777

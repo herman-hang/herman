@@ -16,31 +16,32 @@ import (
 // @param string mode 当前应用运行模式
 // @return err error 返回错误信息
 func InitZapLogs(config *config.LogConfig, mode string) (err error) {
+	var (
+		level = new(zapcore.Level)
+		core  zapcore.Core
+	)
 	// writers
 	writersSyncers := GetLoggerWriter(config)
-	// encoder
+	// 将日志消息编码为指定的格式
 	encoders := GetEncoder()
-	// 定义接受的l
-	var l = new(zapcore.Level)
-	err = l.UnmarshalText([]byte(config.Level))
-	if err != nil {
+	if err = level.UnmarshalText([]byte(config.Level)); err != nil {
 		return err
 	}
-	var core zapcore.Core
 	if mode == "test" {
 		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		// 将多个 zapcore.Core 对象合并成一个
 		core = zapcore.NewTee(
-			zapcore.NewCore(encoders, writersSyncers, l),
+			zapcore.NewCore(encoders, writersSyncers, level),
 			zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), zapcore.DebugLevel),
 		)
 	} else {
-		core = zapcore.NewCore(encoders, writersSyncers, l)
+		core = zapcore.NewCore(encoders, writersSyncers, level)
 	}
 
-	lg := zap.New(core, zap.AddCaller())
+	logger := zap.New(core, zap.AddCaller())
 	// 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
-	zap.ReplaceGlobals(lg)
-	return
+	zap.ReplaceGlobals(logger)
+	return nil
 
 }
 
@@ -56,10 +57,11 @@ func GetLoggerWriter(config *config.LogConfig) zapcore.WriteSyncer {
 		LocalTime:  config.LocalTime,
 		Compress:   config.Compress,
 	}
-	return zapcore.AddSync(lumberLoggers)
+	// zapcore.Lock() 确保多个 goroutine 同时写入日志时不会出现并发问题
+	return zapcore.Lock(zapcore.AddSync(lumberLoggers))
 }
 
-// GetEncoder return encoders
+// GetEncoder 将日志消息编码为指定的格式
 // @return zapcore.Encoder 返回Encoder
 func GetEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
@@ -75,9 +77,8 @@ func GetEncoder() zapcore.Encoder {
 // @return gin.HandlerFunc 返回中间件上下文
 func GinLogger() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		path := ctx.Request.URL.Path
 		ctx.Next()
-
+		path := ctx.Request.URL.Path
 		zap.L().Info(path,
 			zap.Int("status", ctx.Writer.Status()),
 			zap.String("method", ctx.Request.Method),
