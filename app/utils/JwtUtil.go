@@ -8,6 +8,7 @@ import (
 	"github.com/herman-hang/herman/app/common"
 	UserConstant "github.com/herman-hang/herman/app/constants/user"
 	"github.com/herman-hang/herman/servers/settings"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -46,13 +47,12 @@ func JwtVerify(ctx *gin.Context, guard string) *Claims {
 	token := ctx.GetHeader("Authorization")
 
 	if len(token) == UserConstant.LengthByZero {
-		panic(UserConstant.TokenNotExit)
+		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenNotExit})
 	}
 
 	parts := strings.SplitN(token, " ", UserConstant.SplitByTwo)
-
 	if !(len(parts) == UserConstant.SplitByTwo && parts[0] == "Bearer") {
-		panic(UserConstant.TokenError)
+		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenError})
 	}
 
 	return ParseToken(parts[1], ctx, guard)
@@ -69,13 +69,13 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 		return []byte(settings.Config.JwtConfig.JwtSecret), nil
 	})
 	if !token.Valid || err != nil {
-		panic(UserConstant.TokenExpires)
+		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenExpires})
 	}
 
 	claims, ok := token.Claims.(*Claims)
 
 	if !ok || claims.Guard != guard {
-		panic(UserConstant.TokenNotValid)
+		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenNotValid})
 	}
 
 	timeRecord := claims.ExpiresAt - time.Now().Unix()
@@ -83,7 +83,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 	if (timeRecord / 60) < UserConstant.Minute {
 		ttl, err := common.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user_token:", claims.Uid)).Result()
 		if err != nil {
-			panic(UserConstant.TokenRefreshFail)
+			panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenRefreshFail})
 		}
 
 		// 如果redis的有效期大于10分钟，说明已经刷新token，直接返回即可，避免再一次签发token
@@ -91,7 +91,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 			return claims
 		}
 
-		newToken := Refresh(token)
+		newToken := Refresh(token, ctx)
 		ctx.Header("x-new-token", newToken)
 
 		err = common.Redis.Set(context.Background(),
@@ -99,7 +99,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 			newToken,
 			time.Duration(timeRecord)*time.Second).Err()
 		if err != nil {
-			panic(UserConstant.TokenSaveFail)
+			panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenSaveFail})
 		}
 	}
 
@@ -108,15 +108,16 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 
 // Refresh 更新token
 // @param *jwt.Token token Token实例
+// @param *gin.Context ctx 上下文
 // @return newToken 返回新token
-func Refresh(token *jwt.Token) (newToken string) {
+func Refresh(token *jwt.Token, ctx *gin.Context) (newToken string) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)
 	}
 
 	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
-		panic(UserConstant.TokenNotValid)
+		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenNotValid})
 	}
 
 	jwt.TimeFunc = time.Now
@@ -125,7 +126,7 @@ func Refresh(token *jwt.Token) (newToken string) {
 	newToken = GenerateToken(claims)
 
 	if len(newToken) == UserConstant.LengthByZero {
-		panic(UserConstant.TokenRefreshFail)
+		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenRefreshFail})
 	}
 
 	return newToken

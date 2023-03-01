@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
-	"github.com/herman-hang/herman/app/common"
 	"net/http"
 )
 
@@ -12,14 +11,16 @@ import (
 // @return gin.HandlerFunc 返回一个中间件上下文
 func CatchError() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		response := &app.Request{Context: ctx}
+		context := app.Request{Context: ctx}
 		defer func() {
-			if err := recover(); err != nil {
-				errorMessage := fmt.Sprintf("%s", err)
-				// 日志记录
-				common.Log.Errorf(errorMessage)
-				// 没有定义
-				response.Success(app.C(http.StatusInternalServerError), app.M(errorMessage))
+			if data := recover(); data != nil {
+				switch data.(type) {
+				case string:
+					context.Json(nil, http.StatusInternalServerError, fmt.Sprintf("%s", data))
+				case map[string]interface{}:
+					data := data.(map[string]interface{})
+					context.Json(nil, data["code"], data["message"])
+				}
 				ctx.Abort()
 			}
 		}()

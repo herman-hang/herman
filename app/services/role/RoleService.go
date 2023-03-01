@@ -152,7 +152,7 @@ func Remove(data map[string]interface{}) {
 // @return void
 func List(data map[string]interface{}) map[string]interface{} {
 	// 模糊查询条件拼接
-	query := fmt.Sprintf(" role like '%%%s%%' or name like '%%%s%%'", data["keywords"], data["keywords"])
+	query := fmt.Sprintf(" role like '%%%s' or name like '%%%s'", data["keywords"], data["keywords"])
 	fields := []string{
 		"id",
 		"name",

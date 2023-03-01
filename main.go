@@ -18,7 +18,6 @@ func main() {
 	if err != nil {
 		zap.S().Fatalf("New Server falied: %v\n", err)
 	}
-
 	common.NewContainer(s.Engine, s.Log)
 
 	s.Run()
