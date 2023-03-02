@@ -13,12 +13,13 @@ func main() {
 	if err := settings.InitConfig(); err != nil {
 		zap.S().Fatalf("Init Config falied: %v\n", err)
 	}
-
+	// 初始化服务
 	s, err := servers.NewServer(settings.Config)
 	if err != nil {
 		zap.S().Fatalf("New Server falied: %v\n", err)
 	}
+	// 初始化容器
 	common.NewContainer(s.Engine, s.Log)
-
+	// 启动服务
 	s.Run()
 }

@@ -6,12 +6,16 @@ type AppConfig struct {
 	AppName string `mapstructure:"app_name"`
 	// 路由前缀
 	AppPrefix string `mapstructure:"app_prefix"`
-	// 应用版本（格式：主版本.子版本.修订版本）
-	Version string `mapstructure:"version"`
+	// 时区
+	Timezone string `mapstructure:"timezone"`
 	// 应用运行模式
 	Mode string `mapstructure:"mode"`
+	// 启动服务IP地址
+	Host string `mapstructure:"host"`
 	// 应用启动端口
 	Port int `mapstructure:"port"`
+	// 语言
+	Language string `mapstructure:"language"`
 	// mysql配置信息
 	*MysqlConfig `mapstructure:"mysql"`
 	// redis配置信息

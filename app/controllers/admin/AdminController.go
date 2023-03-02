@@ -13,7 +13,7 @@ import (
 func Login(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(AdminService.Login(AdminValidate.Login(data)), 500, "请求失败")
+	context.Json(AdminService.Login(AdminValidate.Login(data)))
 }
 
 // AddAdmin 管理员添加

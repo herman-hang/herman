@@ -89,5 +89,4 @@ func (r *Request) Json(data interface{}, args ...interface{}) {
 	}
 	// 响应http请求
 	r.Context.Data(http.StatusOK, "application/json", jsonString)
-	return
 }

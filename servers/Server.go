@@ -56,7 +56,7 @@ func ZapLogs(config *config.AppConfig) *zap.SugaredLogger {
 func (s *Server) Run() {
 	// 初始化路由
 	routers.InitRouter(s.Engine)
-	serverAddr := fmt.Sprintf("%s:%d", "127.0.0.1", s.Config.Port)
+	serverAddr := fmt.Sprintf("%s:%d", s.Config.Host, s.Config.Port)
 	s.Log.Infof("Server Start on Address: %v", serverAddr)
 	server := &http.Server{
 		Addr:    serverAddr,

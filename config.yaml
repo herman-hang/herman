@@ -1,13 +1,17 @@
 # 应用名称
 app_name: herman
-# 应用版本号
-version: 1.0.0
-# 路由前缀
-app_prefix: /api/v1
 # 应用运行环境模式(develop/test/product)
 mode: test
+# 启动服务IP地址
+host: 0.0.0.0
 # 应用服务启动端口号
 port: 7777
+# 时区
+timezone: Asia/Shanghai
+# 路由前缀
+app_prefix: /api/v1
+# 语言
+language: zh-CN
 
 # 数据库配置
 mysql:
@@ -64,6 +68,7 @@ log:
   local_time: true
   # 对backup的日志是否进行压缩，默认不压缩
   compress: true
+
 # JWT配置
 jwt:
   # token的SECRET
