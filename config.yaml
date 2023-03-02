@@ -2,10 +2,6 @@
 app_name: herman
 # 应用运行环境模式(develop/test/product)
 mode: test
-# 启动服务IP地址
-host: 0.0.0.0
-# 应用服务启动端口号
-port: 7777
 # 时区
 timezone: Asia/Shanghai
 # 路由前缀

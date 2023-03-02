@@ -14,7 +14,8 @@ import (
 // @return gin.HandlerFunc
 func ServerHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		Reload(ctx)
+		common.Context = ctx
+		Reload()
 		ctx.Next()
 		Close()
 	}
@@ -22,7 +23,7 @@ func ServerHandler() gin.HandlerFunc {
 
 // Reload 加载服务函数
 // @return void
-func Reload(ctx *gin.Context) {
+func Reload() {
 	// 连接Mysql
 	db, err := mysql.InitGormDatabase(settings.Config.MysqlConfig)
 	if err != nil {
@@ -41,7 +42,7 @@ func Reload(ctx *gin.Context) {
 		zap.S().Fatalf("The Casbin initialization failed:%v", err)
 	}
 
-	common.Db, common.Redis, common.Casbin, common.Context = db, rdb, cachedEnforcer, ctx
+	common.Db, common.Redis, common.Casbin = db, rdb, cachedEnforcer
 }
 
 // Close 释放服务函数

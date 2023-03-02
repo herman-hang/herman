@@ -11,24 +11,21 @@ import (
 var Config = new(config.AppConfig)
 
 // InitConfig 初始化配置
-// @return err 返回错误信息
-func InitConfig() (err error) {
+// @return void
+func InitConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./")
-	if err = viper.ReadInConfig(); err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		zap.S().Fatalf("viper ReadInConfig failed, err: %v\n", err)
-		return err
 	}
 
-	if err = viper.Unmarshal(&Config); err != nil {
+	if err := viper.Unmarshal(&Config); err != nil {
 		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
 	}
 
 	viper.WatchConfig()
 	viper.OnConfigChange(ReloadConfig)
-
-	return
 }
 
 // ReloadConfig 加载配置回调

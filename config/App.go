@@ -10,10 +10,6 @@ type AppConfig struct {
 	Timezone string `mapstructure:"timezone"`
 	// 应用运行模式
 	Mode string `mapstructure:"mode"`
-	// 启动服务IP地址
-	Host string `mapstructure:"host"`
-	// 应用启动端口
-	Port int `mapstructure:"port"`
 	// 语言
 	Language string `mapstructure:"language"`
 	// mysql配置信息
