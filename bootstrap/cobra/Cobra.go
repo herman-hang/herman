@@ -14,7 +14,12 @@ var rootCmd = &cobra.Command{Use: "herman"}
 // 注册命令行
 func init() {
 	// 执行命令前初始化操作
-	cobra.OnInitialize(settings.InitConfig, middlewares.Reload)
+	cobra.OnInitialize(settings.InitConfig, func() {
+		if command.IsMigrate {
+			// 数据库迁移
+			_ = command.Migrate("up")
+		}
+	}, middlewares.Reload)
 	// 启动服务命令注册
 	rootCmd.AddCommand(command.StartServerCmd)
 	// 注册数据库迁移

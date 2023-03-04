@@ -54,7 +54,16 @@ func Run(host string, port uint) {
 	// 初始化路由
 	routers.InitRouter(common.Engine)
 	serverAddr := fmt.Sprintf("%s:%d", host, port)
-	common.Log.Infof("Server Start on Address: %v", serverAddr)
+	common.Log.Infof(`
+  _    _                                 
+ | |  | |                                
+ | |__| | ___ _ __ _ __ ___   __ _ _ __  
+ |  __  |/ _ \ '__| '_ ' _ \ / _' | '_ \ 
+ | |  | |  __/ |  | | | | | | (_| | | | |
+ |_|  |_|\___|_|  |_| |_| |_|\__,_|_| |_|
+                                         
+ Server start on address: %v
+`, serverAddr)
 	server := &http.Server{
 		Addr:    serverAddr,
 		Handler: common.Engine,

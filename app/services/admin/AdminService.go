@@ -67,7 +67,7 @@ func Add(data map[string]interface{}) {
 		return nil
 	})
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 }
 
@@ -103,7 +103,7 @@ func Modify(data map[string]interface{}) {
 		return nil
 	})
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 }
 

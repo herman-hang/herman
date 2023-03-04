@@ -6,6 +6,11 @@ var ExcludeRoute = map[string]string{
 	"/admin/login": "post",
 }
 
+// ExcludeAuth 校验tokan，但不检查权限的路由
+var ExcludeAuth = map[string]string{
+	"/admin/index": "get",
+}
+
 const (
 	GuardError = "Guard错误"
 )
