@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/fatih/color"
 	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/servers/settings"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -32,7 +34,7 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 	// 关闭连接
 	defer func(producer sarama.SyncProducer) {
 		if err := producer.Close(); err != nil {
-			common.Log.Errorf("Close Producer err: %v", err)
+			zap.S().Error(color.RedString(fmt.Sprintf("Close producer err: %v", err)))
 			return
 		}
 	}(producer)
@@ -47,7 +49,7 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 func Send(topic string, data map[string]interface{}) {
 	syncProducer, err := newSyncProducer()
 	if err != nil {
-		common.Log.Errorf("New Sync Producer failed, err:%v", err)
+		zap.S().Error(color.RedString(fmt.Sprintf("New sync producer failed, err:%v", err)))
 		return
 	}
 
@@ -56,7 +58,7 @@ func Send(topic string, data map[string]interface{}) {
 	// 生产失败的时候返回error
 	partition, offset, err := syncProducer.SendMessage(getProducerMessageStruct(topic, data))
 	if err != nil {
-		common.Log.Errorf("Producer send message failed, err:%v", err)
+		zap.S().Error(color.RedString(fmt.Sprintf("Producer send message failed, err:%v", err)))
 		return
 	}
 	common.Log.Infof("Partition = %d, offset=%d\n", partition, offset)
@@ -70,7 +72,7 @@ func getProducerMessageStruct(topic string, data map[string]interface{}) (messag
 	var timestamp time.Time
 	jsonString, err := json.Marshal(data)
 	if err != nil {
-		common.Log.Errorf("Producer json failed, err:%v", err)
+		zap.S().Error(color.RedString(fmt.Sprintf("Producer json failed, err:%v", err)))
 		return
 	}
 

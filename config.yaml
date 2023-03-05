@@ -1,7 +1,7 @@
 # 应用名称
 app_name: herman
-# 应用运行环境模式(develop/test/product)
-mode: test
+# 应用运行环境模式(debug/test/release)
+mode: debug
 # 时区
 timezone: Asia/Shanghai
 # 路由前缀
@@ -51,7 +51,7 @@ kafka:
 # 日志配置
 log:
   # 日志级别模式
-  level: debug
+  level: info
   # 日志文件名
   filename: herman.log
   # 单个日志文件大小(MB)，日志大小到达max_size就开始backup
@@ -67,8 +67,8 @@ log:
 
 # JWT配置
 jwt:
-  # token的SECRET
-  jwt_secret: coTnkidMZBSNdoQPStGYMlLndWym86c5b7LXhHd3RgFn44AY9a4ERZYQepBvHXAc
+  # token的SECRET 可以执行herman jwt:secret命令随机生成
+  secret: M78ZSb4dDgdIj8GYLrFNDEi4Lh4bJtXzinlw2IVHgQY=
   # token有效时间（单位：小时）
   effect_time: 2
 

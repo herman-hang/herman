@@ -23,7 +23,10 @@ var (
 
 // init 命令参数绑定
 func init() {
+	// 绑定服务IP地址
 	StartServerCmd.Flags().StringVarP(&host, "host", "H", "127.0.0.1", "HTTP server host")
+	// 绑定服务端口
 	StartServerCmd.Flags().UintVarP(&port, "port", "p", 8000, "HTTP server port")
+	// 绑定服务启动时是否需要进行数据迁移
 	StartServerCmd.Flags().BoolVarP(&IsMigrate, "migrate", "m", false, "Whether to migrate the database")
 }

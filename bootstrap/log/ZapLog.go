@@ -27,7 +27,7 @@ func InitZapLogs(config *config.LogConfig, mode string) (err error) {
 	if err = level.UnmarshalText([]byte(config.Level)); err != nil {
 		return err
 	}
-	if mode == "test" {
+	if mode == "debug" {
 		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 		// 将多个 zapcore.Core 对象合并成一个
 		core = zapcore.NewTee(

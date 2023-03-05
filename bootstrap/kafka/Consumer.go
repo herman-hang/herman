@@ -3,8 +3,10 @@ package kafka
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/fatih/color"
 	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/servers/settings"
+	"go.uber.org/zap"
 	"sync"
 )
 
@@ -23,13 +25,13 @@ func (k *Consumer) Consume() {
 		settings.Config.KafkaConfig.Port,
 	)}, config)
 	if err != nil {
-		common.Log.Errorf("New Consumer err: %v", err)
+		zap.S().Error(color.RedString(fmt.Sprintf("New consumer err: %v", err)))
 		return
 	}
 
 	defer func(consumer sarama.Consumer) {
 		if err := consumer.Close(); err != nil {
-			common.Log.Error("Close Consumer err: %v", err)
+			zap.S().Error(color.RedString(fmt.Sprintf("Close consumer err: %v", err)))
 			return
 		}
 	}(consumer)
@@ -37,7 +39,7 @@ func (k *Consumer) Consume() {
 	// 先查询该 topic 有多少分区
 	partitions, err := consumer.Partitions(k.Topic)
 	if err != nil {
-		common.Log.Errorf("Partitions err: %v", err)
+		zap.S().Error(color.RedString(fmt.Sprintf("Partitions err: %v", err)))
 		return
 	}
 	var wg sync.WaitGroup
@@ -60,12 +62,12 @@ func (k *Consumer) consumeByPartition(consumer sarama.Consumer, topic string, pa
 	defer wg.Done()
 	partitionConsumer, err := consumer.ConsumePartition(topic, partitionId, sarama.OffsetNewest)
 	if err != nil {
-		common.Log.Errorf("Consume Partition err: %v", err)
+		zap.S().Error(color.RedString(fmt.Sprintf("Consume partition err: %v", err)))
 		return
 	}
 	defer func(partitionConsumer sarama.PartitionConsumer) {
 		if err := partitionConsumer.Close(); err != nil {
-			common.Log.Errorf("Partition Consumer err: %v", err)
+			zap.S().Error(color.RedString(fmt.Sprintf("Partition consumer err: %v", err)))
 		}
 	}(partitionConsumer)
 	for message := range partitionConsumer.Messages() {

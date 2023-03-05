@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"fmt"
+	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app/common"
 	CasbinServer "github.com/herman-hang/herman/bootstrap/casbin"
@@ -27,19 +29,19 @@ func Reload() {
 	// 连接Mysql
 	db, err := mysql.InitGormDatabase(settings.Config.MysqlConfig)
 	if err != nil {
-		zap.S().Errorf("Mysql connection failure:%v", err)
+		zap.S().Fatal(color.RedString(fmt.Sprintf("Mysql connection failure:%v", err)))
 	}
 
 	// 连接Redis
 	rdb, err := RedisServer.InitRedisConfig(settings.Config.RedisConfig)
 	if err != nil {
-		zap.S().Fatalf("Redis connection failed:%v", err)
+		zap.S().Fatal(color.RedString(fmt.Sprintf("Redis connection failed:%v", err)))
 	}
 
 	// 初始化Casbin
 	cachedEnforcer, err := CasbinServer.InitEnforcer(CasbinServer.GetAdminPolicy(), db)
 	if err != nil {
-		zap.S().Fatalf("The Casbin initialization failed:%v", err)
+		zap.S().Fatal(color.RedString(fmt.Sprintf("The casbin initialization failed:%v", err)))
 	}
 
 	common.Db, common.Redis, common.Casbin = db, rdb, cachedEnforcer

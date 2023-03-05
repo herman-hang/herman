@@ -16,13 +16,3 @@ var (
 	Casbin  *casbin.CachedEnforcer
 	Context *gin.Context
 )
-
-// NewContainer 全局容器
-// @param *gin.Engine engine Engine
-// @param *zap.SugaredLogger log 日志对象
-func NewContainer(
-	engine *gin.Engine,
-	log *zap.SugaredLogger,
-) {
-	Engine, Log = engine, log
-}
