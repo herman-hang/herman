@@ -45,7 +45,7 @@ CREATE TABLE `admin`
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `user_index`(`user`) USING BTREE COMMENT '管理员用户名索引'
+    UNIQUE INDEX `idx_user`(`user`) USING BTREE COMMENT '管理员用户名索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员表' ROW_FORMAT = DYNAMIC;
 -- ----------------------------
 -- Records of admin
@@ -69,8 +69,8 @@ CREATE TABLE `admin_role`
     `updated_at` datetime NOT NULL COMMENT '更新时间',
     `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX        `管理员索引`(`admin_id`) USING BTREE COMMENT '管理员角色索引',
-    INDEX        `角色索引`(`role_key`) USING BTREE COMMENT '角色索引',
+    INDEX        `idx_admin_id`(`admin_id`) USING BTREE COMMENT '管理员角色索引',
+    INDEX        `idx_role_key`(`role_key`) USING BTREE COMMENT '角色索引',
     CONSTRAINT `管理员外键` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT `角色外键` FOREIGN KEY (`role_key`) REFERENCES `roles` (`role`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员角色中间表' ROW_FORMAT = DYNAMIC;
@@ -121,14 +121,13 @@ CREATE TABLE `roles`
     `name`         varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '角色名称',
     `role`         varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '角色英文KEY',
     `state`        tinyint(4) NOT NULL DEFAULT 2 COMMENT '状态(1已停用,2已启用)',
-    `sort`         int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
+    `sort`         int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
     `introduction` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '简介',
     `created_at`   datetime                                               NOT NULL COMMENT '创建时间',
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `role_index`(`role`) USING BTREE COMMENT '角色名索引',
-    INDEX          `id`(`id`, `role`) USING BTREE
+    UNIQUE INDEX `idx_roles`(`role`) USING BTREE COMMENT '角色名索引',
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -169,8 +168,97 @@ CREATE TABLE `users`
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `user`(`user`) USING BTREE COMMENT '用户索引'
+    UNIQUE INDEX `idx_users`(`user`) USING BTREE COMMENT '用户索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for data_dictionary
+-- ----------------------------
+
+DROP TABLE IF EXISTS `data_dictionary`;
+CREATE TABLE `data_dictionary`
+(
+    `id`           int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '数据字典ID',
+    `name`         varchar(30) NOT NULL COMMENT '名称',
+    `code`         varchar(30) NOT NULL COMMENT '唯一KEY',
+    `introduction` varchar(255) DEFAULT NULL COMMENT '描述',
+    `pid`          int(11) UNSIGNED DEFAULT NULL COMMENT '上级ID',
+    `state`        tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态：1表示禁用，2表示启用',
+    `created_at`   datetime    NOT NULL COMMENT '创建时间',
+    `updated_at`   datetime    NOT NULL COMMENT '更新时间',
+    `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `idx_code`(`code`) USING BTREE COMMENT '唯一标识码索引'
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '数据字典表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for dictionary_detail
+-- ----------------------------
+
+DROP TABLE IF EXISTS `dictionary_detail`;
+CREATE TABLE `dictionary_detail`
+(
+    `id`                 int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '数据字典明细ID',
+    `data_dictionary_id` int(11) UNSIGNED NOT NULL COMMENT '数据字典ID',
+    `name`               varchar(255) NOT NULL COMMENT '明细名称',
+    `code`               varchar(255) NOT NULL COMMENT '唯一明细KEY',
+    `value`              varchar(50)  NOT NULL COMMENT '明细值',
+    `remark`             varchar(255) DEFAULT NULL COMMENT '备注',
+    `sort`               int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
+    `state`              tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态：1表示禁用，2表示启用',
+    `created_at`         datetime     NOT NULL COMMENT '创建时间',
+    `updated_at`         datetime     NOT NULL COMMENT '更新时间',
+    `deleted_at`         datetime NULL DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    INDEX                `idx_data_dictionary_id`(`data_dictionary_id`) USING BTREE COMMENT '数据字典索引',
+    CONSTRAINT `数据字典外键` FOREIGN KEY (`data_dictionary_id`) REFERENCES `data_dictionary` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '数据字典明细表' ROW_FORMAT = DYNAMIC;
+
+
+-- ----------------------------
+-- Table structure for files
+-- ----------------------------
+
+DROP TABLE IF EXISTS `files`;
+CREATE TABLE `files`
+(
+    `id`         int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '文件ID',
+    `user_id`    int(11) UNSIGNED DEFAULT NULL COMMENT '用户ID',
+    `file_name`  varchar(255) NOT NULL COMMENT '文件名',
+    `file_type ` varchar(30) DEFAULT NULL COMMENT '文件类型',
+    `file_path`  varchar(255) NOT NULL COMMENT '文件路径',
+    `hash`       varchar(80)  NOT NULL COMMENT '文件hash值',
+    `file_size`  bigint UNSIGNED DEFAULT NULL COMMENT '文件大小',
+    `created_at` datetime     NOT NULL COMMENT '创建时间',
+    `updated_at` datetime     NOT NULL COMMENT '更新时间',
+    `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    INDEX        `idx_files`(`user_id`,`hash`) USING BTREE COMMENT '用户索引',
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for file_chunks
+-- ----------------------------
+
+DROP TABLE IF EXISTS `file_chunks`;
+CREATE TABLE `file_chunks`
+(
+    `id`           int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '分片信息ID',
+    `file_id`      int(11) UNSIGNED NOT NULL COMMENT '文件ID',
+    `chunk_number` int(11) UNSIGNED NOT NULL COMMENT '分片编号',
+    `chunk_size`   bigint UNSIGNED NOT NULL COMMENT '分片大小',
+    `chunk_path`   varchar(255) NOT NULL COMMENT '分片路径',
+    `hash`         varchar(255) NOT NULL COMMENT '分片hash值',
+    `state`        tinyint(4) NOT NULL DEFAULT 1 COMMENT '上传状态，1表示未上传，2表示已上传',
+    `progress`     bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT '上传进度',
+    `created_at`   datetime     NOT NULL COMMENT '创建时间',
+    `updated_at`   datetime     NOT NULL COMMENT '更新时间',
+    `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    INDEX          `idx_file_chunks`(`file_id`,`chunk_number`,`hash`) USING BTREE COMMENT '用户索引',
+    CONSTRAINT `文件外键` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件分片信息表' ROW_FORMAT = DYNAMIC;
+
 
 SET
 FOREIGN_KEY_CHECKS = 1;

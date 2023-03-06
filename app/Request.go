@@ -23,7 +23,7 @@ func (r *Request) Params() (params map[string]interface{}) {
 	case "GET":
 		// query参数处理
 		keys := r.Context.Request.URL.Query()
-		if len(keys) != constants.LengthByZero {
+		if len(keys) > constants.LengthByZero {
 			for k, v := range keys {
 				params[k] = v[0]
 			}
