@@ -3,6 +3,7 @@ package admin
 import (
 	"github.com/gin-gonic/gin"
 	AdminController "github.com/herman-hang/herman/app/controllers/admin"
+	MenuController "github.com/herman-hang/herman/app/controllers/menu"
 	RoleController "github.com/herman-hang/herman/app/controllers/role"
 )
 
@@ -33,4 +34,15 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/role", RoleController.FindRole)
 	// 角色列表
 	router.GET("/role/list", RoleController.ListRole)
+
+	// 添加菜单
+	router.POST("/menu", MenuController.AddMenu)
+	// 修改菜单
+	router.PUT("/menu", MenuController.ModifyMenu)
+	// 根据ID获取菜单详情
+	router.GET("/menu", MenuController.FindMenu)
+	// 删除菜单
+	router.DELETE("/menu", MenuController.RemoveMenu)
+	// 菜单列表
+	router.GET("/menu/list", MenuController.ListMenu)
 }

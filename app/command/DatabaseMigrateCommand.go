@@ -68,6 +68,7 @@ func Migrate(direction string) error {
 	if err != nil {
 		return err
 	}
+
 	// 获取当前最新的迁移版本
 	currentVersion, _, _ := m.Version()
 	err, fileNames := getFileNames(dirPath, direction)
@@ -112,6 +113,12 @@ func selectExec(m *migrate.Migrate, fileNames []string, currentVersion uint, dir
 			return err
 		}
 		fmt.Println(color.GreenString(commandConstant.ForceChangeSuccess))
+	case "drop":
+		fmt.Println(commandConstant.DropDatabase)
+		if err := m.Drop(); err != nil {
+			return err
+		}
+		fmt.Println(color.GreenString(commandConstant.DropDatabaseSuccess))
 	default:
 		return errors.New("invalid migration direction")
 	}

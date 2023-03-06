@@ -11,4 +11,6 @@ const (
 	ContentIsEmpty             = "文件内容为空"
 	ForceChange                = "强制修改版本中···"
 	ForceChangeSuccess         = "强制修改执行成功!"
+	DropDatabase               = "强制删除数据库所有数据中···"
+	DropDatabaseSuccess        = "强制删除数据库成功!"
 )

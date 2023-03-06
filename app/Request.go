@@ -27,7 +27,15 @@ func (r *Request) Params() (params map[string]interface{}) {
 			for k, v := range keys {
 				params[k] = v[0]
 			}
-		} else {
+		}
+		// uri参数处理，目前只接受ID
+		if len(params) == constants.LengthByZero {
+			for _, param := range r.Context.Params {
+				params[param.Key] = param.Value
+			}
+		}
+		// body参数处理
+		if len(params) == constants.LengthByZero {
 			// body参数处理
 			params = bodyParam(data, r.Context)
 		}
