@@ -21,17 +21,17 @@ func (r *Request) Params() (params map[string]interface{}) {
 	data, _ := r.Context.GetRawData()
 	switch r.Context.Request.Method {
 	case "GET":
+		// uri参数处理
+		if len(params) == constants.LengthByZero && len(r.Context.Params) > constants.LengthByZero {
+			for _, param := range r.Context.Params {
+				params[param.Key] = param.Value
+			}
+		}
 		// query参数处理
 		keys := r.Context.Request.URL.Query()
 		if len(keys) > constants.LengthByZero {
 			for k, v := range keys {
 				params[k] = v[0]
-			}
-		}
-		// uri参数处理，目前只接受ID
-		if len(params) == constants.LengthByZero {
-			for _, param := range r.Context.Params {
-				params[param.Key] = param.Value
 			}
 		}
 		// body参数处理

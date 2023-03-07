@@ -114,11 +114,20 @@ func selectExec(m *migrate.Migrate, fileNames []string, currentVersion uint, dir
 		}
 		fmt.Println(color.GreenString(commandConstant.ForceChangeSuccess))
 	case "drop":
-		fmt.Println(commandConstant.DropDatabase)
-		if err := m.Drop(); err != nil {
+		var drop string
+		fmt.Print(commandConstant.IsDropDatabase)
+		if _, err := fmt.Scanln(&drop); err != nil {
 			return err
 		}
-		fmt.Println(color.GreenString(commandConstant.DropDatabaseSuccess))
+		// 去除空格并转为小写
+		drop = strings.TrimSpace(drop)
+		if drop == "y" || drop == "yes" {
+			fmt.Println(commandConstant.DropDatabase)
+			if err := m.Drop(); err != nil {
+				return err
+			}
+			fmt.Println(color.GreenString(commandConstant.DropDatabaseSuccess))
+		}
 	default:
 		return errors.New("invalid migration direction")
 	}
