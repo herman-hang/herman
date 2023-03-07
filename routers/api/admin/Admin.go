@@ -3,6 +3,7 @@ package admin
 import (
 	"github.com/gin-gonic/gin"
 	AdminController "github.com/herman-hang/herman/app/controllers/admin"
+	DictionaryController "github.com/herman-hang/herman/app/controllers/dictionary"
 	MenuController "github.com/herman-hang/herman/app/controllers/menu"
 	RoleController "github.com/herman-hang/herman/app/controllers/role"
 )
@@ -14,35 +15,48 @@ func Router(router *gin.RouterGroup) {
 	// 管理员登录
 	router.POST("/login", AdminController.Login)
 	// 管理员添加
-	router.POST("/admin", AdminController.AddAdmin)
+	router.POST("/admins", AdminController.AddAdmin)
 	// 管理员修改
-	router.PUT("/admin", AdminController.ModifyAdmin)
+	router.PUT("/admins", AdminController.ModifyAdmin)
 	// 根据ID查询管理员详情
-	router.GET("/admin", AdminController.FindAdmin)
+	router.GET("/admins/:id", AdminController.FindAdmin)
 	// 管理员删除
 	router.DELETE("/admin", AdminController.RemoveAdmin)
 	// 管理员列表
-	router.GET("/admin/list", AdminController.ListAdmin)
+	router.GET("/admins", AdminController.ListAdmin)
 
 	// 添加角色
-	router.POST("/role", RoleController.AddRole)
+	router.POST("/roles", RoleController.AddRole)
 	// 删除角色
-	router.DELETE("/role", RoleController.RemoveRole)
+	router.DELETE("/roles", RoleController.RemoveRole)
 	// 修改角色
-	router.PUT("/role", RoleController.ModifyRole)
+	router.PUT("/roles", RoleController.ModifyRole)
 	// 根据ID获取角色详情
-	router.GET("/role", RoleController.FindRole)
+	router.GET("/roles/:id", RoleController.FindRole)
 	// 角色列表
-	router.GET("/role/list", RoleController.ListRole)
+	router.GET("/roles", RoleController.ListRole)
 
 	// 添加菜单
-	router.POST("/menu", MenuController.AddMenu)
+	router.POST("/menus", MenuController.AddMenu)
 	// 修改菜单
-	router.PUT("/menu", MenuController.ModifyMenu)
+	router.PUT("/menus", MenuController.ModifyMenu)
 	// 根据ID获取菜单详情
-	router.GET("/menu", MenuController.FindMenu)
+	router.GET("/menus/:id", MenuController.FindMenu)
 	// 删除菜单
-	router.DELETE("/menu", MenuController.RemoveMenu)
+	router.DELETE("/menus", MenuController.RemoveMenu)
 	// 菜单列表
-	router.GET("/menu/list", MenuController.ListMenu)
+	router.GET("/menus", MenuController.ListMenu)
+
+	// 添加数据字典
+	router.POST("/dictionaries", DictionaryController.AddDictionary)
+	// 删除
+	router.DELETE("/dictionaries", DictionaryController.RemoveDictionary)
+	// 修改数据字典
+	router.PUT("/dictionaries", DictionaryController.ModifyDictionary)
+	// 根据数据字典KEY获取明细值
+	router.GET("/dictionaries/details", DictionaryController.DetailsByDictionary)
+	// 根据ID获取数据字典详情
+	router.GET("/dictionaries/:id", DictionaryController.FindDictionary)
+	// 数据字典列表
+	router.GET("/dictionaries", DictionaryController.ListDictionary)
 }

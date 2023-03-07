@@ -27,7 +27,7 @@ func ModifyMenu(ctx *gin.Context) {
 	context.Json(nil)
 }
 
-// FindMenu 菜单修改
+// FindMenu 根据ID获取菜单详情
 // @param *gin.Context ctx 上下文
 // @return void
 func FindMenu(ctx *gin.Context) {

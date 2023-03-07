@@ -162,23 +162,21 @@ CREATE TABLE `casbin_rule`
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for data_dictionary
+-- Table structure for dictionary
 -- ----------------------------
-DROP TABLE IF EXISTS `data_dictionary`;
-CREATE TABLE `data_dictionary`
+CREATE TABLE `dictionary`
 (
-    `id`           int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '数据字典ID',
-    `pid`          int(11) UNSIGNED NULL DEFAULT NULL COMMENT '上级ID',
-    `name`         varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
-    `code`         varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一KEY',
-    `introduction` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
-    `state`        tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态：1表示禁用，2表示启用',
-    `created_at`   datetime                                               NOT NULL COMMENT '创建时间',
-    `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
-    `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '数据字典ID',
+    `name`       varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
+    `code`       varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一KEY',
+    `remark`     varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+    `state`      tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态：1表示禁用，2表示启用',
+    `created_at` datetime                                               NOT NULL COMMENT '创建时间',
+    `updated_at` datetime                                               NOT NULL COMMENT '更新时间',
+    `deleted_at` datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `idx_code`(`code`) USING BTREE COMMENT '唯一标识码索引'
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '数据字典表' ROW_FORMAT = DYNAMIC;
+    UNIQUE KEY `idx_code` (`code`) USING BTREE COMMENT '唯一标识码索引'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='数据字典表';
 
 -- ----------------------------
 -- Records of data_dictionary
@@ -187,24 +185,23 @@ CREATE TABLE `data_dictionary`
 -- ----------------------------
 -- Table structure for dictionary_detail
 -- ----------------------------
-DROP TABLE IF EXISTS `dictionary_detail`;
 CREATE TABLE `dictionary_detail`
 (
-    `id`                 int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '数据字典明细ID',
-    `data_dictionary_id` int(11) UNSIGNED NOT NULL COMMENT '数据字典ID',
-    `name`               varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '明细名称',
-    `code`               varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一明细KEY',
-    `value`              varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '明细值',
-    `remark`             varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-    `sort`               int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
-    `state`              tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态：1表示禁用，2表示启用',
-    `created_at`         datetime                                               NOT NULL COMMENT '创建时间',
-    `updated_at`         datetime                                               NOT NULL COMMENT '更新时间',
-    `deleted_at`         datetime NULL DEFAULT NULL COMMENT '删除时间',
+    `id`            int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '数据字典明细ID',
+    `dictionary_id` int(11) unsigned NOT NULL COMMENT '数据字典ID',
+    `name`          varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '明细名称',
+    `code`          varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '唯一明细KEY',
+    `value`         varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '明细值',
+    `remark`        varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+    `sort`          int(11) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+    `state`         tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态：1表示禁用，2表示启用',
+    `created_at`    datetime                                               NOT NULL COMMENT '创建时间',
+    `updated_at`    datetime                                               NOT NULL COMMENT '更新时间',
+    `deleted_at`    datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX                `idx_data_dictionary_id`(`data_dictionary_id`, `code`) USING BTREE COMMENT '数据字典索引',
-    CONSTRAINT `数据字典外键` FOREIGN KEY (`data_dictionary_id`) REFERENCES `data_dictionary` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '数据字典明细表' ROW_FORMAT = DYNAMIC;
+    KEY             `idx_dictionary_id` (`dictionary_id`,`code`) USING BTREE COMMENT '数据字典索引',
+    CONSTRAINT `数据字典外键` FOREIGN KEY (`dictionary_id`) REFERENCES `dictionary` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='数据字典明细表';
 
 -- ----------------------------
 -- Records of dictionary_detail

@@ -1,4 +1,4 @@
-package Menu
+package menu
 
 import "github.com/herman-hang/herman/app/validates"
 

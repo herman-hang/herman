@@ -29,7 +29,7 @@ func Modify(data map[string]interface{}) {
 
 // Find 根据ID获取菜单详情
 // @param map[string]interface{} data 前端请求数据
-// @return void
+// @return map[string]interface{} 菜单信息
 func Find(data map[string]interface{}) map[string]interface{} {
 	info, err := repositories.Menu.Find(map[string]interface{}{"id": data["id"]},
 		[]string{"id", "pid", "name", "path", "method", "sort", "created_at"},
@@ -59,9 +59,7 @@ func Remove(data map[string]interface{}) {
 			return errors.New(MenuConstant.DeleteFail)
 		}
 		// 如果存在子菜单，则全部删除
-		if err := repositories.Menu.DeleteByMenuId(ids); err != nil {
-			return errors.New(MenuConstant.DeleteChildMenuFail)
-		}
+		_ = repositories.Menu.DeleteByMenuId(ids)
 		return nil
 	})
 	if err != nil {
