@@ -20,10 +20,11 @@ import (
 
 // MigrationCmd 数据库迁移
 var (
-	direction    string
-	version      uint
-	number       uint
-	MigrationCmd = &cobra.Command{
+	direction       string
+	version         uint
+	number          uint
+	MigrationStatus bool
+	MigrationCmd    = &cobra.Command{
 		Use:          "migrate",
 		Short:        "Run database migrations",
 		Example:      "herman migrate --direction=up --number=1",
@@ -40,6 +41,8 @@ var (
 // init 命令参数绑定
 // @return void
 func init() {
+	// 迁移状态
+	MigrationCmd.Flags().BoolVarP(&MigrationStatus, "status", "s", false, "Database migration status")
 	// 迁移方式，up和down
 	MigrationCmd.Flags().StringVarP(&direction, "direction", "d", "up", "Database migration")
 	// 执行指定数据库版本，主要在出现Error: Dirty database version XX.使用

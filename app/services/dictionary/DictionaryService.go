@@ -9,28 +9,28 @@ import (
 	"gorm.io/gorm"
 )
 
-// Add 添加数据字典
+// AddDictionary 添加数据字典
 // @param map[string]interface{} data 带处理数据
 // @return void
-func Add(data map[string]interface{}) {
+func AddDictionary(data map[string]interface{}) {
 	if _, err := repositories.Dictionary.Insert(data); err != nil {
 		panic(DictionaryConstant.AddFail)
 	}
 }
 
-// Modify 修改数据字典
+// ModifyDictionary 修改数据字典
 // @param map[string]interface{} data 带处理数据
 // @return void
-func Modify(data map[string]interface{}) {
+func ModifyDictionary(data map[string]interface{}) {
 	if err := repositories.Dictionary.Update([]uint{data["id"].(uint)}, data); err != nil {
 		panic(DictionaryConstant.ModifyFail)
 	}
 }
 
-// Find 根据ID获取数据字典详情
+// FindDictionary 根据ID获取数据字典详情
 // @param map[string]interface{} data 带处理数据
 // @return map[string]interface{} 数据字典信息
-func Find(data map[string]interface{}) map[string]interface{} {
+func FindDictionary(data map[string]interface{}) map[string]interface{} {
 	info, err := repositories.Dictionary.Find(map[string]interface{}{"id": data["id"]}, []string{
 		"id", "name", "code", "remark", "state", "created_at",
 	})
@@ -40,10 +40,10 @@ func Find(data map[string]interface{}) map[string]interface{} {
 	return info
 }
 
-// Remove 删除数据字典
+// RemoveDictionary 删除数据字典
 // @param map[string]interface{} data 带处理数据
 // @return void
-func Remove(data map[string]interface{}) {
+func RemoveDictionary(data map[string]interface{}) {
 	err := common.Db.Transaction(func(tx *gorm.DB) error {
 		common.Db = tx
 		ids := data["id"].([]uint)
@@ -59,10 +59,10 @@ func Remove(data map[string]interface{}) {
 	}
 }
 
-// List 数据字典列表
+// ListDictionary 数据字典列表
 // @param map[string]interface{} data 带处理数据
 // @return map[string]interface{} 返回列表数据
-func List(data map[string]interface{}) map[string]interface{} {
+func ListDictionary(data map[string]interface{}) map[string]interface{} {
 	// 模糊查询条件拼接
 	query := fmt.Sprintf(" id like '%%%s' or name like '%%%s' or code like '%%%s'", data["keywords"], data["keywords"], data["keywords"])
 	// 查询指定字段
@@ -83,10 +83,10 @@ func List(data map[string]interface{}) map[string]interface{} {
 	return list
 }
 
-// Details 数据字典KEY获取明细值
+// DetailsDictionary 数据字典KEY获取明细值
 // @param map[string]interface{} data 带处理数据
 // @return dictionary 返回数据字典和明细值
-func Details(data map[string]interface{}) (dictionary []map[string]interface{}) {
+func DetailsDictionary(data map[string]interface{}) (dictionary []map[string]interface{}) {
 	var list []map[string]interface{}
 	keys := data["keys"].([]string)
 	if len(keys) > 0 {

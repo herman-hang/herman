@@ -67,7 +67,13 @@ func GetEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.TimeKey = "time"
-	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	encoderConfig.LevelKey = "level"
+	encoderConfig.NameKey = "logger"
+	encoderConfig.CallerKey = "caller"
+	encoderConfig.FunctionKey = "function"
+	encoderConfig.MessageKey = "msg"
+	encoderConfig.StacktraceKey = "stacktrace"
+	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	return zapcore.NewJSONEncoder(encoderConfig)

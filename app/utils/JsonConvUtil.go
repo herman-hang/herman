@@ -53,22 +53,24 @@ func CamelJSON(data interface{}) ([]byte, error) {
 	return converted, err
 }
 
-// CamelToCase 驼峰式写法转为下划线写法
+// ToSnakeCase 将小驼峰字符串转为下划线形式
 // @param string data 待转数据
 // @return string 返回转换完成的字符串
-func CamelToCase(data string) string {
-	buffer := &Buffer{Buffer: new(bytes.Buffer)}
-	for i, r := range data {
-		if unicode.IsUpper(r) {
-			if i != 0 {
-				buffer.Append('_')
-			}
-			buffer.Append(unicode.ToLower(r))
-		} else {
-			buffer.Append(r)
+func ToSnakeCase(s string) string {
+	data := make([]byte, 0, len(s)*2)
+	j := false
+	num := len(s)
+	for i := 0; i < num; i++ {
+		d := s[i]
+		if i > 0 && d >= 'A' && d <= 'Z' && j {
+			data = append(data, '_')
 		}
+		if d != '_' {
+			j = true
+		}
+		data = append(data, d)
 	}
-	return buffer.String()
+	return strings.ToLower(string(data))
 }
 
 // CaseToCamel 下划线写法转为驼峰写法

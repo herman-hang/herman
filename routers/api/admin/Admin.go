@@ -49,7 +49,7 @@ func Router(router *gin.RouterGroup) {
 
 	// 添加数据字典
 	router.POST("/dictionaries", DictionaryController.AddDictionary)
-	// 删除
+	// 删除数据字典
 	router.DELETE("/dictionaries", DictionaryController.RemoveDictionary)
 	// 修改数据字典
 	router.PUT("/dictionaries", DictionaryController.ModifyDictionary)
@@ -59,4 +59,13 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/dictionaries/:id", DictionaryController.FindDictionary)
 	// 数据字典列表
 	router.GET("/dictionaries", DictionaryController.ListDictionary)
+
+	// 添加明细值
+	router.POST("/dictionaries/details", DictionaryController.AddDetail)
+	// 删除明细值
+	router.DELETE("/dictionaries/details", DictionaryController.RemoveDetail)
+	// 根据ID获取明细值详情
+	router.GET("/dictionaries/details/:id", DictionaryController.FindDetail)
+	// 修改明细值
+	router.PUT("/dictionaries/details", DictionaryController.ModifyDetail)
 }

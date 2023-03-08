@@ -1,8 +1,10 @@
 drop table admin_role;
+drop table admin;
 drop table menus;
 drop table roles;
+drop table casbin_rule;
 drop table users;
 drop table dictionary_detail;
-drop table data_dictionary;
+drop table dictionary;
 drop table file_chunks;
 drop table files;

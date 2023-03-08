@@ -22,7 +22,7 @@ func (r *Request) Params() (params map[string]interface{}) {
 	switch r.Context.Request.Method {
 	case "GET":
 		// uri参数处理
-		if len(params) == constants.LengthByZero && len(r.Context.Params) > constants.LengthByZero {
+		if len(r.Context.Params) > constants.LengthByZero {
 			for _, param := range r.Context.Params {
 				params[param.Key] = param.Value
 			}

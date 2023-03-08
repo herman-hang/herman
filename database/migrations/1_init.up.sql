@@ -240,7 +240,7 @@ DROP TABLE IF EXISTS `files`;
 CREATE TABLE `files`
 (
     `id`         int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '文件ID',
-    `user_id`    int(11) UNSIGNED NOT NULL COMMENT '用户ID',
+    `creator_id`    int(11) UNSIGNED NOT NULL COMMENT '创建者ID',
     `file_name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名',
     `file_type`  varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '文件类型',
     `file_path`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',
@@ -250,7 +250,7 @@ CREATE TABLE `files`
     `updated_at` datetime                                                NOT NULL COMMENT '更新时间',
     `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX        `idx_files`(`user_id`, `hash`) USING BTREE COMMENT '用户索引'
+    INDEX        `idx_files`(`creator_id`, `hash`) USING BTREE COMMENT '用户索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------

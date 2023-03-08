@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
 	DictionaryService "github.com/herman-hang/herman/app/services/dictionary"
-	DictionaryValidate "github.com/herman-hang/herman/app/validates/dictionary"
+	"github.com/herman-hang/herman/app/validates/dictionary/dictionary"
 )
 
 // AddDictionary 添加数据字典
@@ -13,7 +13,7 @@ import (
 func AddDictionary(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	DictionaryService.Add(DictionaryValidate.Add.Check(data))
+	DictionaryService.AddDictionary(dictionary.Add.Check(data))
 	context.Json(nil)
 }
 
@@ -23,7 +23,7 @@ func AddDictionary(ctx *gin.Context) {
 func ModifyDictionary(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	DictionaryService.Modify(DictionaryValidate.Modify.Check(data))
+	DictionaryService.ModifyDictionary(dictionary.Modify.Check(data))
 	context.Json(nil)
 }
 
@@ -33,7 +33,7 @@ func ModifyDictionary(ctx *gin.Context) {
 func FindDictionary(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(DictionaryService.Find(DictionaryValidate.Find.Check(data)))
+	context.Json(DictionaryService.FindDictionary(dictionary.Find.Check(data)))
 }
 
 // RemoveDictionary 删除数据字典
@@ -42,7 +42,7 @@ func FindDictionary(ctx *gin.Context) {
 func RemoveDictionary(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	DictionaryService.Remove(DictionaryValidate.Delete.Check(data))
+	DictionaryService.RemoveDictionary(dictionary.Delete.Check(data))
 	context.Json(nil)
 }
 
@@ -52,7 +52,7 @@ func RemoveDictionary(ctx *gin.Context) {
 func ListDictionary(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(DictionaryService.List(DictionaryValidate.List.Check(data)))
+	context.Json(DictionaryService.ListDictionary(dictionary.List.Check(data)))
 }
 
 // DetailsByDictionary 数据字典KEY获取明细值
@@ -61,5 +61,5 @@ func ListDictionary(ctx *gin.Context) {
 func DetailsByDictionary(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(DictionaryService.Details(DictionaryValidate.Details.Check(data)))
+	context.Json(DictionaryService.DetailsDictionary(dictionary.Details.Check(data)))
 }

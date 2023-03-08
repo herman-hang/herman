@@ -20,7 +20,11 @@ func init() {
 			// 数据库迁移
 			_ = command.Migrate("up")
 		}
-	}, middlewares.Reload)
+		// 如果执行的是数据库迁移命令，则不需要加载初始化操作
+		if !command.MigrationStatus {
+			middlewares.Reload()
+		}
+	})
 	// 启动服务命令注册
 	rootCmd.AddCommand(command.StartServerCmd)
 	// 注册数据库迁移

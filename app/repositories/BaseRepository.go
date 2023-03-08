@@ -34,7 +34,6 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 	// 模型拷贝
 	tempStruct := base.Model
 	toMap, err = utils.ToMap(tempStruct, "json")
-
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +62,13 @@ func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]s
 // @param []uint ids 查询条件
 // @param map[string]interface{} attributes 待更新数据
 // @return error 错误信息
-func (base *BaseRepository) Update(ids []uint, attributes map[string]interface{}) error {
+func (base *BaseRepository) Update(ids []uint, data map[string]interface{}) error {
+	var attributes = make(map[string]interface{})
+	// 驼峰转下划线
+	for k, v := range data {
+		k := utils.ToSnakeCase(k)
+		attributes[k] = v
+	}
 	if err := common.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
 		return err
 	}
