@@ -31,12 +31,10 @@ func Check(ctx *gin.Context) (files []*multipart.FileHeader) {
 	if len(files) > FileConstant.MaxCount {
 		panic(FileConstant.SurpassMaxCount)
 	}
-	common.Log.Debug("33333333333")
 	if err := Validate(files); err != nil {
 		panic(err.Error())
 	}
 
-	common.Log.Debug("44444444444444444")
 	return files
 }
 
