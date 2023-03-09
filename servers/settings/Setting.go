@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-var Config = new(config.AppConfig)
+var Config = new(config.App)
 
 // InitConfig 初始化配置
 // @return void

@@ -1,7 +1,7 @@
 package config
 
-// MysqlConfig 数据库的配置
-type MysqlConfig struct {
+// Mysql 数据库的配置
+type Mysql struct {
 	// 连接IP地址
 	Host string `mapstructure:"host"`
 	// 连接端口号

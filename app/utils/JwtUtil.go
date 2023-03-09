@@ -26,11 +26,11 @@ type Claims struct {
 // @return string 返回token
 func GenerateToken(claims *Claims) string {
 	// token有效时间（纳秒）
-	var effectTime = settings.Config.EffectTime * time.Hour
+	var effectTime = settings.Config.Jwt.EffectTime * time.Hour
 	//设置token有效期
 	claims.ExpiresAt = time.Now().Add(effectTime).Unix()
 	//生成token
-	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(settings.Config.JwtConfig.JwtSecret))
+	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(settings.Config.Jwt.JwtSecret))
 	if err != nil {
 		panic(UserConstant.CreateTokenFail)
 	}
@@ -66,7 +66,7 @@ func JwtVerify(ctx *gin.Context, guard string) *Claims {
 func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 	// 解析token
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(settings.Config.JwtConfig.JwtSecret), nil
+		return []byte(settings.Config.Jwt.JwtSecret), nil
 	})
 	if !token.Valid || err != nil {
 		panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenExpires})

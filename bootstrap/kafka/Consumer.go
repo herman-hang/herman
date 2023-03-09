@@ -21,8 +21,8 @@ type Consumer struct {
 func (k *Consumer) Consume() {
 	config := sarama.NewConfig()
 	consumer, err := sarama.NewConsumer([]string{fmt.Sprintf("%s:%d",
-		settings.Config.KafkaConfig.Host,
-		settings.Config.KafkaConfig.Port,
+		settings.Config.Kafka.Host,
+		settings.Config.Kafka.Port,
 	)}, config)
 	if err != nil {
 		zap.S().Error(color.RedString(fmt.Sprintf("New consumer err: %v", err)))

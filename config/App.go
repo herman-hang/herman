@@ -1,7 +1,7 @@
 package config
 
-// AppConfig 项目全局的配置
-type AppConfig struct {
+// App 项目全局的配置
+type App struct {
 	// 应用名称
 	AppName string `mapstructure:"app_name"`
 	// 路由前缀
@@ -13,19 +13,19 @@ type AppConfig struct {
 	// 语言
 	Language string `mapstructure:"language"`
 	// mysql配置信息
-	*MysqlConfig `mapstructure:"mysql"`
+	*Mysql `mapstructure:"mysql"`
 	// redis配置信息
-	*RedisConfig `mapstructure:"redis"`
+	*Redis `mapstructure:"redis"`
 	// 日志配置信息
-	*LogConfig `mapstructure:"log"`
+	*Log `mapstructure:"log"`
 	// jwt配置信息
-	*JwtConfig `mapstructure:"jwt"`
+	*Jwt `mapstructure:"jwt"`
 	// 验证码配置
-	*CaptchaConfig `mapstructure:"captcha"`
+	*Captcha `mapstructure:"captcha"`
 	// Kafka配置
-	*KafkaConfig `mapstructure:"kafka"`
+	*Kafka `mapstructure:"kafka"`
 	// 短信配置
-	*SmsConfig `mapstructure:"sms"`
+	*Sms `mapstructure:"sms"`
 	// 文件存储配置
-	*FileStorageConfig `mapstructure:"storage"`
+	*FileStorage `mapstructure:"storage"`
 }

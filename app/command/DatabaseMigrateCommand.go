@@ -55,11 +55,11 @@ func init() {
 // @return error 错误信息
 func Migrate(direction string) error {
 	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?multiStatements=true",
-		settings.Config.MysqlConfig.User,
-		settings.Config.MysqlConfig.Password,
-		settings.Config.MysqlConfig.Host,
-		settings.Config.MysqlConfig.Port,
-		settings.Config.MysqlConfig.Dbname,
+		settings.Config.Mysql.User,
+		settings.Config.Mysql.Password,
+		settings.Config.Mysql.Host,
+		settings.Config.Mysql.Port,
+		settings.Config.Mysql.Dbname,
 	))
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {

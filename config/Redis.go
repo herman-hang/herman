@@ -1,7 +1,7 @@
 package config
 
-// RedisConfig redis的配置
-type RedisConfig struct {
+// Redis redis的配置
+type Redis struct {
 	// 连接IP地址
 	Host string `mapstructure:"host"`
 	// 连接端口号

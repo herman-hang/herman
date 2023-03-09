@@ -98,49 +98,49 @@ sms:
 storage:
   # 文件存储类型（本地：local，阿里云OSS：oss，七牛云：qiniu，腾讯云COS：cos）
   drive: local
-    # 本地存储配置
-    local:
-      # 本地存储路径
-      path: ./resources/files/uploads
-    # 阿里云OSS配置
-    oss:
-      # 阿里云OSS的AccessKeyID
-      access_key_id:
-      # 阿里云OSS的AccessKeySecret
-      access_key_secret:
-      # 阿里云OSS的Bucket
-      bucket:
-      # 阿里云OSS的Endpoint
-      endpoint:
-      # 阿里云OSS的外网域名
-      domain:
-    # 七牛云配置
-    qiniu:
-      # 七牛云的AccessKey
-      access_key:
-      # 七牛云的SecretKey
-      secret_key:
-      # 七牛云的Bucket
-      bucket:
-      # 七牛云的外网域名
-      domain:
-      # 七牛云的Zone
-      zone:
-      # 七牛云的UseHTTPS
-      use_https:
-    # 腾讯云COS配置
-    cos:
-      # 腾讯云COS的AppID
-      app_id:
-      # 腾讯云COS的SecretID
-      secret_id:
-      # 腾讯云COS的SecretKey
-      secret_key:
-      # 腾讯云COS的Bucket
-      bucket:
-      # 腾讯云COS的Region
-      region:
-      # 腾讯云COS的外网域名
-      domain:
-      # 腾讯云COS的UseHTTPS
-      use_https:
+  # 本地存储配置
+  local:
+    # 本地存储路径(路径结尾不需要加"/")
+    path: ./resources/files/uploads
+  # 阿里云OSS配置
+  oss:
+    # 阿里云OSS的AccessKeyID
+    access_key_id:
+    # 阿里云OSS的AccessKeySecret
+    access_key_secret:
+    # 阿里云OSS的Bucket
+    bucket:
+    # 阿里云OSS的Endpoint
+    endpoint:
+    # 阿里云OSS的外网域名
+    domain:
+  # 七牛云配置
+  qiniu:
+    # 七牛云的AccessKey
+    access_key:
+    # 七牛云的SecretKey
+    secret_key:
+    # 七牛云的Bucket
+    bucket:
+    # 七牛云的外网域名
+    domain:
+    # 七牛云的Zone
+    zone:
+    # 七牛云的UseHTTPS
+    use_https:
+  # 腾讯云COS配置
+  cos:
+    # 腾讯云COS的AppID
+    app_id:
+    # 腾讯云COS的SecretID
+    secret_id:
+    # 腾讯云COS的SecretKey
+    secret_key:
+    # 腾讯云COS的Bucket
+    bucket:
+    # 腾讯云COS的Region
+    region:
+    # 腾讯云COS的外网域名
+    domain:
+    # 腾讯云COS的UseHTTPS
+    use_https:

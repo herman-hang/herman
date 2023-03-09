@@ -236,22 +236,23 @@ CREATE TABLE `file_chunks`
 -- ----------------------------
 -- Table structure for files
 -- ----------------------------
-DROP TABLE IF EXISTS `files`;
 CREATE TABLE `files`
 (
-    `id`         int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '文件ID',
-    `creator_id`    int(11) UNSIGNED NOT NULL COMMENT '创建者ID',
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '文件ID',
+    `drive`      varchar(10)                                             NOT NULL COMMENT '文件存储驱动(local:本地，oss:阿里云OSS，cos:腾讯云COS，qiniu:七牛云)',
+    `creator_id` int(11) unsigned NOT NULL COMMENT '创建者ID',
     `file_name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名',
+    `file_ext`   varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '文件扩展',
     `file_type`  varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '文件类型',
-    `file_path`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',
+    `file_path`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '文件路径',
     `hash`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件hash值',
-    `file_size`  bigint(20) UNSIGNED NOT NULL COMMENT '文件大小',
+    `file_size`  bigint(20) unsigned NOT NULL COMMENT '文件大小',
     `created_at` datetime                                                NOT NULL COMMENT '创建时间',
     `updated_at` datetime                                                NOT NULL COMMENT '更新时间',
-    `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
+    `deleted_at` datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX        `idx_files`(`creator_id`, `hash`) USING BTREE COMMENT '用户索引'
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+    KEY          `idx_files` (`creator_id`,`hash`) USING BTREE COMMENT '用户索引'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='文件信息表';
 
 -- ----------------------------
 -- Records of files

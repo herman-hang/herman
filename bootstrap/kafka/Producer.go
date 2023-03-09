@@ -24,8 +24,8 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 
 	// 使用给定代理地址和配置创建一个同步生产者
 	producer, err = sarama.NewSyncProducer([]string{fmt.Sprintf("%s:%d",
-		settings.Config.KafkaConfig.Host,
-		settings.Config.KafkaConfig.Port,
+		settings.Config.Kafka.Host,
+		settings.Config.Kafka.Port,
 	)}, config)
 	if err != nil {
 		return nil, err

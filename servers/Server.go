@@ -35,7 +35,7 @@ func NewServer(host string, port uint) {
 // ZapLogs 初始化日志
 // @return void
 func ZapLogs() {
-	if err := log.InitZapLogs(settings.Config.LogConfig, settings.Config.Mode); err != nil {
+	if err := log.InitZapLogs(settings.Config.Log, settings.Config.Mode); err != nil {
 		zap.S().Fatal(color.RedString(fmt.Sprintf("Init zapLog failed:%v", err)))
 	}
 	common.Log = zap.S()

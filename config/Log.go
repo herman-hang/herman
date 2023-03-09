@@ -1,7 +1,7 @@
 package config
 
-// LogConfig log的配置
-type LogConfig struct {
+// Log log的配置
+type Log struct {
 	// 日志级别模式
 	Level string `mapstructure:"level"`
 	// 日志文件名

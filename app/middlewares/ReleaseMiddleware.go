@@ -27,13 +27,13 @@ func ServerHandler() gin.HandlerFunc {
 // @return void
 func Reload() {
 	// 连接Mysql
-	db, err := mysql.InitGormDatabase(settings.Config.MysqlConfig)
+	db, err := mysql.InitGormDatabase(settings.Config.Mysql)
 	if err != nil {
 		zap.S().Fatal(color.RedString(fmt.Sprintf("Mysql connection failure:%v", err)))
 	}
 
 	// 连接Redis
-	rdb, err := RedisServer.InitRedisConfig(settings.Config.RedisConfig)
+	rdb, err := RedisServer.InitRedisConfig(settings.Config.Redis)
 	if err != nil {
 		zap.S().Fatal(color.RedString(fmt.Sprintf("Redis connection failed:%v", err)))
 	}

@@ -14,23 +14,23 @@ import (
 func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验配置模块（具体参数可从业务系统配置文件自定义）
 	// 行为校验初始化
 	factory = CaptchaService.NewCaptchaServiceFactory(
-		CaptchaConfig.BuildConfig(settings.Config.CaptchaConfig.CacheType,
-			settings.Config.CaptchaConfig.ResourcePath,
+		CaptchaConfig.BuildConfig(settings.Config.Captcha.CacheType,
+			settings.Config.Captcha.ResourcePath,
 			&CaptchaConfig.WatermarkConfig{
-				Text: settings.Config.CaptchaConfig.Text,
+				Text: settings.Config.Captcha.Text,
 			},
-			nil, nil, settings.Config.CaptchaConfig.CacheExpireSec))
+			nil, nil, settings.Config.Captcha.CacheExpireSec))
 	// 注册内存缓存
 	factory.RegisterCache(Constant.MemCacheKey, CaptchaService.NewMemCacheService(CaptchaConstant.CacheMaxNumber))
 	// 注册自定义配置redis数据库
 	factory.RegisterCache(Constant.RedisCacheKey, CaptchaService.NewConfigRedisCacheService([]string{fmt.Sprintf("%s:%d",
-		settings.Config.RedisConfig.Host,
-		settings.Config.RedisConfig.Port,
+		settings.Config.Redis.Host,
+		settings.Config.Redis.Port,
 	)},
-		settings.Config.RedisConfig.UserName,
-		settings.Config.RedisConfig.Password,
+		settings.Config.Redis.UserName,
+		settings.Config.Redis.Password,
 		false,
-		settings.Config.RedisConfig.Db,
+		settings.Config.Redis.Db,
 	))
 	// 注册文字点选验证码服务
 	factory.RegisterService(Constant.ClickWordCaptcha, CaptchaService.NewClickWordCaptchaService(factory))

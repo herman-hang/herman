@@ -30,7 +30,7 @@ type ExcludeCaptchaLoginValidate struct {
 // @return toMap 返回验证通过的数据
 func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	// 判断是否需要验证码
-	if !settings.Config.CaptchaConfig.Switch {
+	if !settings.Config.Captcha.Switch {
 		return excludeCaptchaLogin(data)
 	}
 	return captchaLogin(data)

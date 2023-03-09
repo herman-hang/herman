@@ -2,8 +2,8 @@ package config
 
 import "time"
 
-// JwtConfig JWT配置
-type JwtConfig struct {
+// Jwt JWT配置
+type Jwt struct {
 	// 密钥
 	JwtSecret string `mapstructure:"secret"`
 	// token有效时间（单位：小时）

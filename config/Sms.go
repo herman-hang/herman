@@ -1,7 +1,7 @@
 package config
 
-// SmsConfig Kafka配置
-type SmsConfig struct {
+// Sms Kafka配置
+type Sms struct {
 	// API接口
 	Api string `mapstructure:"api"`
 	// 用户名

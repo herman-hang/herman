@@ -1,7 +1,9 @@
 package file
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"mime/multipart"
 	"net/http"
@@ -15,10 +17,13 @@ import (
 func Check(ctx *gin.Context) (files []*multipart.FileHeader) {
 	// 请求体最大允许的大小不能超过 60MB
 	if err := ctx.Request.ParseMultipartForm(60 << 20); err != nil {
+		fmt.Println(err)
 		panic(FileConstant.MaxMemory)
 	}
+
 	form := ctx.Request.MultipartForm
 	files = form.File["files"]
+	common.Log.Debug(files)
 	// 检查文件数量
 	if len(files) == FileConstant.CountZero {
 		panic(FileConstant.Empty)
@@ -26,10 +31,12 @@ func Check(ctx *gin.Context) (files []*multipart.FileHeader) {
 	if len(files) > FileConstant.MaxCount {
 		panic(FileConstant.SurpassMaxCount)
 	}
+	common.Log.Debug("33333333333")
 	if err := Validate(files); err != nil {
 		panic(err.Error())
 	}
 
+	common.Log.Debug("44444444444444444")
 	return files
 }
 
@@ -55,7 +62,7 @@ func Validate(files []*multipart.FileHeader) error {
 			panic(file.Filename + FileConstant.NameFail + safeName)
 		}
 
-		//	// 检查文件大小
+		// 检查文件大小
 		if file.Size > 10<<20 {
 			panic(file.Filename + FileConstant.SizeFail)
 		}

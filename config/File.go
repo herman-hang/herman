@@ -1,24 +1,26 @@
 package config
 
-// FileStorageConfig 文件存储配置
-type FileStorageConfig struct {
+// FileStorage 文件存储配置
+type FileStorage struct {
 	Drive string `mapstructure:"drive"`
 	// 本地存储配置
-	*LocalConfig `mapstructure:"local"`
+	*Local `mapstructure:"local"`
 	// 阿里云OSS存储配置
-	*OssConfig `mapstructure:"oss"`
+	*Oss `mapstructure:"oss"`
 	// 腾讯云COS存储配置
-	*CosConfig `mapstructure:"cos"`
+	*Cos `mapstructure:"cos"`
+	// 七牛云存储配置
+	*Qiniu `mapstructure:"qiniu"`
 }
 
-// LocalConfig 本地存储配置
-type LocalConfig struct {
+// Local 本地存储配置
+type Local struct {
 	// 本地存储路径
 	Path string `mapstructure:"path"`
 }
 
-// OssConfig 阿里云OSS存储配置
-type OssConfig struct {
+// Oss 阿里云OSS存储配置
+type Oss struct {
 	// 阿里云OSS的AccessKeyID
 	AccessKeyId string `mapstructure:"access_key_id"`
 	// 阿里云OSS的AccessKeySecret
@@ -31,8 +33,8 @@ type OssConfig struct {
 	Domain string `mapstructure:"domain"`
 }
 
-// QiniuConfig 七牛云存储配置
-type QiniuConfig struct {
+// Qiniu 七牛云存储配置
+type Qiniu struct {
 	// 七牛云的AccessKey
 	AccessKey string `mapstructure:"access_key"`
 	// 七牛云的SecretKey
@@ -47,8 +49,8 @@ type QiniuConfig struct {
 	UseHttps string `mapstructure:"use_https"`
 }
 
-// CosConfig 腾讯云COS存储配置
-type CosConfig struct {
+// Cos 腾讯云COS存储配置
+type Cos struct {
 	// 腾讯云COS的AppId
 	AppId string `mapstructure:"app_id"`
 	// 腾讯云COS的SecretId

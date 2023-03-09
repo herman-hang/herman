@@ -9,9 +9,9 @@ import (
 )
 
 // InitRedisConfig 初始化Redis
-// @param *settings.RedisConfig cfg Mysql配置信息
+// @param *settings.Redis cfg Mysql配置信息
 // @return rdb err 返回一个redis对象和错误信息
-func InitRedisConfig(cfg *config.RedisConfig) (rdb *redis.Client, err error) {
+func InitRedisConfig(cfg *config.Redis) (rdb *redis.Client, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	rdb = redis.NewClient(&redis.Options{

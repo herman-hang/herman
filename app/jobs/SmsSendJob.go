@@ -36,9 +36,9 @@ func SendSms(topic string) {
 func execSend(data map[string]interface{}) {
 	// 发起http请求
 	response, err := http.Get(fmt.Sprintf("%ssms?u=%s&p=%s&m=%s&c=%s",
-		settings.Config.SmsConfig.Api,
-		settings.Config.SmsConfig.User,
-		settings.Config.SmsConfig.Password,
+		settings.Config.Sms.Api,
+		settings.Config.Sms.User,
+		settings.Config.Sms.Password,
 		data["mobile"],
 		url.QueryEscape(fmt.Sprintf("%s", data["content"])),
 	))

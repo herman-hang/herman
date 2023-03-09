@@ -1,7 +1,7 @@
 package config
 
-// CaptchaConfig 验证码配置
-type CaptchaConfig struct {
+// Captcha 验证码配置
+type Captcha struct {
 	Switch         bool   `mapstructure:"switch"`           // 验证码开关
 	Text           string `mapstructure:"text"`             // 水印文字
 	CacheType      string `mapstructure:"cache_type"`       // 验证码使用的缓存类型驱动（目前只支持redis）
