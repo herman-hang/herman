@@ -1,7 +1,6 @@
 package file
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
@@ -17,7 +16,6 @@ import (
 func Check(ctx *gin.Context) (files []*multipart.FileHeader) {
 	// 请求体最大允许的大小不能超过 60MB
 	if err := ctx.Request.ParseMultipartForm(60 << 20); err != nil {
-		fmt.Println(err)
 		panic(FileConstant.MaxMemory)
 	}
 
