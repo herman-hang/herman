@@ -60,13 +60,11 @@ func Validate(dataStruct interface{}) (err error) {
 	uni := ut.New(zhCh)
 	trans, _ := uni.GetTranslator("zh")
 	// 验证器注册翻译器
-	err = zhTrans.RegisterDefaultTranslations(validate, trans)
-	if err != nil {
+	if err = zhTrans.RegisterDefaultTranslations(validate, trans); err != nil {
 		return err
 	}
 
-	err = validate.Struct(dataStruct)
-	if err != nil {
+	if err = validate.Struct(dataStruct); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
 			return errors.New(err.Translate(trans))
 		}

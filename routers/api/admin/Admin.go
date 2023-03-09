@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	AdminController "github.com/herman-hang/herman/app/controllers/admin"
 	DictionaryController "github.com/herman-hang/herman/app/controllers/dictionary"
+	FileController "github.com/herman-hang/herman/app/controllers/file"
 	MenuController "github.com/herman-hang/herman/app/controllers/menu"
 	RoleController "github.com/herman-hang/herman/app/controllers/role"
 )
@@ -68,4 +69,7 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/dictionaries/details/:id", DictionaryController.FindDetail)
 	// 修改明细值
 	router.PUT("/dictionaries/details", DictionaryController.ModifyDetail)
+
+	// 文件上传
+	router.POST("/files/upload", FileController.UploadFile)
 }

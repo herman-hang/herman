@@ -26,4 +26,6 @@ type AppConfig struct {
 	*KafkaConfig `mapstructure:"kafka"`
 	// 短信配置
 	*SmsConfig `mapstructure:"sms"`
+	// 文件存储配置
+	*FileStorageConfig `mapstructure:"storage"`
 }

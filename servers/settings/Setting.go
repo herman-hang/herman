@@ -1,11 +1,13 @@
 package settings
 
 import (
+	"fmt"
 	"github.com/fsnotify/fsnotify"
 	_ "github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/config"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"os"
 )
 
 var Config = new(config.AppConfig)
@@ -17,11 +19,13 @@ func InitConfig() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./")
 	if err := viper.ReadInConfig(); err != nil {
-		zap.S().Fatalf("viper ReadInConfig failed, err: %v\n", err)
+		fmt.Printf("viper ReadInConfig failed, err: %v", err)
+		os.Exit(1)
 	}
 
 	if err := viper.Unmarshal(&Config); err != nil {
-		zap.S().Fatalf("viper unmarshal failed, err:%v\n", err)
+		fmt.Printf("viper unmarshal failed, err:%v\n", err)
+		os.Exit(1)
 	}
 
 	viper.WatchConfig()

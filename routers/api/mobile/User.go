@@ -1,4 +1,4 @@
-package user
+package mobile
 
 import (
 	"github.com/gin-gonic/gin"

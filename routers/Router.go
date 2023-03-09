@@ -6,7 +6,7 @@ import (
 	CaptchaController "github.com/herman-hang/herman/app/controllers/captcha"
 	"github.com/herman-hang/herman/app/middlewares"
 	"github.com/herman-hang/herman/routers/api/admin"
-	"github.com/herman-hang/herman/routers/api/user"
+	"github.com/herman-hang/herman/routers/api/mobile"
 	"github.com/herman-hang/herman/servers/settings"
 )
 
@@ -31,7 +31,7 @@ func InitRouter(rootEngine *gin.Engine) {
 	// 用户模块
 	userRouter := api.Group("/user", middlewares.Jwt("user"))
 	{
-		user.Router(userRouter)
+		mobile.Router(userRouter)
 	}
 
 	// 后台模块
