@@ -1,7 +1,7 @@
 # 应用名称
 app_name: herman
 # 应用运行环境模式(debug/test/release)
-mode: debug
+mode: release
 # 时区
 timezone: Asia/Shanghai
 # 路由前缀
