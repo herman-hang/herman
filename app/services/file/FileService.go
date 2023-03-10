@@ -1,9 +1,7 @@
 package file
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/herman-hang/herman/app/models"
 	"github.com/herman-hang/herman/app/repositories"
@@ -34,11 +32,11 @@ func Upload(ctx *gin.Context, files []*multipart.FileHeader) (existFileInfos []m
 			panic(FileConstant.RecordFileFail)
 		}
 		existFileInfos = append(existFileInfos, map[string]interface{}{
-			"id":        fileInfo["id"],
-			"file_name": fileInfo["fileName"],
-			"file_type": fileInfo["fileType"],
-			"file_ext":  fileInfo["fileExt"],
-			"file_size": fileInfo["fileSize"],
+			"id":       fileInfo["id"],
+			"fileName": fileInfo["fileName"],
+			"fileType": fileInfo["fileType"],
+			"fileExt":  fileInfo["fileExt"],
+			"fileSize": fileInfo["fileSize"],
 		})
 	}
 	return existFileInfos
@@ -51,14 +49,14 @@ func Upload(ctx *gin.Context, files []*multipart.FileHeader) (existFileInfos []m
 func Download(ctx *gin.Context, data map[string]interface{}) {
 	info, err := repositories.File().Find(map[string]interface{}{
 		"id": data["id"],
-	}, []string{"id", "file_name", "file_path", "hash"})
+	}, []string{"id", "drive", "file_name", "file_path", "hash"})
 	if err != nil {
 		panic(FileConstant.NotExist)
 	}
-	// 设置响应头
-	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", info["file_name"]))
-	ctx.Header("Content-Type", "application/octet-stream")
-	ctx.File(info["file_path"].(string))
+	// 返回文件流
+	stream := adaptiveDownload(info)
+	// 响应文件流
+	response(ctx, stream, info["fileName"].(string))
 }
 
 // Preview 图片预览
@@ -68,10 +66,20 @@ func Download(ctx *gin.Context, data map[string]interface{}) {
 func Preview(ctx *gin.Context, data map[string]interface{}) {
 	info, err := repositories.File().Find(map[string]interface{}{
 		"id": data["id"],
-	}, []string{"id", "file_name", "file_ext", "file_path", "hash"})
-	common.Log.Debug(info)
+	}, []string{"id", "drive", "file_name", "file_type", "file_ext", "file_path", "file_size", "hash"})
 	if err != nil {
 		panic(FileConstant.NotExist)
 	}
-	ctx.File(info["file_path"].(string) + info["file_path"].(string))
+	// 判断是否为图片
+	if info["fileType"].(string) != "image/jpeg" &&
+		info["fileType"].(string) != "image/png" &&
+		info["fileType"].(string) != "image/gif" {
+		panic(FileConstant.NotImage)
+	}
+	// 返回文件流
+	stream := adaptiveDownload(info)
+	// 响应文件流
+	ctx.Header("Content-Type", info["fileType"].(string))
+	ctx.Header("Connection", "keep-alive")
+	response(ctx, stream, info["fileName"].(string))
 }

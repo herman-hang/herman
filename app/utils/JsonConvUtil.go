@@ -137,3 +137,18 @@ func (b *Buffer) append(s string) *Buffer {
 	b.WriteString(s)
 	return b
 }
+
+// UnderscoreToLowerCamelCase 下划线转为小驼峰
+// @param string data 待转数据
+// @return string 返回转换成功数据
+func UnderscoreToLowerCamelCase(data string) string {
+	parts := strings.Split(data, "_")
+	for i := range parts {
+		if i == 0 {
+			parts[i] = strings.ToLower(parts[i])
+			continue
+		}
+		parts[i] = strings.Title(parts[i])
+	}
+	return strings.Join(parts, "")
+}

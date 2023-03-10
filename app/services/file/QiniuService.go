@@ -18,7 +18,7 @@ type Qiniu struct {
 	domain    string
 }
 
-func NewQiniu(accessKey, secretKey, bucket, domain string) *Qiniu {
+func NewQiniu(accessKey string, secretKey string, bucket string, domain string) *Qiniu {
 	return &Qiniu{
 		accessKey: accessKey,
 		secretKey: secretKey,
@@ -50,6 +50,9 @@ func (q *Qiniu) Upload(key string, content []byte) error {
 	return nil
 }
 
+// Download 文件下载
+// @param string key 文件key
+// @return []byte, error 文件流和错误信息
 func (q *Qiniu) Download(key string) ([]byte, error) {
 	url := q.domain + "/" + key
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
@@ -64,17 +67,4 @@ func (q *Qiniu) Download(key string) ([]byte, error) {
 		}
 	}(res.Body)
 	return ioutil.ReadAll(res.Body)
-}
-
-func (q *Qiniu) Preview(key string) error {
-	mac := qbox.NewMac(q.accessKey, q.secretKey)
-
-	cfg := storage.Config{}
-	bucketManager := storage.NewBucketManager(mac, &cfg)
-
-	err := bucketManager.Delete(q.bucket, key)
-	if err != nil {
-		panic(FileConstant.DeleteFail)
-	}
-	return nil
 }

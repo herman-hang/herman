@@ -14,7 +14,6 @@ const (
 	SizeFail             = "文件大小超过限制10MB"
 	UploadFail           = "上传失败"
 	Download             = "下载失败"
-	DeleteFail           = "删除失败"
 	CreateOSSClientFail  = "创建OSS客户机失败"
 	GetOSSBucketFail     = "获取存储驱动失败"
 	ConfigFileDriveError = "文件存储驱动配置错误"
@@ -24,4 +23,5 @@ const (
 	ReadFileFail         = "读取文件失败"
 	EmptyString          = ""
 	NotExist             = "文件不存在"
+	NotImage             = "请求文件不是图片，无法预览"
 )

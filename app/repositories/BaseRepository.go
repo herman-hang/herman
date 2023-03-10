@@ -44,8 +44,9 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 // @param map[string]interface{} condition 查询条件
 // @param []string fields 查询指定字段
 // @return data err 详情数据，错误信息
-func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]string) (data map[string]interface{}, err error) {
-	data = make(map[string]interface{})
+func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]string) (info map[string]interface{}, err error) {
+	data := make(map[string]interface{})
+	info = make(map[string]interface{})
 	if len(fields) > 0 {
 		if err := common.Db.Model(&base.Model).Where(condition).Select(fields[0]).Find(&data).Error; err != nil {
 			return nil, err
@@ -55,7 +56,13 @@ func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]s
 			return nil, err
 		}
 	}
-	return data, nil
+	if len(data) > 0 {
+		for k, v := range data {
+			// 下划线转为小驼峰
+			info[utils.UnderscoreToLowerCamelCase(k)] = v
+		}
+	}
+	return info, nil
 }
 
 // Update 更新

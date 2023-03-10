@@ -38,6 +38,9 @@ func (a *AliOSS) Upload(key string, content []byte) error {
 	return a.bucket.PutObject(key, bytes.NewReader(content))
 }
 
+// Download 文件下载
+// @param string key 文件key
+// @return []byte, error 文件流和错误信息
 func (a *AliOSS) Download(key string) ([]byte, error) {
 	body, err := a.bucket.GetObject(key)
 	if err != nil {
@@ -51,8 +54,4 @@ func (a *AliOSS) Download(key string) ([]byte, error) {
 	}(body)
 	data, err := ioutil.ReadAll(body)
 	return data, nil
-}
-
-func (a *AliOSS) Preview(key string) error {
-	return a.bucket.DeleteObject(key)
 }

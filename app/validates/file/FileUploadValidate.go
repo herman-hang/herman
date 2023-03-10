@@ -97,7 +97,13 @@ func isSafeFileType(f *multipart.FileHeader) bool {
 	fileType := http.DetectContentType(buf)
 
 	switch fileType {
-	case "image/jpeg", "image/png", "image/gif", "text/plain", "application/pdf":
+	case "image/jpeg",
+		"image/png",
+		"image/gif",
+		"text/plain",
+		"application/pdf",
+		"application/msword",
+		"application/vnd.ms-excel":
 		return true
 	default:
 		return false

@@ -13,12 +13,9 @@ type LocalOSS struct {
 }
 
 // NewLocalOSS 实例化一个本地存储对象
-// @param string path 文件存储目录
 // @return *LocalOSS 返回本地存储对象
-func NewLocalOSS(path string) *LocalOSS {
-	return &LocalOSS{
-		path: path,
-	}
+func NewLocalOSS() *LocalOSS {
+	return &LocalOSS{}
 }
 
 // Upload 文件上传
@@ -26,8 +23,7 @@ func NewLocalOSS(path string) *LocalOSS {
 // @param content 文件流
 // @return error 返回一个错误信息
 func (l *LocalOSS) Upload(key string, content []byte) error {
-	// 判断文件目录是否存在,不存在则创建
-	fp, err := os.Create(mkdir(l.path) + "/" + key)
+	fp, err := os.Create(key)
 	if err != nil {
 		return err
 	}

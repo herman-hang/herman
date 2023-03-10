@@ -43,18 +43,13 @@ func (t *TencentCOS) Upload(key string, content []byte) error {
 	return nil
 }
 
+// Download 文件下载
+// @param string key 文件key
+// @return []byte, error 文件流和错误信息
 func (t *TencentCOS) Download(key string) ([]byte, error) {
 	res, err := t.client.Object.Get(context.Background(), key, nil)
 	if err != nil {
 		panic(FileConstant.Download)
 	}
 	return ioutil.ReadAll(res.Body)
-}
-
-func (t *TencentCOS) Preview(key string) error {
-	_, err := t.client.Object.Delete(context.Background(), key, nil)
-	if err != nil {
-		panic(FileConstant.DeleteFail)
-	}
-	return nil
 }

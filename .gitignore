@@ -139,3 +139,4 @@ Pipfile
 /tmp/main.exe
 /runtime/
 /storages/
+config.yaml

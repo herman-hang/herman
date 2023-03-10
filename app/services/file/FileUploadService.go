@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // Exec 执行文件上传
@@ -70,46 +71,57 @@ func calculateHash(file *multipart.FileHeader) (hash string, content []byte) {
 	return hex.EncodeToString(hashed.Sum(nil)), content
 }
 
-// adaptiveUpload 适配驱动文件上传
+// adaptiveUpload 适配驱动上传文件
 // @param string fileHash 文件hash值
 // @param []byte content 文件流
-// @return string 返回一个文件路径
+// @return filePath 返回一个文件路径
 func adaptiveUpload(fileHash string, content []byte) (filePath string) {
-	// 当使用oss,cos,qiniu时,文件路径为空
-	filePath = FileConstant.EmptyString
+	folderName := time.Now().Format("2006/01/02")
 	switch settings.Config.FileStorage.Drive {
 	case "local":
-		fileDrive := NewLocalOSS(settings.Config.FileStorage.Local.Path)
-		filePath = fileDrive.path
-		if err := fileDrive.Upload(fileHash, content); err != nil {
-			panic(FileConstant.UploadFail)
-		}
+		filePath = mkdir(settings.Config.FileStorage.Local.Path) + "/" + fileHash
+		fileDrive := NewLocalOSS()
+		go func() {
+			if err := fileDrive.Upload(filePath, content); err != nil {
+				panic(FileConstant.UploadFail)
+			}
+		}()
 	case "oss":
-		oss := settings.Config.FileStorage.Oss
-		fileDrive, err := NewAliOSS(oss.Endpoint, oss.AccessKeyId, oss.AccessKeySecret, oss.Bucket)
+		aliOss := settings.Config.FileStorage.Oss
+		filePath = filepath.Join(aliOss.Path, folderName) + "/" + fileHash
+		fileDrive, err := NewAliOSS(aliOss.Endpoint, aliOss.AccessKeyId, aliOss.AccessKeySecret, aliOss.Bucket)
 		if err != nil {
 			panic(FileConstant.NewObjectFail)
 		}
-		if err := fileDrive.Upload(fileHash, content); err != nil {
-			panic(FileConstant.UploadFail)
-		}
+		go func() {
+			if err := fileDrive.Upload(filePath, content); err != nil {
+				panic(FileConstant.UploadFail)
+			}
+		}()
 	case "cos":
 		cos := settings.Config.FileStorage.Cos
+		filePath = filepath.Join(cos.Path, folderName) + "/" + fileHash
 		fileDrive, err := NewTencentCOS(cos.Region, cos.AppId, cos.SecretId, cos.SecretKey, cos.Bucket)
 		if err != nil {
 			panic(FileConstant.NewObjectFail)
 		}
-		if err := fileDrive.Upload(fileHash, content); err != nil {
-			panic(FileConstant.UploadFail)
-		}
+		go func() {
+			if err := fileDrive.Upload(filePath, content); err != nil {
+				panic(FileConstant.UploadFail)
+			}
+		}()
 	case "qiniu":
 		qiniu := settings.Config.FileStorage.Qiniu
+		filePath = filepath.Join(qiniu.Path, folderName) + "/" + fileHash
 		fileDrive := NewQiniu(qiniu.SecretKey, qiniu.SecretKey, qiniu.Bucket, qiniu.Domain)
-		if err := fileDrive.Upload(fileHash, content); err != nil {
-			panic(FileConstant.UploadFail)
-		}
+		go func() {
+			if err := fileDrive.Upload(filePath, content); err != nil {
+				panic(FileConstant.UploadFail)
+			}
+		}()
 	default:
 		panic(FileConstant.ConfigFileDriveError)
 	}
-	return filePath
+
+	return strings.ReplaceAll(filePath, "\\", "/")
 }

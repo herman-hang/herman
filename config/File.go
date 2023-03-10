@@ -29,8 +29,8 @@ type Oss struct {
 	Bucket string `mapstructure:"bucket"`
 	// 阿里云OSS的Endpoint
 	Endpoint string `mapstructure:"endpoint"`
-	// 阿里云OSS的外网域名
-	Domain string `mapstructure:"domain"`
+	// 存储路径
+	Path string `mapstructure:"path"`
 }
 
 // Qiniu 七牛云存储配置
@@ -43,10 +43,8 @@ type Qiniu struct {
 	Bucket string `mapstructure:"bucket"`
 	// 七牛云的外网域名
 	Domain string `mapstructure:"domain"`
-	// 七牛云的Zone
-	Zone string `mapstructure:"zone"`
-	// 七牛云的UseHttps
-	UseHttps string `mapstructure:"use_https"`
+	// 存储路径
+	Path string `mapstructure:"path"`
 }
 
 // Cos 腾讯云COS存储配置
@@ -61,8 +59,6 @@ type Cos struct {
 	Bucket string `mapstructure:"bucket"`
 	// 腾讯云COS的Region
 	Region string `mapstructure:"region"`
-	// 腾讯云COS的外网域名
-	Domain string `mapstructure:"domain"`
-	// 腾讯云COS的外网域名
-	UseHttps string `mapstructure:"use_https"`
+	// 存储路径
+	Path string `mapstructure:"path"`
 }
