@@ -51,7 +51,7 @@ func (t *TencentCOS) Download(key string) ([]byte, error) {
 	return ioutil.ReadAll(res.Body)
 }
 
-func (t *TencentCOS) Delete(key string) error {
+func (t *TencentCOS) Preview(key string) error {
 	_, err := t.client.Object.Delete(context.Background(), key, nil)
 	if err != nil {
 		panic(FileConstant.DeleteFail)

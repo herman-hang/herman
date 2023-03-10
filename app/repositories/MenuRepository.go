@@ -5,11 +5,15 @@ import (
 	"github.com/herman-hang/herman/app/models"
 )
 
-var Menu = MenuRepository{BaseRepository{Model: new(models.Menu)}}
-
 // MenuRepository 菜单仓储层
 type MenuRepository struct {
 	BaseRepository
+}
+
+// Menu 实例化菜单仓储层
+// @return MenuRepository 返回菜单仓储层
+func Menu() *MenuRepository {
+	return &MenuRepository{BaseRepository{Model: new(models.Menu)}}
 }
 
 // DeleteByMenuId 根据父菜单ID删除子菜单

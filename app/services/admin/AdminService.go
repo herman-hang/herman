@@ -20,7 +20,7 @@ import (
 // @return interface{} 返回一个token值
 func Login(data map[string]interface{}) interface{} {
 	// 获取管理员信息
-	admin := repositories.Admin.GetAdminInfo(fmt.Sprintf("%s", data["user"]))
+	admin := repositories.Admin().GetAdminInfo(fmt.Sprintf("%s", data["user"]))
 	// 设置上下文
 	ctx := context.Background()
 	// 设置Redis错误密码的key
@@ -37,7 +37,7 @@ func Login(data map[string]interface{}) interface{} {
 		panic(AdminConstant.PasswordError)
 	}
 	// 登录总数自增
-	if err = repositories.Admin.Update([]uint{admin.Id}, map[string]interface{}{"login_total": admin.LoginTotal + 1}); err != nil {
+	if err = repositories.Admin().Update([]uint{admin.Id}, map[string]interface{}{"login_total": admin.LoginTotal + 1}); err != nil {
 		return nil
 	}
 	// 返回token
@@ -52,7 +52,8 @@ func Add(data map[string]interface{}) {
 		common.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 执行添加管理员
-		admin, err := repositories.Admin.Insert(data)
+		adminRepository := repositories.Admin()
+		admin, err := adminRepository.Insert(data)
 		if err != nil {
 			return errors.New(AdminConstant.AddFail)
 		}
@@ -85,7 +86,7 @@ func Modify(data map[string]interface{}) {
 		delete(data, "user")
 		delete(data, "roles")
 		// 执行更新
-		if err := repositories.Admin.Update([]uint{id}, data); err != nil {
+		if err := repositories.Admin().Update([]uint{id}, data); err != nil {
 			return errors.New(AdminConstant.UpdateFail)
 		}
 		// 判断选择的角色是否存在
@@ -93,7 +94,7 @@ func Modify(data map[string]interface{}) {
 			return errors.New(AdminConstant.RoleNotExist)
 		}
 		// 删除角色
-		if err := repositories.AdminRole.DeleteByAdminId(id); err != nil {
+		if err := repositories.AdminRole().DeleteByAdminId(id); err != nil {
 			return errors.New(AdminConstant.DeleteFail)
 		}
 		// 关联角色
@@ -130,7 +131,7 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		"login_out_at",
 		"created_at",
 	}
-	info, err := repositories.Admin.Find(map[string]interface{}{"id": id}, fields)
+	info, err := repositories.Admin().Find(map[string]interface{}{"id": id}, fields)
 	info["roles"] = FindRole(id)
 	if err != nil {
 		panic(AdminConstant.GetAdminInfoFail)
@@ -142,7 +143,7 @@ func Find(data map[string]interface{}) map[string]interface{} {
 // @param map[string]interface{} data 前端请求数据
 // @return void
 func Remove(data map[string]interface{}) {
-	if err := repositories.Admin.Delete(data["id"].([]uint)); err != nil {
+	if err := repositories.Admin().Delete(data["id"].([]uint)); err != nil {
 		panic(AdminConstant.DeleteAdminFail)
 	}
 }
@@ -172,7 +173,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 	// 排序
 	order := "created_at desc"
 	// 执行查询
-	list, err := repositories.Admin.GetList(query, fields, order, data)
+	list, err := repositories.Admin().GetList(query, fields, order, data)
 	if err != nil {
 		panic(AdminConstant.GetAdminListFail)
 	}

@@ -15,7 +15,7 @@ import (
 // @param map data 前端请求数据
 // @return interface{} 返回一个token值
 func Login(data map[string]interface{}) interface{} {
-	user := repositories.User.GetUserInfo(fmt.Sprintf("%s", data["user"]))
+	user := repositories.User().GetUserInfo(fmt.Sprintf("%s", data["user"]))
 	// 设置上下文
 	ctx := context.Background()
 	// 设置Redis错误密码的key

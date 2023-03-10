@@ -101,7 +101,7 @@ storage:
   # 本地存储配置
   local:
     # 本地存储路径(路径结尾不需要加"/")
-    path: ./resources/files/uploads
+    path: storages/files/uploads
   # 阿里云OSS配置
   oss:
     # 阿里云OSS的AccessKeyID

@@ -5,12 +5,15 @@ import (
 	"github.com/herman-hang/herman/app/models"
 )
 
-// DictionaryDetail 实例化结构体并重写BaseRepository
-var DictionaryDetail = DictionaryDetailRepository{BaseRepository{Model: new(models.DictionaryDetail)}}
-
 // DictionaryDetailRepository 数据字典表仓储层
 type DictionaryDetailRepository struct {
 	BaseRepository
+}
+
+// DictionaryDetail 数据字典表仓储层
+// @return DictionaryDetailRepository 返回数据字典表仓储层
+func DictionaryDetail() *DictionaryDetailRepository {
+	return &DictionaryDetailRepository{BaseRepository{Model: new(models.DictionaryDetail)}}
 }
 
 // FindByCode 根据数据字典KEY返回明细值

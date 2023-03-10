@@ -24,7 +24,7 @@ func FilterPassword(data map[string]interface{}) map[string]interface{} {
 func RoleKeyIsExist(roles []role.Roles) error {
 	for _, v := range roles {
 		// 判断角色Key是否存在
-		if isExist, err := repositories.Role.KeyIsExist(v.Role); !isExist {
+		if isExist, err := repositories.Role().KeyIsExist(v.Role); !isExist {
 			return err
 		}
 	}
@@ -37,7 +37,7 @@ func RoleKeyIsExist(roles []role.Roles) error {
 // @return error 返回一个错误信息
 func JoinRole(admin map[string]interface{}, roles []role.Roles) error {
 	for _, v := range roles {
-		_, err := repositories.AdminRole.Insert(map[string]interface{}{
+		_, err := repositories.AdminRole().Insert(map[string]interface{}{
 			"adminId": admin["id"],
 			"roleKey": v.Role,
 		})
@@ -52,7 +52,7 @@ func JoinRole(admin map[string]interface{}, roles []role.Roles) error {
 // @param uint adminId 管理员ID
 // @return data 返回角色数据
 func FindRole(adminId uint) []map[string]interface{} {
-	info, err := repositories.AdminRole.GetRoles(adminId, []string{"roles.role", "roles.name"})
+	info, err := repositories.AdminRole().GetRoles(adminId, []string{"roles.role", "roles.name"})
 	if err != nil {
 		panic(AdminConstant.GetRoleFail)
 	}

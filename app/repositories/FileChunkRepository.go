@@ -2,10 +2,13 @@ package repositories
 
 import "github.com/herman-hang/herman/app/models"
 
-// FileChunk 实例化结构体并重写BaseRepository
-var FileChunk = AdminRepository{BaseRepository{Model: new(models.FileChunk)}}
-
-// FileChunkRepository 管理员表仓储层
+// FileChunkRepository 文件分片表仓储层
 type FileChunkRepository struct {
 	BaseRepository
+}
+
+// FileChunk 实例化文件分片表仓储层
+// @return AdminRepository 返回文件分片表仓储层
+func FileChunk() *FileChunkRepository {
+	return &FileChunkRepository{BaseRepository{Model: new(models.FileChunk)}}
 }

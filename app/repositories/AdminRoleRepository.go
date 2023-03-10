@@ -5,12 +5,15 @@ import (
 	"github.com/herman-hang/herman/app/models"
 )
 
-// AdminRole 实例化结构体并重写BaseRepository
-var AdminRole = AdminRoleRepository{BaseRepository{Model: new(models.AdminRoleModel)}}
-
 // AdminRoleRepository 管理员角色中间表仓储层
 type AdminRoleRepository struct {
 	BaseRepository
+}
+
+// AdminRole 实例化管理员角色中间表仓储层
+// @return AdminRoleRepository 返回管理员角色中间表仓储层
+func AdminRole() *AdminRoleRepository {
+	return &AdminRoleRepository{BaseRepository{Model: new(models.AdminRoleModel)}}
 }
 
 // DeleteByAdminId 根据管理员ID删除角色

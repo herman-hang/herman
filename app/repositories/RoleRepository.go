@@ -6,11 +6,15 @@ import (
 	"github.com/herman-hang/herman/app/models"
 )
 
-var Role = RoleRepository{BaseRepository{Model: new(models.Role)}}
-
 // RoleRepository 角色仓储层
 type RoleRepository struct {
 	BaseRepository
+}
+
+// Role 实例化角色仓储层
+// @return RoleRepository 返回角色仓储层
+func Role() *RoleRepository {
+	return &RoleRepository{BaseRepository{Model: new(models.Role)}}
 }
 
 // KeyIsExist 判断角色Key是否存在

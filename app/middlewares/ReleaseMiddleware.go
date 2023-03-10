@@ -16,7 +16,6 @@ import (
 // @return gin.HandlerFunc
 func ServerHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		common.Context = ctx
 		Reload()
 		ctx.Next()
 		Close()
@@ -58,5 +57,5 @@ func Close() {
 		_ = db.Close()
 	}
 	// 设置全局变量为nil，等待GC进行回收
-	common.Db, common.Redis, common.Casbin, common.Context = nil, nil, nil, nil
+	common.Db, common.Redis, common.Casbin = nil, nil, nil
 }

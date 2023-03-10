@@ -13,7 +13,7 @@ import (
 // @param map[string]interface{} data 前端请求数据
 // @return void
 func Add(data map[string]interface{}) {
-	if _, err := repositories.Menu.Insert(data); err != nil {
+	if _, err := repositories.Menu().Insert(data); err != nil {
 		panic(MenuConstant.AddFail)
 	}
 }
@@ -22,7 +22,7 @@ func Add(data map[string]interface{}) {
 // @param map[string]interface{} data 前端请求数据
 // @return void
 func Modify(data map[string]interface{}) {
-	if err := repositories.Menu.Update([]uint{data["id"].(uint)}, data); err != nil {
+	if err := repositories.Menu().Update([]uint{data["id"].(uint)}, data); err != nil {
 		panic(MenuConstant.ModifyFail)
 	}
 }
@@ -31,11 +31,11 @@ func Modify(data map[string]interface{}) {
 // @param map[string]interface{} data 前端请求数据
 // @return map[string]interface{} 菜单信息
 func Find(data map[string]interface{}) map[string]interface{} {
-	info, err := repositories.Menu.Find(map[string]interface{}{"id": data["id"]},
+	info, err := repositories.Menu().Find(map[string]interface{}{"id": data["id"]},
 		[]string{"id", "pid", "name", "path", "method", "sort", "created_at"},
 	)
 	if info["pid"] != MenuConstant.TopChild {
-		topChild, err := repositories.Menu.Find(map[string]interface{}{"id": info["pid"]}, []string{"name"})
+		topChild, err := repositories.Menu().Find(map[string]interface{}{"id": info["pid"]}, []string{"name"})
 		if err != nil {
 			return nil
 		}
@@ -55,11 +55,11 @@ func Remove(data map[string]interface{}) {
 	err := common.Db.Transaction(func(tx *gorm.DB) error {
 		common.Db = tx
 		ids := data["id"].([]uint)
-		if err := repositories.Menu.Delete(ids); err != nil {
+		if err := repositories.Menu().Delete(ids); err != nil {
 			return errors.New(MenuConstant.DeleteFail)
 		}
 		// 如果存在子菜单，则全部删除
-		_ = repositories.Menu.DeleteByMenuId(ids)
+		_ = repositories.Menu().DeleteByMenuId(ids)
 		return nil
 	})
 	if err != nil {
@@ -88,7 +88,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 	// 排序
 	order := "created_at desc"
 	// 执行查询
-	list, err := repositories.Menu.GetList(query, fields, order, data)
+	list, err := repositories.Menu().GetList(query, fields, order, data)
 	if err != nil {
 		panic(MenuConstant.GetListFail)
 	}

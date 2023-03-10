@@ -28,7 +28,9 @@ func InitZapLogs(config *config.Log, mode string) (err error) {
 		return err
 	}
 	if mode == "debug" {
-		consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+		encoderConfig := zap.NewDevelopmentEncoderConfig()
+		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 		// 将多个 zapcore.Core 对象合并成一个
 		core = zapcore.NewTee(
 			zapcore.NewCore(encoders, writersSyncers, level),
@@ -73,7 +75,7 @@ func GetEncoder() zapcore.Encoder {
 	encoderConfig.FunctionKey = "function"
 	encoderConfig.MessageKey = "msg"
 	encoderConfig.StacktraceKey = "stacktrace"
-	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	return zapcore.NewJSONEncoder(encoderConfig)

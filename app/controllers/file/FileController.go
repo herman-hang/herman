@@ -13,6 +13,23 @@ import (
 func UploadFile(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	files := FileValidate.Check(ctx)
-	FileService.Upload(context.Context, files)
-	context.Json(nil)
+	context.Json(FileService.Upload(context.Context, files))
+}
+
+// DownloadFile 下载文件
+// @param ctx *gin.Context 上下文
+// @return void
+func DownloadFile(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	FileService.Download(ctx, data)
+}
+
+// PreviewFile 图片文件
+// @param ctx *gin.Context 上下文
+// @return void
+func PreviewFile(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	FileService.Preview(ctx, data)
 }

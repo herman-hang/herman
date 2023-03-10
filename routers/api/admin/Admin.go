@@ -71,5 +71,9 @@ func Router(router *gin.RouterGroup) {
 	router.PUT("/dictionaries/details", DictionaryController.ModifyDetail)
 
 	// 文件上传
-	router.POST("/files/upload", FileController.UploadFile)
+	router.POST("/files/uploads", FileController.UploadFile)
+	// 文件下载
+	router.GET("/files/download/:id", FileController.DownloadFile)
+	// 图片预览
+	router.GET("/files/preview/:id", FileController.PreviewFile)
 }

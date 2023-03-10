@@ -9,10 +9,9 @@ import (
 )
 
 var (
-	Engine  *gin.Engine
-	Log     *zap.SugaredLogger
-	Db      *gorm.DB
-	Redis   *redis.Client
-	Casbin  *casbin.CachedEnforcer
-	Context *gin.Context
+	Engine *gin.Engine
+	Log    *zap.SugaredLogger
+	Db     *gorm.DB
+	Redis  *redis.Client
+	Casbin *casbin.CachedEnforcer
 )

@@ -53,6 +53,6 @@ func (a *AliOSS) Download(key string) ([]byte, error) {
 	return data, nil
 }
 
-func (a *AliOSS) Delete(key string) error {
+func (a *AliOSS) Preview(key string) error {
 	return a.bucket.DeleteObject(key)
 }

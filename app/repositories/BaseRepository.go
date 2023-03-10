@@ -86,15 +86,15 @@ func (base *BaseRepository) Delete(ids []uint) error {
 }
 
 // IsExist 查询数据是否存在
-// @param uint id 条件ID
-// @return bool error 返回一个错误信息
-func (base *BaseRepository) IsExist(id uint) (bool bool, err error) {
-	result := make(map[string]interface{})
-	err = common.Db.Model(&base.Model).Find(&result, id).Error
-	if len(result) != constants.LengthByZero {
-		return true, nil
+// @param map[string]interface{} condition 查询条件
+// @return bool 返回一个bool值
+func (base *BaseRepository) IsExist(condition map[string]interface{}) bool {
+	data := make(map[string]interface{})
+	err := common.Db.Model(&base.Model).Where(condition).Find(&data).Error
+	if err != nil && len(data) > constants.LengthByZero {
+		return true
 	}
-	return false, err
+	return false
 }
 
 // GetList 获取列表数据

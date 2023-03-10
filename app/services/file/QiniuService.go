@@ -66,7 +66,7 @@ func (q *Qiniu) Download(key string) ([]byte, error) {
 	return ioutil.ReadAll(res.Body)
 }
 
-func (q *Qiniu) Delete(key string) error {
+func (q *Qiniu) Preview(key string) error {
 	mac := qbox.NewMac(q.accessKey, q.secretKey)
 
 	cfg := storage.Config{}

@@ -20,9 +20,9 @@ func Jwt(guard string) gin.HandlerFunc {
 		switch guard {
 		case "user", "mobile": // 前台和移动端（用户）
 			// 用户信息存储在请求中
-			ctx.Set("user", repositories.User.GetUserInfo(claims.Uid))
+			ctx.Set("user", repositories.User().GetUserInfo(claims.Uid))
 		case "admin": // 管理员后台
-			ctx.Set("admin", repositories.Admin.GetAdminInfo(claims.Uid))
+			ctx.Set("admin", repositories.Admin().GetAdminInfo(claims.Uid))
 		case "merchant": // 商家后台
 
 		default:

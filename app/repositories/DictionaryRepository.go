@@ -5,12 +5,15 @@ import (
 	"github.com/herman-hang/herman/app/models"
 )
 
-// Dictionary 实例化结构体并重写BaseRepository
-var Dictionary = DictionaryRepository{BaseRepository{Model: new(models.Dictionary)}}
-
 // DictionaryRepository 数据字典表仓储层
 type DictionaryRepository struct {
 	BaseRepository
+}
+
+// Dictionary 数据字典表仓储层
+// @return DictionaryRepository 返回数据字典表仓储层
+func Dictionary() *DictionaryRepository {
+	return &DictionaryRepository{BaseRepository{Model: new(models.Dictionary)}}
 }
 
 // DeleteByDictionaryId 根据数据字典ID删除明细值

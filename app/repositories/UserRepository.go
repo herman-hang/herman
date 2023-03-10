@@ -7,12 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
-// User 实例化结构体并重写BaseRepository
-var User = UserRepository{BaseRepository{Model: new(models.Users)}}
-
 // UserRepository 用户表仓储层
 type UserRepository struct {
 	BaseRepository
+}
+
+// User 实例化用户表仓储层
+// @return UserRepository 返回用户表仓储层
+func User() *UserRepository {
+	return &UserRepository{BaseRepository{Model: new(models.Users)}}
 }
 
 // GetUserInfo 获取用户信息

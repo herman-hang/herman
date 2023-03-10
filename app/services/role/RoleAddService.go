@@ -47,7 +47,7 @@ func extend(data []role.Roles, roleInfo map[string]interface{}) (roles [][]strin
 	var newRole = roleInfo["role"].(string)
 	for _, v := range data {
 		prole := v.Role
-		isExist, _ := repositories.Role.KeyIsExist(prole)
+		isExist, _ := repositories.Role().KeyIsExist(prole)
 		if !isExist {
 			return nil, errors.New(fmt.Sprintf(RoleConstant.PRoleNotExist, prole))
 		}

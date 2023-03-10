@@ -2,7 +2,6 @@ package file
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"mime/multipart"
 	"net/http"
@@ -21,7 +20,6 @@ func Check(ctx *gin.Context) (files []*multipart.FileHeader) {
 
 	form := ctx.Request.MultipartForm
 	files = form.File["files"]
-	common.Log.Debug(files)
 	// 检查文件数量
 	if len(files) == FileConstant.CountZero {
 		panic(FileConstant.Empty)

@@ -21,7 +21,7 @@ func Add(data map[string]interface{}) {
 		// casbin重新初始化
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 判断角色Key是否存在
-		if isExist, _ := repositories.Role.KeyIsExist(data["role"].(string)); isExist {
+		if isExist, _ := repositories.Role().KeyIsExist(data["role"].(string)); isExist {
 			return errors.New(RoleConstant.KeyExist)
 		}
 		roles := data["roles"]
@@ -29,7 +29,7 @@ func Add(data map[string]interface{}) {
 		delete(data, "roles")
 		delete(data, "rules")
 		// 添加角色信息
-		roleInfo, err := repositories.Role.Insert(data)
+		roleInfo, err := repositories.Role().Insert(data)
 		if err != nil {
 			return errors.New(RoleConstant.AddFail)
 		}
@@ -54,7 +54,7 @@ func Modify(data map[string]interface{}) {
 		common.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 判断角色是否存在
-		roleInfo, _ := repositories.Role.Find(map[string]interface{}{"id": id}, []string{"id", "role"})
+		roleInfo, _ := repositories.Role().Find(map[string]interface{}{"id": id}, []string{"id", "role"})
 		if len(roleInfo) == constants.LengthByZero {
 			return errors.New(RoleConstant.NotExist)
 		}
@@ -63,7 +63,7 @@ func Modify(data map[string]interface{}) {
 		delete(data, "roles")
 		delete(data, "rules")
 		// 修改角色
-		if err := repositories.Role.Update([]uint{id}, data); err != nil {
+		if err := repositories.Role().Update([]uint{id}, data); err != nil {
 			return errors.New(RoleConstant.ModifyFail)
 		}
 		// 删除所有角色和权限
@@ -87,7 +87,7 @@ func Modify(data map[string]interface{}) {
 func Find(data map[string]interface{}) map[string]interface{} {
 	// 查询角色信息
 	fields := []string{"id", "name", "role", "state", "introduction"}
-	roleInfo, err := repositories.Role.Find(map[string]interface{}{"id": data["id"]}, fields)
+	roleInfo, err := repositories.Role().Find(map[string]interface{}{"id": data["id"]}, fields)
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
@@ -95,12 +95,12 @@ func Find(data map[string]interface{}) map[string]interface{} {
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
-	roleInfo["roles"], err = repositories.Role.FindRoles(roles)
+	roleInfo["roles"], err = repositories.Role().FindRoles(roles)
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
 	// 查询菜单
-	rules, err := repositories.Menu.GetAllData([]string{"path", "method", "name"})
+	rules, err := repositories.Menu().GetAllData([]string{"path", "method", "name"})
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
@@ -127,11 +127,11 @@ func Remove(data map[string]interface{}) {
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 查询角色信息
 		for _, id := range data["id"].([]uint) {
-			roleInfo, err := repositories.Role.Find(map[string]interface{}{"id": id}, []string{"id", "role"})
+			roleInfo, err := repositories.Role().Find(map[string]interface{}{"id": id}, []string{"id", "role"})
 			if err != nil {
 				return errors.New(RoleConstant.DeleteFail)
 			}
-			if err := repositories.Role.Delete([]uint{id}); err != nil {
+			if err := repositories.Role().Delete([]uint{id}); err != nil {
 				return errors.New(RoleConstant.DeleteFail)
 			}
 			// 删除所有角色和权限
@@ -164,7 +164,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 	}
 	// 排序
 	order := "created_at desc"
-	list, err := repositories.Role.GetList(query, fields, order, data)
+	list, err := repositories.Role().GetList(query, fields, order, data)
 	if err != nil {
 		panic(RoleConstant.GetListFail)
 	}

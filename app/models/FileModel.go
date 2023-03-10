@@ -14,8 +14,8 @@ type File struct {
 	FileType  string         `json:"fileType" gorm:"column:file_type;comment:文件类型"`
 	FileExt   string         `json:"fileExt" gorm:"column:file_ext;comment:文件扩展名"`
 	FilePath  string         `json:"filePath" gorm:"column:file_path;comment:文件路径"`
-	Hash      string         `json:"hash" gorm:"column:file_path;comment:文件Hash值"`
-	FileSize  int64          `json:"fileSize" gorm:"column:file_size;comment:文件大小"`
+	Hash      string         `json:"hash" gorm:"column:hash;comment:文件Hash值"`
+	FileSize  int64          `json:"fileSize" gorm:"column:file_size;comment:文件大小(单位byte)"`
 	CreatedAt time.Time      `json:"createdAt" gorm:"column:created_at;comment:创建时间"`
 	UpdatedAt time.Time      `json:"updatedAt" gorm:"column:updated_at;comment:更新时间"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;index;comment:删除时间"`

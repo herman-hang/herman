@@ -6,12 +6,15 @@ import (
 	"github.com/herman-hang/herman/app/models"
 )
 
-// Admin 实例化结构体并重写BaseRepository
-var Admin = AdminRepository{BaseRepository{Model: new(models.Admin)}}
-
 // AdminRepository 管理员表仓储层
 type AdminRepository struct {
 	BaseRepository
+}
+
+// Admin 实例化管理员表仓储层
+// @return AdminRepository 返回管理员表仓储层
+func Admin() *AdminRepository {
+	return &AdminRepository{BaseRepository{Model: new(models.Admin)}}
 }
 
 // GetAdminInfo 获取管理员信息

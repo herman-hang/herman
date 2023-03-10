@@ -13,7 +13,7 @@ import (
 // @param map[string]interface{} data 带处理数据
 // @return void
 func AddDictionary(data map[string]interface{}) {
-	if _, err := repositories.Dictionary.Insert(data); err != nil {
+	if _, err := repositories.Dictionary().Insert(data); err != nil {
 		panic(DictionaryConstant.AddFail)
 	}
 }
@@ -22,7 +22,7 @@ func AddDictionary(data map[string]interface{}) {
 // @param map[string]interface{} data 带处理数据
 // @return void
 func ModifyDictionary(data map[string]interface{}) {
-	if err := repositories.Dictionary.Update([]uint{data["id"].(uint)}, data); err != nil {
+	if err := repositories.Dictionary().Update([]uint{data["id"].(uint)}, data); err != nil {
 		panic(DictionaryConstant.ModifyFail)
 	}
 }
@@ -31,7 +31,7 @@ func ModifyDictionary(data map[string]interface{}) {
 // @param map[string]interface{} data 带处理数据
 // @return map[string]interface{} 数据字典信息
 func FindDictionary(data map[string]interface{}) map[string]interface{} {
-	info, err := repositories.Dictionary.Find(map[string]interface{}{"id": data["id"]}, []string{
+	info, err := repositories.Dictionary().Find(map[string]interface{}{"id": data["id"]}, []string{
 		"id", "name", "code", "remark", "state", "created_at",
 	})
 	if err != nil {
@@ -47,11 +47,11 @@ func RemoveDictionary(data map[string]interface{}) {
 	err := common.Db.Transaction(func(tx *gorm.DB) error {
 		common.Db = tx
 		ids := data["id"].([]uint)
-		if err := repositories.Dictionary.Delete(ids); err != nil {
+		if err := repositories.Dictionary().Delete(ids); err != nil {
 			return errors.New(DictionaryConstant.DeleteFail)
 		}
 		// 删除数据字典下的明细值
-		_ = repositories.Dictionary.DeleteByDictionaryId(ids)
+		_ = repositories.Dictionary().DeleteByDictionaryId(ids)
 		return nil
 	})
 	if err != nil {
@@ -76,7 +76,7 @@ func ListDictionary(data map[string]interface{}) map[string]interface{} {
 	}
 	// 排序
 	order := "created_at desc"
-	list, err := repositories.Dictionary.GetList(query, fields, order, data)
+	list, err := repositories.Dictionary().GetList(query, fields, order, data)
 	if err != nil {
 		panic(DictionaryConstant.GetListFail)
 	}
@@ -91,13 +91,13 @@ func DetailsDictionary(data map[string]interface{}) (dictionary []map[string]int
 	keys := data["keys"].([]string)
 	if len(keys) > 0 {
 		for _, key := range keys {
-			dictionary, err := repositories.Dictionary.Find(map[string]interface{}{"code": key}, []string{
+			dictionary, err := repositories.Dictionary().Find(map[string]interface{}{"code": key}, []string{
 				"id", "name", "code", "remark",
 			})
 			if err != nil {
 				panic(DictionaryConstant.FindFail)
 			}
-			dictionaryDetail, err := repositories.DictionaryDetail.FindByCode(map[string]interface{}{"dictionary_id": dictionary["id"]}, []string{
+			dictionaryDetail, err := repositories.DictionaryDetail().FindByCode(map[string]interface{}{"dictionary_id": dictionary["id"]}, []string{
 				"id", "name", "value", "remark", "sort",
 			})
 			if err != nil {
