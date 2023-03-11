@@ -3,8 +3,8 @@ package file
 import (
 	"bytes"
 	"context"
-	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"io"
@@ -49,7 +49,7 @@ func (q *Qiniu) Upload(key string, content []byte) error {
 	putExtra := storage.PutExtra{}
 	err := formUploader.Put(context.Background(), &ret, uploadToken, key, bytes.NewReader(content), int64(len(content)), &putExtra)
 	if err != nil {
-		common.Log.Error(FileConstant.UploadFail)
+		core.Log.Error(FileConstant.UploadFail)
 	}
 	return nil
 }

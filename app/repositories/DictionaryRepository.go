@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/bootstrap/core"
 )
 
 // DictionaryRepository 数据字典表仓储层
@@ -20,7 +20,7 @@ func Dictionary() *DictionaryRepository {
 // @param []uint id 数据字典ID
 // @return error 返回一个错误信息
 func (base DictionaryRepository) DeleteByDictionaryId(id []uint) error {
-	err := common.Db.Where("dictionary_id IN ?", id).Delete(&base.Model).Error
+	err := core.Db.Where("dictionary_id IN ?", id).Delete(&base.Model).Error
 	if err != nil {
 		return err
 	}

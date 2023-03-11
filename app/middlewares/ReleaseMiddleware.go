@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/common"
 	CasbinServer "github.com/herman-hang/herman/bootstrap/casbin"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/bootstrap/mysql"
 	RedisServer "github.com/herman-hang/herman/bootstrap/redis"
 	"github.com/herman-hang/herman/servers/settings"
@@ -43,19 +43,19 @@ func Reload() {
 		zap.S().Fatal(color.RedString(fmt.Sprintf("The casbin initialization failed:%v", err)))
 	}
 
-	common.Db, common.Redis, common.Casbin = db, rdb, cachedEnforcer
+	core.Db, core.Redis, core.Casbin = db, rdb, cachedEnforcer
 }
 
 // Close 释放服务函数
 // @return void
 func Close() {
 	// 关闭redis
-	_ = common.Redis.Close()
+	_ = core.Redis.Close()
 	// 关闭DB
-	db, _ := common.Db.DB()
+	db, _ := core.Db.DB()
 	if db != nil {
 		_ = db.Close()
 	}
 	// 设置全局变量为nil，等待GC进行回收
-	common.Db, common.Redis, common.Casbin = nil, nil, nil
+	core.Db, core.Redis, core.Casbin = nil, nil, nil
 }

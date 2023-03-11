@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/bootstrap/core"
 )
 
 // MenuRepository 菜单仓储层
@@ -20,7 +20,7 @@ func Menu() *MenuRepository {
 // @param []uint id 管理员ID
 // @return error 返回一个错误信息
 func (base MenuRepository) DeleteByMenuId(id []uint) error {
-	err := common.Db.Where("pid IN ?", id).Delete(&base.Model).Error
+	err := core.Db.Where("pid IN ?", id).Delete(&base.Model).Error
 	if err != nil {
 		return err
 	}

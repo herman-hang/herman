@@ -25,6 +25,9 @@ func init() {
 			middlewares.Reload()
 		}
 	})
+
+	// 注册框架版本命令
+	rootCmd.AddCommand(command.HermanVersionCmd)
 	// 启动服务命令注册
 	rootCmd.AddCommand(command.StartServerCmd)
 	// 注册数据库迁移

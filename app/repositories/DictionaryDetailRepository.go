@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/bootstrap/core"
 )
 
 // DictionaryDetailRepository 数据字典表仓储层
@@ -22,7 +22,7 @@ func DictionaryDetail() *DictionaryDetailRepository {
 // @return data err 切片数据，错误信息
 func (base DictionaryDetailRepository) FindByCode(condition map[string]interface{}, fields ...[]string) (data []map[string]interface{}, err error) {
 	var list []map[string]interface{}
-	if err := common.Db.Model(base.Model).Where(condition).Select(fields[0]).Find(&list).Error; err != nil {
+	if err := core.Db.Model(base.Model).Where(condition).Select(fields[0]).Find(&list).Error; err != nil {
 		return nil, err
 	}
 	return list, nil

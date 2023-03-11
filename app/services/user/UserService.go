@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/herman-hang/herman/app/common"
 	UserConstant "github.com/herman-hang/herman/app/constants/user"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/utils"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"time"
 )
 
@@ -22,7 +22,7 @@ func Login(data map[string]interface{}) interface{} {
 	key := fmt.Sprintf("user_password_error:%d", user.Id)
 
 	// 获取错误登录次数
-	errorNumber, err := common.Redis.Get(ctx, key).Int()
+	errorNumber, err := core.Redis.Get(ctx, key).Int()
 
 	// 判断是否登录次数过多
 	if err != redis.Nil && errorNumber > UserConstant.LoginErrorLimitNumber {
@@ -31,7 +31,7 @@ func Login(data map[string]interface{}) interface{} {
 
 	// 密码验证
 	if !utils.ComparePasswords(user.Password, fmt.Sprintf("%s", data["password"])) {
-		common.Redis.Set(ctx, key, errorNumber+UserConstant.Increment, time.Minute*UserConstant.KeyValidity)
+		core.Redis.Set(ctx, key, errorNumber+UserConstant.Increment, time.Minute*UserConstant.KeyValidity)
 		panic(UserConstant.PasswordError)
 	}
 

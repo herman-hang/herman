@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/common"
 	UserConstant "github.com/herman-hang/herman/app/constants/user"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"net/http"
 	"strings"
@@ -81,7 +81,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 	timeRecord := claims.ExpiresAt - time.Now().Unix()
 	// token小于10分钟则刷新token
 	if (timeRecord / 60) < UserConstant.Minute {
-		ttl, err := common.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user_token:", claims.Uid)).Result()
+		ttl, err := core.Redis.TTL(context.Background(), fmt.Sprintf("%s%d", "user_token:", claims.Uid)).Result()
 		if err != nil {
 			panic(map[string]interface{}{"code": http.StatusUnauthorized, "message": UserConstant.TokenRefreshFail})
 		}
@@ -94,7 +94,7 @@ func ParseToken(tokenString string, ctx *gin.Context, guard string) *Claims {
 		newToken := Refresh(token, ctx)
 		ctx.Header("x-new-token", newToken)
 
-		err = common.Redis.Set(context.Background(),
+		err = core.Redis.Set(context.Background(),
 			fmt.Sprintf("%s%d", "user_token:", claims.Uid),
 			newToken,
 			time.Duration(timeRecord)*time.Second).Err()

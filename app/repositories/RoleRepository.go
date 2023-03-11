@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/app/constants"
 	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/bootstrap/core"
 )
 
 // RoleRepository 角色仓储层
@@ -22,7 +22,7 @@ func Role() *RoleRepository {
 // @return bool err 返回一个bool值和一个错误信息
 func (base RoleRepository) KeyIsExist(role string) (bool bool, err error) {
 	result := make(map[string]interface{})
-	err = common.Db.Model(&base.Model).Where("role = ?", role).Find(&result).Error
+	err = core.Db.Model(&base.Model).Where("role = ?", role).Find(&result).Error
 	if len(result) != constants.LengthByZero {
 		return true, nil
 	}
@@ -33,7 +33,7 @@ func (base RoleRepository) KeyIsExist(role string) (bool bool, err error) {
 // @param []string roles
 // @return data err 返回一个角色切片，错误信息
 func (base RoleRepository) FindRoles(roles []string) (data []map[string]interface{}, err error) {
-	err = common.Db.Model(&base.Model).Where("role IN ?", roles).Select([]string{"role", "name"}).Find(&data).Error
+	err = core.Db.Model(&base.Model).Where("role IN ?", roles).Select([]string{"role", "name"}).Find(&data).Error
 	if err != nil {
 		return nil, err
 	}

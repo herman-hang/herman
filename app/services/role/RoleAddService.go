@@ -3,10 +3,10 @@ package role
 import (
 	"errors"
 	"fmt"
-	"github.com/herman-hang/herman/app/common"
 	RoleConstant "github.com/herman-hang/herman/app/constants/role"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/validates/role"
+	"github.com/herman-hang/herman/bootstrap/core"
 )
 
 // AddPolicies 角色添加策略
@@ -23,7 +23,7 @@ func AddPolicies(roles []role.Roles, rules []role.Rules, roleInfo map[string]int
 			return err
 		}
 		// 添加角色
-		if _, err := common.Casbin.AddGroupingPolicies(addExtendRoles); err != nil {
+		if _, err := core.Casbin.AddGroupingPolicies(addExtendRoles); err != nil {
 			return errors.New(RoleConstant.AddFail)
 		}
 	}
@@ -31,7 +31,7 @@ func AddPolicies(roles []role.Roles, rules []role.Rules, roleInfo map[string]int
 	if rules != nil && len(rules) != RoleConstant.RulesNotExist {
 		newRole := roleInfo["role"].(string)
 		for _, v := range rules {
-			if _, err := common.Casbin.AddPolicy(newRole, v.Path, v.Method); err != nil {
+			if _, err := core.Casbin.AddPolicy(newRole, v.Path, v.Method); err != nil {
 				return errors.New(fmt.Sprintf(RoleConstant.AddRulesFail, v.Name))
 			}
 		}

@@ -3,8 +3,8 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/herman-hang/herman/app/common"
 	SmsConstant "github.com/herman-hang/herman/app/constants/sms"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"io"
 	"io/ioutil"
@@ -24,7 +24,7 @@ func SendSms(topic string) {
 		message := <-kafkaConsumer.MessageQueue
 		// 将取出的JSON数据转为map
 		if err := json.Unmarshal(message, &data); err != nil {
-			common.Log.Errorf("Consumer sms json data failed, err:%v", err)
+			core.Log.Errorf("Consumer sms json data failed, err:%v", err)
 		}
 		execSend(data)
 	}
@@ -43,13 +43,13 @@ func execSend(data map[string]interface{}) {
 		url.QueryEscape(fmt.Sprintf("%s", data["content"])),
 	))
 	if err != nil {
-		common.Log.Errorf("Sms send failed, mobile:%s content:%s err:%v", data["mobile"], data["content"], err)
+		core.Log.Errorf("Sms send failed, mobile:%s content:%s err:%v", data["mobile"], data["content"], err)
 		return
 	}
 
 	defer func(body io.ReadCloser) {
 		if err := body.Close(); err != nil {
-			common.Log.Errorf("Sms send close failed, err:%v", err)
+			core.Log.Errorf("Sms send close failed, err:%v", err)
 		}
 	}(response.Body)
 
@@ -57,6 +57,6 @@ func execSend(data map[string]interface{}) {
 	// 转为字符串
 	code := string(bodyBytes)
 	if SmsConstant.Status[code] != SmsConstant.SendSuccess {
-		common.Log.Errorf("Sms send failed, mobile:%s content:%s err:%v", data["mobile"], data["content"], SmsConstant.Status[code])
+		core.Log.Errorf("Sms send failed, mobile:%s content:%s err:%v", data["mobile"], data["content"], SmsConstant.Status[code])
 	}
 }

@@ -1,7 +1,7 @@
 package role
 
 import (
-	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/bootstrap/core"
 )
 
 // DeleteRole 删除当前用户继承的所有角色和权限
@@ -10,11 +10,11 @@ import (
 func DeleteRole(roleInfo map[string]interface{}) error {
 	role := roleInfo["role"].(string)
 	// 删除所有继承角色
-	if _, err := common.Casbin.DeleteRolesForUser(role); err != nil {
+	if _, err := core.Casbin.DeleteRolesForUser(role); err != nil {
 		return err
 	}
 	// 删除所有权限
-	if _, err := common.Casbin.DeletePermissionsForUser(role); err != nil {
+	if _, err := core.Casbin.DeletePermissionsForUser(role); err != nil {
 		return err
 	}
 	return nil

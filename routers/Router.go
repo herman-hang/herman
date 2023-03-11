@@ -12,13 +12,13 @@ import (
 
 // InitRouter 初始化路由
 // @param *gin.Engine rootEngine 路由引擎
-// @return void
-func InitRouter(rootEngine *gin.Engine) {
+// @return *gin.Engine 路由引擎
+func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	// 测试路由
 	rootEngine.GET("/", func(context *gin.Context) {
 		response := app.Request{Context: context}
 		response.Success(app.D(map[string]interface{}{
-			"welcome": "Hello Herman!",
+			"message": "Welcome to Herman!",
 		}))
 	})
 	// 设置路由前缀
@@ -39,4 +39,6 @@ func InitRouter(rootEngine *gin.Engine) {
 	{
 		admin.Router(adminRouter)
 	}
+
+	return rootEngine
 }

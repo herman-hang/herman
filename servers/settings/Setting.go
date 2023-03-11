@@ -4,20 +4,25 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	_ "github.com/gin-gonic/gin"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/config"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"os"
 )
 
-var Config = new(config.App)
+// Config 配置
+var (
+	Version = "1.1.0"
+	Config  = new(config.App)
+)
 
 // InitConfig 初始化配置
 // @return void
 func InitConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./")
+	viper.AddConfigPath(core.RootPath)
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("viper ReadInConfig failed, err: %v", err)
 		os.Exit(1)

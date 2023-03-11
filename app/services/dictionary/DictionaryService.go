@@ -3,9 +3,9 @@ package dictionary
 import (
 	"errors"
 	"fmt"
-	"github.com/herman-hang/herman/app/common"
 	DictionaryConstant "github.com/herman-hang/herman/app/constants/dictionary"
 	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"gorm.io/gorm"
 )
 
@@ -44,8 +44,8 @@ func FindDictionary(data map[string]interface{}) map[string]interface{} {
 // @param map[string]interface{} data 带处理数据
 // @return void
 func RemoveDictionary(data map[string]interface{}) {
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
-		common.Db = tx
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
+		core.Db = tx
 		ids := data["id"].([]uint)
 		if err := repositories.Dictionary().Delete(ids); err != nil {
 			return errors.New(DictionaryConstant.DeleteFail)

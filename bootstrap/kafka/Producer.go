@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
 	"time"
@@ -61,7 +61,7 @@ func Send(topic string, data map[string]interface{}) {
 		zap.S().Error(color.RedString(fmt.Sprintf("Producer send message failed, err:%v", err)))
 		return
 	}
-	common.Log.Infof("Partition = %d, offset=%d\n", partition, offset)
+	core.Log.Infof("Partition = %d, offset=%d\n", partition, offset)
 }
 
 // getProducerMessageStruct 构造生产者消息结构体

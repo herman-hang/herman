@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/herman-hang/herman/app/common"
 	UserConstant "github.com/herman-hang/herman/app/constants/user"
 	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"gorm.io/gorm"
 )
 
@@ -22,7 +22,7 @@ func User() *UserRepository {
 // @param interface{} attributes 用户id或者用户user
 // @return user 返回当前user用户的信息
 func (u UserRepository) GetUserInfo(attributes interface{}) (user models.Users) {
-	err := common.Db.Where("id = ?", attributes).Or("user = ?", attributes).Find(&user).Error
+	err := core.Db.Where("id = ?", attributes).Or("user = ?", attributes).Find(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		panic(UserConstant.GetUserInfoFail)
 	}

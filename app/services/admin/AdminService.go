@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"github.com/herman-hang/herman/app/common"
 	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/utils"
 	"github.com/herman-hang/herman/app/validates/role"
 	"github.com/herman-hang/herman/bootstrap/casbin"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"gorm.io/gorm"
 	"time"
 )
@@ -26,14 +26,14 @@ func Login(data map[string]interface{}) interface{} {
 	// 设置Redis错误密码的key
 	key := fmt.Sprintf("admin_password_error:%d", admin.Id)
 	// 获取错误登录次数
-	errorNumber, err := common.Redis.Get(ctx, key).Int()
+	errorNumber, err := core.Redis.Get(ctx, key).Int()
 	// 判断是否登录次数过多
 	if err != redis.Nil && errorNumber > AdminConstant.LoginErrorLimitNumber {
 		panic(AdminConstant.ErrorLoginOverload)
 	}
 	// 密码验证
 	if !utils.ComparePasswords(admin.Password, fmt.Sprintf("%s", data["password"])) {
-		common.Redis.Set(ctx, key, errorNumber+AdminConstant.Increment, time.Minute*AdminConstant.KeyValidity)
+		core.Redis.Set(ctx, key, errorNumber+AdminConstant.Increment, time.Minute*AdminConstant.KeyValidity)
 		panic(AdminConstant.PasswordError)
 	}
 	// 登录总数自增
@@ -48,8 +48,8 @@ func Login(data map[string]interface{}) interface{} {
 // @param map[string]interface{} data 前端请求数据
 // @return void
 func Add(data map[string]interface{}) {
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
-		common.Db = tx
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
+		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 执行添加管理员
 		adminRepository := repositories.Admin()
@@ -78,8 +78,8 @@ func Add(data map[string]interface{}) {
 func Modify(data map[string]interface{}) {
 	// 过滤密码数据
 	data = FilterPassword(data)
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
-		common.Db = tx
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
+		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		id := data["id"].(uint)
 		roles := data["roles"].([]role.Roles)

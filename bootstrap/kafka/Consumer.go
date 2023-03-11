@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/app/common"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
 	"sync"
@@ -71,7 +71,7 @@ func (k *Consumer) consumeByPartition(consumer sarama.Consumer, topic string, pa
 		}
 	}(partitionConsumer)
 	for message := range partitionConsumer.Messages() {
-		common.Log.Infof("[Consumer] partitionid: %d; offset:%d, value: %s\n", message.Partition, message.Offset, string(message.Value))
+		core.Log.Infof("[Consumer] partitionid: %d; offset:%d, value: %s\n", message.Partition, message.Offset, string(message.Value))
 		k.MessageQueue <- message.Value
 	}
 }

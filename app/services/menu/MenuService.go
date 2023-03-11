@@ -3,9 +3,9 @@ package menu
 import (
 	"errors"
 	"fmt"
-	"github.com/herman-hang/herman/app/common"
 	MenuConstant "github.com/herman-hang/herman/app/constants/menu"
 	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"gorm.io/gorm"
 )
 
@@ -52,8 +52,8 @@ func Find(data map[string]interface{}) map[string]interface{} {
 // @param map[string]interface{} data 前端请求数据
 // @return void
 func Remove(data map[string]interface{}) {
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
-		common.Db = tx
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
+		core.Db = tx
 		ids := data["id"].([]uint)
 		if err := repositories.Menu().Delete(ids); err != nil {
 			return errors.New(MenuConstant.DeleteFail)

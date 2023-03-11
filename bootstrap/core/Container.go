@@ -1,4 +1,4 @@
-package common
+package core
 
 import (
 	"github.com/casbin/casbin/v2"
@@ -15,3 +15,8 @@ var (
 	Redis  *redis.Client
 	Casbin *casbin.CachedEnforcer
 )
+
+// Debug 重新封装Debug方法
+func Debug(args ...interface{}) {
+	Log.Debug(args)
+}

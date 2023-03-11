@@ -3,12 +3,12 @@ package role
 import (
 	"errors"
 	"fmt"
-	"github.com/herman-hang/herman/app/common"
 	"github.com/herman-hang/herman/app/constants"
 	RoleConstant "github.com/herman-hang/herman/app/constants/role"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/validates/role"
 	"github.com/herman-hang/herman/bootstrap/casbin"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +16,8 @@ import (
 // @param map[string]interface{} data 带处理数据
 // @return void
 func Add(data map[string]interface{}) {
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
-		common.Db = tx
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
+		core.Db = tx
 		// casbin重新初始化
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 判断角色Key是否存在
@@ -49,9 +49,9 @@ func Add(data map[string]interface{}) {
 // @param map[string]interface{} data 带处理数据
 // @return void
 func Modify(data map[string]interface{}) {
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
 		id := data["id"].(uint)
-		common.Db = tx
+		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 判断角色是否存在
 		roleInfo, _ := repositories.Role().Find(map[string]interface{}{"id": id}, []string{"id", "role"})
@@ -91,7 +91,7 @@ func Find(data map[string]interface{}) map[string]interface{} {
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
-	roles, err := common.Casbin.GetRolesForUser(roleInfo["role"].(string))
+	roles, err := core.Casbin.GetRolesForUser(roleInfo["role"].(string))
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
@@ -105,7 +105,7 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		panic(RoleConstant.FindFail)
 	}
 	for i, rule := range rules {
-		enforce, _ := common.Casbin.Enforce(roleInfo["role"].(string), rule["path"], rule["method"])
+		enforce, _ := core.Casbin.Enforce(roleInfo["role"].(string), rule["path"], rule["method"])
 		fmt.Println(rule["path"].(string))
 		if enforce {
 			rules[i]["isPermission"] = RoleConstant.HaveAuthority
@@ -122,8 +122,8 @@ func Find(data map[string]interface{}) map[string]interface{} {
 // @return void
 func Remove(data map[string]interface{}) {
 	fmt.Println(data)
-	err := common.Db.Transaction(func(tx *gorm.DB) error {
-		common.Db = tx
+	err := core.Db.Transaction(func(tx *gorm.DB) error {
+		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 查询角色信息
 		for _, id := range data["id"].([]uint) {
