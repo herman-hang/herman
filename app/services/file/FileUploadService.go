@@ -3,6 +3,7 @@ package file
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/servers/settings"
@@ -83,7 +84,7 @@ func adaptiveUpload(fileHash string, content []byte) (filePath string) {
 		fileDrive := NewLocalOSS()
 		go func() {
 			if err := fileDrive.Upload(filePath, content); err != nil {
-				panic(FileConstant.UploadFail)
+				common.Log.Error(FileConstant.UploadFail)
 			}
 		}()
 	case "oss":
@@ -95,7 +96,7 @@ func adaptiveUpload(fileHash string, content []byte) (filePath string) {
 		}
 		go func() {
 			if err := fileDrive.Upload(filePath, content); err != nil {
-				panic(FileConstant.UploadFail)
+				common.Log.Error(FileConstant.UploadFail)
 			}
 		}()
 	case "cos":
@@ -103,20 +104,20 @@ func adaptiveUpload(fileHash string, content []byte) (filePath string) {
 		filePath = filepath.Join(cos.Path, folderName) + "/" + fileHash
 		fileDrive, err := NewTencentCOS(cos.Region, cos.AppId, cos.SecretId, cos.SecretKey, cos.Bucket)
 		if err != nil {
-			panic(FileConstant.NewObjectFail)
+			panic(FileConstant.UploadFail)
 		}
 		go func() {
 			if err := fileDrive.Upload(filePath, content); err != nil {
-				panic(FileConstant.UploadFail)
+				common.Log.Error(FileConstant.UploadFail)
 			}
 		}()
 	case "qiniu":
 		qiniu := settings.Config.FileStorage.Qiniu
 		filePath = filepath.Join(qiniu.Path, folderName) + "/" + fileHash
-		fileDrive := NewQiniu(qiniu.SecretKey, qiniu.SecretKey, qiniu.Bucket, qiniu.Domain)
+		fileDrive := NewQiniu(qiniu.AccessKey, qiniu.SecretKey, qiniu.Bucket, qiniu.Domain)
 		go func() {
 			if err := fileDrive.Upload(filePath, content); err != nil {
-				panic(FileConstant.UploadFail)
+				common.Log.Error(FileConstant.UploadFail)
 			}
 		}()
 	default:

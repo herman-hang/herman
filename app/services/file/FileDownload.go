@@ -36,7 +36,7 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 		if err != nil {
 			panic(FileConstant.NewObjectFail)
 		}
-		data, err = fileDrive.Download(info["hash"].(string))
+		data, err = fileDrive.Download(info["filePath"].(string))
 		if err != nil {
 			panic(FileConstant.Download)
 		}
@@ -46,7 +46,7 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 		if err != nil {
 			panic(FileConstant.NewObjectFail)
 		}
-		data, err = fileDrive.Download(info["hash"].(string))
+		data, err = fileDrive.Download(info["filePath"].(string))
 		if err != nil {
 			panic(FileConstant.Download)
 		}
@@ -54,7 +54,7 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 		var err error
 		qiniu := settings.Config.FileStorage.Qiniu
 		fileDrive := NewQiniu(qiniu.SecretKey, qiniu.SecretKey, qiniu.Bucket, qiniu.Domain)
-		data, err = fileDrive.Download(info["hash"].(string))
+		data, err = fileDrive.Download(info["filePath"].(string))
 		if err != nil {
 			panic(FileConstant.Download)
 		}

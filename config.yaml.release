@@ -120,7 +120,7 @@ storage:
     access_key:
     # 七牛云的SecretKey
     secret_key:
-    # 七牛云的外网域名
+    # 七牛云的外网域名(需要带上http协议)
     domain:
     # 七牛云的Bucket
     bucket:
@@ -134,7 +134,7 @@ storage:
     secret_id:
     # 腾讯云COS的SecretKey
     secret_key:
-    # 腾讯云COS的Bucket
+    # 腾讯云COS的Bucket(注意:腾讯云COS复制出来的bucket名称格式为：bucket名称-appid)
     bucket:
     # 腾讯云COS的Region
     region:

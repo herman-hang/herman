@@ -3,6 +3,7 @@ package file
 import (
 	"bytes"
 	"fmt"
+	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"golang.org/x/net/context"
@@ -38,7 +39,7 @@ func NewTencentCOS(region string, appId string, secretId string, secretKey strin
 func (t *TencentCOS) Upload(key string, content []byte) error {
 	_, err := t.client.Object.Put(context.Background(), key, bytes.NewReader(content), nil)
 	if err != nil {
-		panic(FileConstant.UploadFail)
+		common.Log.Error(FileConstant.UploadFail)
 	}
 	return nil
 }

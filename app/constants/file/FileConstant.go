@@ -21,7 +21,6 @@ const (
 	OpenFileFail         = "打开文件失败"
 	RecordFileFail       = "记录文件失败"
 	ReadFileFail         = "读取文件失败"
-	EmptyString          = ""
 	NotExist             = "文件不存在"
 	NotImage             = "请求文件不是图片，无法预览"
 )

@@ -3,6 +3,7 @@ package file
 import (
 	"bytes"
 	"context"
+	"github.com/herman-hang/herman/app/common"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
@@ -18,6 +19,9 @@ type Qiniu struct {
 	domain    string
 }
 
+// NewQiniu 实例化一个七牛云对象
+// @param string path 文件存储目录
+// @return *Qiniu 返回七牛云对象
 func NewQiniu(accessKey string, secretKey string, bucket string, domain string) *Qiniu {
 	return &Qiniu{
 		accessKey: accessKey,
@@ -41,11 +45,11 @@ func (q *Qiniu) Upload(key string, content []byte) error {
 
 	cfg := storage.Config{}
 	formUploader := storage.NewFormUploader(&cfg)
-
 	ret := storage.PutRet{}
-	err := formUploader.Put(context.Background(), &ret, uploadToken, key, bytes.NewReader(content), int64(len(content)), nil)
+	putExtra := storage.PutExtra{}
+	err := formUploader.Put(context.Background(), &ret, uploadToken, key, bytes.NewReader(content), int64(len(content)), &putExtra)
 	if err != nil {
-		panic(FileConstant.UploadFail)
+		common.Log.Error(FileConstant.UploadFail)
 	}
 	return nil
 }
@@ -54,11 +58,10 @@ func (q *Qiniu) Upload(key string, content []byte) error {
 // @param string key 文件key
 // @return []byte, error 文件流和错误信息
 func (q *Qiniu) Download(key string) ([]byte, error) {
-	url := q.domain + "/" + key
-	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	req, _ := http.NewRequest(http.MethodGet, storage.MakePublicURL(q.domain, key), nil)
 	client := &http.Client{}
 	res, err := client.Do(req)
-	if err != nil {
+	if err != nil || res.StatusCode != http.StatusOK {
 		panic(FileConstant.Download)
 	}
 	defer func(Body io.ReadCloser) {
