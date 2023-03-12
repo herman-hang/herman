@@ -3,6 +3,7 @@ package admin
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
+	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
 	AdminService "github.com/herman-hang/herman/app/services/admin"
 	AdminValidate "github.com/herman-hang/herman/app/validates/admin"
 )
@@ -13,7 +14,7 @@ import (
 func Login(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(AdminService.Login(AdminValidate.Login(data)))
+	context.Json(AdminService.Login(AdminValidate.Login(data)), AdminConstant.LoginSuccess)
 }
 
 // AddAdmin 管理员添加

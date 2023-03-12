@@ -21,6 +21,9 @@ import (
 func Login(data map[string]interface{}) interface{} {
 	// 获取管理员信息
 	admin := repositories.Admin().GetAdminInfo(fmt.Sprintf("%s", data["user"]))
+	if len(admin.User) == AdminConstant.NotExist {
+		panic(AdminConstant.UserNotExist)
+	}
 	// 设置上下文
 	ctx := context.Background()
 	// 设置Redis错误密码的key

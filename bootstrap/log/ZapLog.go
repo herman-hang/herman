@@ -1,8 +1,8 @@
 package log
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/config"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
@@ -52,7 +52,7 @@ func InitZapLogs(config *config.Log, mode string) (err error) {
 // @return zapcore.WriteSyncer 返回一个日志记录器
 func GetLoggerWriter(config *config.Log) zapcore.WriteSyncer {
 	lumberLoggers := &lumberjack.Logger{
-		Filename:   fmt.Sprintf("%s%s", "runtime/logs/", config.FileName),
+		Filename:   core.RootPath + "runtime/logs/" + config.FileName,
 		MaxSize:    config.MaxSize,
 		MaxBackups: config.MaxBackups,
 		MaxAge:     config.MaxAge,

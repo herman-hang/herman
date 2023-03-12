@@ -76,7 +76,7 @@ func (r *Request) Success(opts ...Option) {
 
 // Json 方法二：响应函数（所有字段转小驼峰写法）
 // @param interface{} data 接收响应参数
-// @param args 第一个参数为code，第二个参数为message
+// @param args 第一个参数为message，第二个参数为code
 func (r *Request) Json(data interface{}, args ...interface{}) {
 	var jsonString []byte
 	// 将数据转为json格式返回
@@ -84,8 +84,10 @@ func (r *Request) Json(data interface{}, args ...interface{}) {
 	switch len(args) {
 	case 0:
 		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, http.StatusOK, constants.Success, camelJson))
+	case 1:
+		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, http.StatusOK, args[0], camelJson))
 	case 2:
-		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, args[0], args[1], camelJson))
+		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, args[1], args[0], camelJson))
 	}
 	// 响应http请求
 	r.Context.Data(http.StatusOK, "application/json", jsonString)

@@ -1,6 +1,8 @@
 package admin
 
 const (
+	NotExist              = 0
+	UserNotExist          = "管理员不存在"
 	PasswordError         = "密码错误"
 	ErrorLoginOverload    = "登录次数过多，请30分钟后重试"
 	GetAdminInfoFail      = "获取用户信息失败"
@@ -15,4 +17,5 @@ const (
 	GetRoleFail           = "获取角色信息失败"
 	DeleteAdminFail       = "删除失败"
 	GetAdminListFail      = "获取列表失败"
+	LoginSuccess          = "登录成功"
 )

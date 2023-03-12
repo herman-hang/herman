@@ -16,7 +16,7 @@ func CatchError() gin.HandlerFunc {
 			if data := recover(); data != nil {
 				switch data.(type) {
 				case string:
-					context.Json(nil, http.StatusInternalServerError, fmt.Sprintf("%s", data))
+					context.Json(nil, fmt.Sprintf("%s", data), http.StatusInternalServerError)
 				case map[string]interface{}:
 					data := data.(map[string]interface{})
 					context.Json(nil, data["code"], data["message"])
