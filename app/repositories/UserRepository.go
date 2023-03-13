@@ -13,9 +13,13 @@ type UserRepository struct {
 }
 
 // User 实例化用户表仓储层
+// @param *gorm.DB tx 事务
 // @return UserRepository 返回用户表仓储层
-func User() *UserRepository {
-	return &UserRepository{BaseRepository{Model: new(models.Users)}}
+func User(tx ...*gorm.DB) *UserRepository {
+	if len(tx) > 0 && tx[0] != nil {
+		return &UserRepository{BaseRepository{Model: new(models.Users), Db: tx[0]}}
+	}
+	return &UserRepository{BaseRepository{Model: new(models.Users), Db: core.Db}}
 }
 
 // GetUserInfo 获取用户信息

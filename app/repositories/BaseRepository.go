@@ -3,13 +3,14 @@ package repositories
 import (
 	"github.com/herman-hang/herman/app/constants"
 	"github.com/herman-hang/herman/app/utils"
-	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/mitchellh/mapstructure"
+	"gorm.io/gorm"
 )
 
 // BaseRepository 公共仓储层
 type BaseRepository struct {
 	Model interface{}
+	Db    *gorm.DB
 }
 
 // PageInfo 分页结构体
@@ -28,7 +29,7 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 	if err := mapstructure.WeakDecode(data, base.Model); err != nil {
 		return nil, err
 	}
-	if err := core.Db.Create(base.Model).Error; err != nil {
+	if err := base.Db.Create(base.Model).Error; err != nil {
 		return nil, err
 	}
 	// 模型拷贝
@@ -48,11 +49,11 @@ func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]s
 	data := make(map[string]interface{})
 	info = make(map[string]interface{})
 	if len(fields) > 0 {
-		if err := core.Db.Model(&base.Model).Where(condition).Select(fields[0]).Find(&data).Error; err != nil {
+		if err := base.Db.Model(&base.Model).Where(condition).Select(fields[0]).Find(&data).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		if err := core.Db.Model(&base.Model).Where(condition).Find(&data).Error; err != nil {
+		if err := base.Db.Model(&base.Model).Where(condition).Find(&data).Error; err != nil {
 			return nil, err
 		}
 	}
@@ -76,7 +77,7 @@ func (base *BaseRepository) Update(ids []uint, data map[string]interface{}) erro
 		k := utils.ToSnakeCase(k)
 		attributes[k] = v
 	}
-	if err := core.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
+	if err := base.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
 		return err
 	}
 	return nil
@@ -86,7 +87,7 @@ func (base *BaseRepository) Update(ids []uint, data map[string]interface{}) erro
 // @param []uint ids 主键ID
 // @return error 错误信息
 func (base *BaseRepository) Delete(ids []uint) error {
-	if err := core.Db.Delete(&base.Model, ids).Error; err != nil {
+	if err := base.Db.Delete(&base.Model, ids).Error; err != nil {
 		return err
 	}
 	return nil
@@ -97,7 +98,7 @@ func (base *BaseRepository) Delete(ids []uint) error {
 // @return bool 返回一个bool值
 func (base *BaseRepository) IsExist(condition map[string]interface{}) bool {
 	data := make(map[string]interface{})
-	err := core.Db.Model(&base.Model).Where(condition).Find(&data).Error
+	err := base.Db.Model(&base.Model).Where(condition).Find(&data).Error
 	if err != nil && len(data) > constants.LengthByZero {
 		return true
 	}
@@ -123,14 +124,14 @@ func (base *BaseRepository) GetList(query string, fields []string, order string,
 		}
 	}
 	// 总条数
-	core.Db.Model(&base.Model).Count(&total)
+	base.Db.Model(&base.Model).Count(&total)
 	// 计算总页数
 	if page.PageSize != 0 && total%page.PageSize != 0 {
 		pageNum = total / page.PageSize
 		pageNum++
 	}
 	// 示例 query = fmt.Sprintf(" dns like '%%%s' ", createDbnameInfo.DNS)
-	err = core.Db.Model(&base.Model).
+	err = base.Db.Model(&base.Model).
 		Select(fields).
 		Where(query).
 		Order(order).
@@ -155,11 +156,11 @@ func (base *BaseRepository) GetList(query string, fields []string, order string,
 // @return list err 返回列表，错误信息
 func (base *BaseRepository) GetAllData(fields []string) (data []map[string]interface{}, err error) {
 	if len(fields) > 0 {
-		if err := core.Db.Model(&base.Model).Select(fields).Find(&data).Error; err != nil {
+		if err := base.Db.Model(&base.Model).Select(fields).Find(&data).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		if err := core.Db.Model(&base.Model).Find(&data).Error; err != nil {
+		if err := base.Db.Model(&base.Model).Find(&data).Error; err != nil {
 			return nil, err
 		}
 	}

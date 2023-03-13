@@ -17,11 +17,10 @@ import (
 // @return void
 func Add(data map[string]interface{}) {
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		core.Db = tx
 		// casbin重新初始化
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 判断角色Key是否存在
-		if isExist, _ := repositories.Role().KeyIsExist(data["role"].(string)); isExist {
+		if isExist, _ := repositories.Role(tx).KeyIsExist(data["role"].(string)); isExist {
 			return errors.New(RoleConstant.KeyExist)
 		}
 		roles := data["roles"]
@@ -29,7 +28,7 @@ func Add(data map[string]interface{}) {
 		delete(data, "roles")
 		delete(data, "rules")
 		// 添加角色信息
-		roleInfo, err := repositories.Role().Insert(data)
+		roleInfo, err := repositories.Role(tx).Insert(data)
 		if err != nil {
 			return errors.New(RoleConstant.AddFail)
 		}
@@ -51,10 +50,9 @@ func Add(data map[string]interface{}) {
 func Modify(data map[string]interface{}) {
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
 		id := data["id"].(uint)
-		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 判断角色是否存在
-		roleInfo, _ := repositories.Role().Find(map[string]interface{}{"id": id}, []string{"id", "role"})
+		roleInfo, _ := repositories.Role(tx).Find(map[string]interface{}{"id": id}, []string{"id", "role"})
 		if len(roleInfo) == constants.LengthByZero {
 			return errors.New(RoleConstant.NotExist)
 		}
@@ -63,7 +61,7 @@ func Modify(data map[string]interface{}) {
 		delete(data, "roles")
 		delete(data, "rules")
 		// 修改角色
-		if err := repositories.Role().Update([]uint{id}, data); err != nil {
+		if err := repositories.Role(tx).Update([]uint{id}, data); err != nil {
 			return errors.New(RoleConstant.ModifyFail)
 		}
 		// 删除所有角色和权限
@@ -121,17 +119,15 @@ func Find(data map[string]interface{}) map[string]interface{} {
 // @param map[string]interface{} data 带处理数据
 // @return void
 func Remove(data map[string]interface{}) {
-	fmt.Println(data)
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 查询角色信息
 		for _, id := range data["id"].([]uint) {
-			roleInfo, err := repositories.Role().Find(map[string]interface{}{"id": id}, []string{"id", "role"})
+			roleInfo, err := repositories.Role(tx).Find(map[string]interface{}{"id": id}, []string{"id", "role"})
 			if err != nil {
 				return errors.New(RoleConstant.DeleteFail)
 			}
-			if err := repositories.Role().Delete([]uint{id}); err != nil {
+			if err := repositories.Role(tx).Delete([]uint{id}); err != nil {
 				return errors.New(RoleConstant.DeleteFail)
 			}
 			// 删除所有角色和权限

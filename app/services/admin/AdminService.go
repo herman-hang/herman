@@ -52,10 +52,9 @@ func Login(data map[string]interface{}) interface{} {
 // @return void
 func Add(data map[string]interface{}) {
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		// 执行添加管理员
-		adminRepository := repositories.Admin()
+		adminRepository := repositories.Admin(tx)
 		admin, err := adminRepository.Insert(data)
 		if err != nil {
 			return errors.New(AdminConstant.AddFail)
@@ -65,7 +64,7 @@ func Add(data map[string]interface{}) {
 			return errors.New(AdminConstant.RoleNotExist)
 		}
 		// 关联角色
-		if err = JoinRole(admin, data["roles"].([]role.Roles)); err != nil {
+		if err = JoinRole(admin, data["roles"].([]role.Roles), tx); err != nil {
 			return errors.New(AdminConstant.AddRoleFail)
 		}
 		return nil
@@ -82,14 +81,13 @@ func Modify(data map[string]interface{}) {
 	// 过滤密码数据
 	data = FilterPassword(data)
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		core.Db = tx
 		_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 		id := data["id"].(uint)
 		roles := data["roles"].([]role.Roles)
 		delete(data, "user")
 		delete(data, "roles")
 		// 执行更新
-		if err := repositories.Admin().Update([]uint{id}, data); err != nil {
+		if err := repositories.Admin(tx).Update([]uint{id}, data); err != nil {
 			return errors.New(AdminConstant.UpdateFail)
 		}
 		// 判断选择的角色是否存在
@@ -97,11 +95,11 @@ func Modify(data map[string]interface{}) {
 			return errors.New(AdminConstant.RoleNotExist)
 		}
 		// 删除角色
-		if err := repositories.AdminRole().DeleteByAdminId(id); err != nil {
+		if err := repositories.AdminRole(tx).DeleteByAdminId(id); err != nil {
 			return errors.New(AdminConstant.DeleteFail)
 		}
 		// 关联角色
-		if err := JoinRole(data, roles); err != nil {
+		if err := JoinRole(data, roles, tx); err != nil {
 			return errors.New(AdminConstant.AddRoleFail)
 		}
 		return nil

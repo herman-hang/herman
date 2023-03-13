@@ -64,6 +64,7 @@ func (s *SuiteCase) Assert(testCase []Case) {
 		_, _, w := s.Request(v.Method, v.Uri, v.Params)
 		// json转struct
 		err := json.Unmarshal(w.Body.Bytes(), &response)
+		s.T().Logf("Response: %s", w.Body.String())
 		assert.Equal(s.T(), err, nil)
 		assert.Equal(s.T(), v.Code, response.Code)
 		assert.Equal(s.T(), v.Message, response.Message)

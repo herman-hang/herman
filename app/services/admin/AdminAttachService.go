@@ -5,6 +5,7 @@ import (
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/utils"
 	"github.com/herman-hang/herman/app/validates/role"
+	"gorm.io/gorm"
 )
 
 // FilterPassword 过滤密码数据
@@ -34,10 +35,11 @@ func RoleKeyIsExist(roles []role.Roles) error {
 // JoinRole 管理员关联角色
 // @param map[string]interface{} admin 管理员信息
 // @param []role.Roles 角色数组
+// @param *gorm.DB tx 事务
 // @return error 返回一个错误信息
-func JoinRole(admin map[string]interface{}, roles []role.Roles) error {
+func JoinRole(admin map[string]interface{}, roles []role.Roles, tx *gorm.DB) error {
 	for _, v := range roles {
-		_, err := repositories.AdminRole().Insert(map[string]interface{}{
+		_, err := repositories.AdminRole(tx).Insert(map[string]interface{}{
 			"adminId": admin["id"],
 			"roleKey": v.Role,
 		})
