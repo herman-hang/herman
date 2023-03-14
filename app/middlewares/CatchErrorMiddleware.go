@@ -19,7 +19,7 @@ func CatchError() gin.HandlerFunc {
 					context.Json(nil, fmt.Sprintf("%s", data), http.StatusInternalServerError)
 				case map[string]interface{}:
 					data := data.(map[string]interface{})
-					context.Json(nil, data["code"], data["message"])
+					context.Json(nil, data["message"], data["code"])
 				}
 				ctx.Abort()
 			}

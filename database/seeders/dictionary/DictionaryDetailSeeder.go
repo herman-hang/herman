@@ -7,7 +7,7 @@ import "github.com/brianvoe/gofakeit/v6"
 func Detail() map[string]interface{} {
 	return map[string]interface{}{
 		"name":   gofakeit.Name(),
-		"code":   gofakeit.Noun(),
+		"code":   gofakeit.LetterN(5),
 		"value":  gofakeit.Noun(),
 		"remark": gofakeit.HackerPhrase(),
 		"sort":   gofakeit.Number(0, 100),

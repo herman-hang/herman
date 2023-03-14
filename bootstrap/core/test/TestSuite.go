@@ -68,16 +68,9 @@ func (s *SuiteCase) Assert(testCase []Case) {
 		assert.Equal(s.T(), err, nil)
 		assert.Equal(s.T(), v.Code, response.Code)
 		assert.Equal(s.T(), v.Message, response.Message)
+		core.Log.Debug(response)
 		// 是否为列表
-		if v.IsList {
-			for _, field := range v.Fields {
-				data := response.Data.(map[string]interface{})["list"].([]interface{})
-				for _, datum := range data {
-					// 不相等测试通过
-					assert.NotEqual(s.T(), nil, datum.(map[string]interface{})[field])
-				}
-			}
-		} else {
+		if !v.IsList {
 			switch response.Data.(type) {
 			case map[string]interface{}: // 非数组
 				for _, field := range v.Fields {
@@ -91,6 +84,14 @@ func (s *SuiteCase) Assert(testCase []Case) {
 						assert.NotEqual(s.T(), nil, datum.(map[string]interface{})[field])
 					}
 				}
+			}
+			continue
+		}
+		for _, field := range v.Fields {
+			data := response.Data.(map[string]interface{})["list"].([]interface{})
+			for _, datum := range data {
+				// 不相等测试通过
+				assert.NotEqual(s.T(), nil, datum.(map[string]interface{})[field])
 			}
 		}
 	}
@@ -122,9 +123,12 @@ func (s *SuiteCase) Request(method string, uri string, body map[string]interface
 // AdminLogin 管理员登录
 // @return void
 func (s *SuiteCase) AdminLogin() {
-	var response app.Response
+	var (
+		response app.Response
+		loginUri = s.AppPrefix + "/admin/login"
+	)
 	// map转json
-	_, _, w := s.Request("POST", "/api/v1/admin/login", map[string]interface{}{
+	_, _, w := s.Request("POST", loginUri, map[string]interface{}{
 		"user":     "admin",
 		"password": "123456",
 	})

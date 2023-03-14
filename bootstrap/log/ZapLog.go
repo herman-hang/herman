@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/bootstrap/core"
 	"github.com/herman-hang/herman/config"
@@ -17,8 +18,8 @@ import (
 // @return err error 返回错误信息
 func InitZapLogs(config *config.Log, mode string) (err error) {
 	var (
-		level = new(zapcore.Level)
-		core  zapcore.Core
+		level   = new(zapcore.Level)
+		logCore zapcore.Core
 	)
 	// writers
 	writersSyncers := GetLoggerWriter(config)
@@ -27,20 +28,28 @@ func InitZapLogs(config *config.Log, mode string) (err error) {
 	if err = level.UnmarshalText([]byte(config.Level)); err != nil {
 		return err
 	}
-	if mode == "debug" {
-		encoderConfig := zap.NewDevelopmentEncoderConfig()
-		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-		consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
+	encoderConfig := zap.NewDevelopmentEncoderConfig()
+	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
+	switch mode {
+	case gin.DebugMode:
 		// 将多个 zapcore.Core 对象合并成一个
-		core = zapcore.NewTee(
+		logCore = zapcore.NewTee(
 			zapcore.NewCore(encoders, writersSyncers, level),
 			zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), zapcore.DebugLevel),
 		)
-	} else {
-		core = zapcore.NewCore(encoders, writersSyncers, level)
+	case gin.TestMode:
+		logCore = zapcore.NewTee(
+			zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), zapcore.DebugLevel),
+		)
+	case gin.ReleaseMode:
+		logCore = zapcore.NewCore(encoders, writersSyncers, level)
+	default:
+		fmt.Println("unknown mode: ", mode)
+		os.Exit(1)
 	}
 
-	logger := zap.New(core, zap.AddCaller())
+	logger := zap.New(logCore, zap.AddCaller())
 	// 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
 	zap.ReplaceGlobals(logger)
 	return nil

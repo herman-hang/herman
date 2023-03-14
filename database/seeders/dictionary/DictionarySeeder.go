@@ -9,7 +9,7 @@ import (
 func Dictionary() map[string]interface{} {
 	return map[string]interface{}{
 		"name":   gofakeit.Name(),
-		"code":   gofakeit.Noun(),
+		"code":   gofakeit.LetterN(5),
 		"remark": gofakeit.HackerPhrase(),
 		"state":  gofakeit.RandomInt([]int{1, 2}),
 	}

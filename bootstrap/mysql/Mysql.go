@@ -2,7 +2,9 @@ package mysql
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/config"
+	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -55,5 +57,7 @@ func InitGormDatabase(config *config.Mysql) (db *gorm.DB, err error) {
 // @param ...interface{} args
 // @return void
 func (w Writer) Printf(format string, args ...interface{}) {
-	zap.L().Info(fmt.Sprintf(format, args...))
+	if settings.Config.Mode == gin.DebugMode {
+		zap.L().Info(fmt.Sprintf(format, args...))
+	}
 }

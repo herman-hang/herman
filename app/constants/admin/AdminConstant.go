@@ -5,7 +5,7 @@ const (
 	UserNotExist          = "管理员不存在"
 	PasswordError         = "密码错误"
 	ErrorLoginOverload    = "登录次数过多，请30分钟后重试"
-	GetAdminInfoFail      = "获取用户信息失败"
+	GetAdminInfoFail      = "获取管理员信息失败"
 	LoginErrorLimitNumber = 3
 	Increment             = 1
 	KeyValidity           = 30
