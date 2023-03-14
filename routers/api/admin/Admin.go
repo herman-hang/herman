@@ -22,7 +22,7 @@ func Router(router *gin.RouterGroup) {
 	// 根据ID查询管理员详情
 	router.GET("/admins/:id", AdminController.FindAdmin)
 	// 管理员删除
-	router.DELETE("/admin", AdminController.RemoveAdmin)
+	router.DELETE("/admins", AdminController.RemoveAdmin)
 	// 管理员列表
 	router.GET("/admins", AdminController.ListAdmin)
 

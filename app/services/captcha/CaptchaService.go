@@ -10,7 +10,7 @@ import (
 // @param map data 前端请求数据
 // @return captchaData 返回验证码相关信息
 func GetCaptcha(data map[string]interface{}) (captchaData map[string]interface{}) {
-	captchaData, err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Get()
+	captchaData, err := utils.Factory().GetService(data["captchaType"].(string)).Get()
 	if err != nil {
 		panic(CaptchaConstant.GetCaptchaFail)
 	}

@@ -42,7 +42,6 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		info["pname"] = topChild["name"]
 	}
 	if err != nil {
-		fmt.Println(err)
 		panic(MenuConstant.FindFail)
 	}
 	return info

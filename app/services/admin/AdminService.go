@@ -166,6 +166,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 		"email",
 		"name",
 		"card",
+		"introduction",
 		"sex",
 		"age",
 		"region",

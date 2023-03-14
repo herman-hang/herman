@@ -7,6 +7,7 @@ require (
 	github.com/TestsLing/aj-captcha-go v0.0.0-20221117062708-1abcf4c62792
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.6+incompatible
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
+	github.com/brianvoe/gofakeit/v6 v6.20.2
 	github.com/casbin/casbin/v2 v2.65.0
 	github.com/casbin/gorm-adapter/v3 v3.14.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -36,7 +37,6 @@ require (
 
 require (
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
-	github.com/brianvoe/gofakeit/v6 v6.20.2 // indirect
 	github.com/bytedance/sonic v1.8.3 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect

@@ -68,7 +68,6 @@ func (s *SuiteCase) Assert(testCase []Case) {
 		assert.Equal(s.T(), err, nil)
 		assert.Equal(s.T(), v.Code, response.Code)
 		assert.Equal(s.T(), v.Message, response.Message)
-		core.Log.Debug(response)
 		// 是否为列表
 		if !v.IsList {
 			switch response.Data.(type) {
