@@ -215,17 +215,237 @@ air
 
 Golang虽然是一门面向过程的语言，但是也引入了容器的概念，对项目核心的对象，比如Redis，MySQL，Casbin等都已存放在`/bootstrap/core/Container.go`文件中。
 
+```go
+package core
+
+import (
+	"github.com/casbin/casbin/v2"
+	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+)
+
+var (
+	Engine *gin.Engine
+	Log    *zap.SugaredLogger
+	Db     *gorm.DB
+	Redis  *redis.Client
+	Casbin *casbin.CachedEnforcer
+)
+```
+
 ### 中间件
 
+中间件分为**前置中间件**和**后置中间件**的，主要存放在`/app/middlewares`，比如以下定义的中间件：
 
+```go
+// ServerHandler 服务管理中间件
+// @return gin.HandlerFunc
+func ServerHandler() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		Reload() // 请求前执行
+		ctx.Next()
+		Close() // 请求后执行
+	}
+}
+```
+
+中间件定义调用均采用Gin框架提供的API，所以调用中间可以在路由，也可以在别处，具体看业务要求，以下在程序启动后调用：
+
+```go
+func NewServer(host string, port uint) {
+	// 设置gin框架运行模式
+	gin.SetMode(settings.Config.Mode)
+	// 启动gin框架
+	engine := gin.New()
+	// 注册中间件
+	engine.Use(log.GinLogger()).Use(middlewares.CatchError()).Use(middlewares.ServerHandler())
+	// 初始化路由
+	core.Engine = routers.InitRouter(engine)
+	// 启动服务
+	Run(host, port)
+}
+```
+
+你也可以在路由中调用，比如鉴权中间件：
+
+```go
+// Jwt 鉴权
+// @return gin.HandlerFunc 返回一个中间件上下文
+func Jwt(guard string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if VerifyRoute(ctx.Request.URL.Path, ctx.Request.Method, MiddlewareConstant.ExcludeRoute) {
+			return
+		}
+		claims := utils.JwtVerify(ctx, guard)
+		switch guard {
+		case "user", "mobile": // 前台和移动端（用户）
+			// 用户信息存储在请求中
+			ctx.Set("user", repositories.User().GetUserInfo(claims.Uid))
+		case "admin": // 管理员后台
+			ctx.Set("admin", repositories.Admin().GetAdminInfo(claims.Uid))
+		case "merchant": // 商家后台
+
+		default:
+			panic(MiddlewareConstant.GuardError)
+		}
+		ctx.Next()
+	}
+}
+```
+
+路由定义中调用：
+
+```go
+// 后台模块
+adminRouter := api.Group("/admin", middlewares.Jwt("admin"), middlewares.CheckPermission())
+{
+    admin.Router(adminRouter)
+}
+```
 
 ### 命令行
 
+命令行核心采用cobra实现，主要存放在`/app/command`，命令注册在`/bootstrap/casbin/Casbin.go`文件，比如以下例子：
 
+```go
+// HermanVersionCmd 获取herman版本号
+var (
+	HermanVersionCmd = &cobra.Command{
+		Use:          "version",
+		Short:        "Get herman version",
+		Example:      "herman version",
+		SilenceUsage: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Printf(`Herman version: %v`, color.GreenString(settings.Version))
+			return nil
+		},
+	}
+)
+```
+
+编写好之后，进行注册：
+
+```go
+// rootCmd 定义命令行
+var rootCmd = &cobra.Command{Use: "herman"}
+
+// 注册命令行
+func init() {
+	// 执行命令前初始化操作
+	cobra.OnInitialize(settings.InitConfig, servers.ZapLogs, func() {
+		if command.IsMigrate {
+			// 数据库迁移
+			_ = command.Migrate("up")
+		}
+		// 如果执行的是数据库迁移命令，则不需要加载初始化操作
+		if !command.MigrationStatus {
+			middlewares.Reload()
+		}
+	})
+
+	// 注册框架版本命令
+	rootCmd.AddCommand(command.HermanVersionCmd)
+}
+```
+
+官方已经内置了几个命令：
+
+（1）查看框架版本号
+
+```shell
+herman version # Herman version: 1.3.0
+```
+
+（2）数据库迁移
+
+```shell
+herman migrate --direction=up --number=1 # 表示迁移1个版本
+```
+
+这里每个参数需要绑定
+
+```go
+// init 命令参数绑定
+// @return void
+func init() {
+	// 迁移状态
+	MigrationCmd.Flags().BoolVarP(&MigrationStatus, "status", "s", false, "Database migration status")
+	// 迁移方式，up和down
+	MigrationCmd.Flags().StringVarP(&direction, "direction", "d", "up", "Database migration")
+	// 执行指定数据库版本，主要在出现Error: Dirty database version XX.使用
+	MigrationCmd.Flags().UintVarP(&version, "version", "v", 0, "Database version")
+	// 执行迁移的版本次数，比如回滚1个版本，可以执行herman -d down -n 1，不指定则全部迁移
+	MigrationCmd.Flags().UintVarP(&number, "number", "n", 0, "Database migration steps")
+}
+```
+
+命令绑定之后，可以随意结合，都是可选的，根据业务需求执行。
+
+（3）随机生成JWT令牌
+
+```shell
+herman jwt:secret
+```
+
+（4）框架服务启动
+
+```shell
+herman server --host=0.0.0.0 --port=8000 --migrate=true # 启动服务并做数据库迁移
+```
+
+如果框架已经迁移过数据库，也可以这样启动服务：
+
+```shell
+herman server # 默认端口为8000
+```
+
+cobra扩展文档：https://cobra.dev/
 
 ### 队列
 
+队列采用kafka，主要存放在`/app/jobs`，比如以下短信发送例子：
 
+```go
+// SendSms 发送短信队列
+// @param string topic 消息主题
+// @return void
+func SendSms(topic string) {
+	var data map[string]interface{}
+	// 调用消费者对数据进行消费，并返回结构体
+	kafkaConsumer := ExecConsumer(topic)
+	for {
+		// 从通道取出消费的数据
+		message := <-kafkaConsumer.MessageQueue
+		// 将取出的JSON数据转为map
+		if err := json.Unmarshal(message, &data); err != nil {
+			core.Log.Errorf("Consumer sms json data failed, err:%v", err)
+		}
+		execSend(data)
+	}
+}
+```
+
+服务层调用：
+
+```go
+jobs.Dispatch(data,jobs.SendSms)
+```
+
+其中，以下代码为固定写法，目的是取出消费的数据：
+
+```go
+	for {
+		// 从通道取出消费的数据
+		message := <-kafkaConsumer.MessageQueue
+		// 将取出的JSON数据转为map
+		if err := json.Unmarshal(message, &data); err != nil {
+			core.Log.Errorf("Consumer sms json data failed, err:%v", err)
+		}
+		execSend(data)
+	}
+```
 
 ### 缓存
 
@@ -282,3 +502,8 @@ Golang虽然是一门面向过程的语言，但是也引入了容器的概念�
 
 
 ## 12. 数据填充
+
+
+
+## 13. License
+
