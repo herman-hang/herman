@@ -9,22 +9,10 @@ services:
       - db
       - redis
       - kafka
-      - elasticsearch
-    environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=123456
-      - DB_NAME=herman
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KAFKA_HOST=kafka
-      - KAFKA_PORT=9092
-      - ELASTICSEARCH_HOST=elasticsearch
-      - ELASTICSEARCH_PORT=9200
 
   db:
-    image: mysql/mysql-server
+    image: mysql:latest
+    restart: always
     ports:
       - "3306:3306"
     environment:
@@ -34,12 +22,14 @@ services:
       - MYSQL_PASSWORD=herman@2023
 
   redis:
-    image: redis
+    image: redis:latest
     ports:
       - "6379:6379"
 
   kafka:
     image: wurstmeister/kafka
+    depends_on:
+      - zookeeper
     ports:
       - "9092:9092"
     environment:
@@ -47,9 +37,5 @@ services:
       - KAFKA_CREATE_TOPICS=test:1:1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
-    ports:
-      - "9200:9200"
-    environment:
-      - discovery.type=single-node
+  zookeeper:
+    image: wurstmeister/zookeeper:latest

@@ -1,14 +1,15 @@
 # Herman框架
 
 ## 1. 序言
-基于Gin框架开发，专注于后端快速上手的脚手架。
+### 介绍 
 
-## 2. 项目结构
+Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，专注于后端快速上手的一款开源，简洁，轻量框架。
+
+### 项目结构
 
 ```
 ├─app --------------------------------------------------------- 应用程序目录
 │  ├─command -------------------------------------------------- 命令管理目录
-│  ├─common --------------------------------------------------- 公共模块目录
 │  ├─constants ------------------------------------------------ 常量存放目录
 │  ├─controllers ---------------------------------------------- 控制器目录
 │  ├─jobs ----------------------------------------------------- 队列作业目录
@@ -20,12 +21,11 @@
 │  ├─validates ------------------------------------------------ 验证器目录
 │  ├─Request.go ----------------------------------------------- 请求对象库
 │  └─Response.go ---------------------------------------------- 响应对象库
-├─bootstrap --------------------------------------------------- 辅助程序目录
+├─bootstrap --------------------------------------------------- 程序核心目录
 ├─config ------------------------------------------------------ 配置文件目录
 ├─database ---------------------------------------------------- 数据库相关目录
 │  ├─migrations ----------------------------------------------- 数据迁移目录
-│  ├─seeders -------------------------------------------------- 数据填充目录
-│  └─sqls ----------------------------------------------------- 数据库更新SQL文件目录
+│  └─seeders -------------------------------------------------- 数据填充目录
 ├─runtime ----------------------------------------------------- 运行目录
 │  └─logs ----------------------------------------------------- 日志记录目录
 ├─resources --------------------------------------------------- 资源目录
@@ -39,48 +39,36 @@
 ├─server ------------------------------------------------------ GO服务目录
 │  ├─log ------------------------------------------------------ 日志驱动目录
 │  └─settings ------------------------------------------------- 核心配置目录
-├─storage ----------------------------------------------------- 文件存储目录
+├─storages ---------------------------------------------------- 文件存储目录
 ├─tests ------------------------------------------------------- 测试目录
 ├─.air.toml --------------------------------------------------- Air热重载配置文件
 ├─.gitignore -------------------------------------------------- gitignore文件
 ├─go.mod ------------------------------------------------------ go.mod文件
 ├─go.sum ------------------------------------------------------ go.sum文件
-├─config.yaml ------------------------------------------------- 环境配置文件
+├─config.yaml.debug ------------------------------------------- 开发环境配置文件
+├─config.yaml.test -------------------------------------------- 测试环境配置文件
+├─config.yaml.release ----------------------------------------- 正式环境配置文件
+├─Dockerfile -------------------------------------------------- Dodcker镜像配置
+├─docker-compose.yaml ----------------------------------------- Dodcker容器编排配置文件
+├─LICENSE ----------------------------------------------------- 程序许可证文件
+├─Makefile ---------------------------------------------------- 程序Makefile文件
 ├─main.go ----------------------------------------------------- 程序入口文件
 └─README.md --------------------------------------------------- Readme文件
 ```
 
-## 3. 项目热重载启动
-使用 Go 的版本为 1.16 或更高:
-```bash
-go install github.com/cosmtrek/air@latest
-```
-最简单的方法是执行
-```bash
-# 优先在当前路径查找 `.air.toml` 后缀的文件，如果没有找到，则使用默认的
-air -c .air.toml
-```
-您可以运行以下命令初始化，把默认配置添加到当前路径下的`.air.toml` 文件。
+### 开发规范
 
-```bash
-air init
-```
-
-在这之后，你只需执行 `air` 命令，无需添加额外的变量，它就能使用 `.air.toml` 文件中的配置了。
-
-```bash
-air
-```
-
-## 4. 项目开发规范
 #### （1）目录与文件命名
+
 - 目录名称采用小驼峰命名（首字母小写）
 - .go文件采用大驼峰命名（首字母大写），例如：`User`，`UserController`
 - 配置文件采用大驼峰命名（首字母大写），例如：`SmsConfig.go`
-- .sql文件以更新版本号命名，例如：`init.sql`，`1.0.0.sql`，`1.1.0.sql`
+- 数据库迁移文件采用下划线命名，例如：`1_init.down.sql`，`1_init.up.sql`，1为版本号，init为自定义名称，down代表回滚，up代码更新。
 - 资源文件(图片，CSS文件，JS文件等)均采用蛇形命名，例如CSS文件：`test.css`，`test_user.css`，以此类推
+- 测试文件命名根据控制器文件加`_test.go`，例如：`UserController_test.go`，`_test.go`是golang强制遵循的规范
 
 #### （2）函数、方法、结构体
+
 - 函数和方法命名可以大驼峰（首字母大写）和小驼峰（首字母小写）命名，具体看业务需求，如果只需在本包调用则小驼峰即可，否则需要大驼峰
 
 - 结构体名称、字段名、json标签一律使用大驼峰命名，示例：
@@ -105,261 +93,192 @@ air
   ```
 
 #### （3）变量与常量
-- 全局变量如果类型是一个对象，则采用大驼峰命名（首字母大写），例如：`Db`，`Redis`；类型不是对象的则为小驼峰（首字母小写），例如：`user`，`userName`
+
+- 全局变量和函数方法规范相似，如果需要跨包调用，则采用大驼峰（首字母大写），否则采用小驼峰（首字母小写）
 - 常量使用大驼峰命名（首字母大写），例如：`Success`，`TokenNotExit`
 
 #### （4）数据表与字段
+
 - 数据表名没有前缀，表名不能出现大写字母，建议以蛇形定义，例如：`user`，`user_role`
 - 字段名称采用蛇形命名，不能出现大写字母，例如：`user_id`，`user_name`
 
-## 5. 编码示例
-#### （1）路由
-第一步：首先到routers文件夹下打开Router.go文件（以用户相关路由为例）
+### 安装
 
-```go
-// InitRouter 初始化路由
-func InitRouter(rootEngine *gin.Engine) {
-	api := rootEngine.Group(settings.ConfigJwtConfig.AppPrefix)
+#### （1）修改环境文件
 
-	api.Use(middlewares.Jwt())
-	{
-        // 用户相关路由(路由从这里编写)
-		userRouter := api.Group("/user")
-		
-        // 这里的user为api文件夹下的user.go文件，Router是user包中的一个函数
-		user.Router(userRouter)
-	}
-}
+为了项目开发管理灵活性，根目录分别有3个环境文件，分别为`config.yaml.debug`开发环境文件，`config.yaml.test`测试环境文件，`config.yaml.release`正式环境文件，如果当前使用的环境为开发环境，则修改`config.yaml.debug`为`config.yaml`，例如：
+
+```shell
+cp config.yaml.debug config.yaml
 ```
 
-第二步：在`根目录/routers/api`文件夹下创建一个`user.go`文件，编写一下内容
+以此类推。
 
-```go
-// Router 用户相关路由
-func Router(router *gin.RouterGroup) {
-    // 第一个参数为路由，第二个参数为指定控制器下的函数
-	router.POST("/login", UserController.Login)
-}
+#### （2）配置MySQL和Redis
+
+项目启动依赖于Mysql和Redis，所以在启动之前，必须配置好MySQL和Redis的服务连接参数，否则程序无法启动。
+
+```yaml
+# 数据库配置
+mysql:
+  # 连接IP地址
+  host: 127.0.0.1
+  # 连接端口号
+  port: 3306
+  # 连接用户名
+  user: root
+  # 连接密码
+  password: root
+  # 连接数据库名称
+  dbname: herman
+  # 最大连接数
+  max_open_conn: 100
+  # 最大连接空闲数，建议和max_open_conn一致
+  max_idle_conn: 10
+
+# Redis配置
+redis:
+  # 连接IP地址
+  host: 127.0.0.1
+  # 连接端口号
+  port: 6380
+  # 连接用户名
+  username:
+  # 连接密码
+  password:
+  # 默认数据库，默认是0
+  db: 0
+  # 最大连接数
+  pool_size: 100
 ```
 
-这样就写好一些路由了，例如上面的路由为`/api/v1/user/login`，其中`/api/v1`为路由前缀，可以到配置文件设置
+#### （3）安装依赖
 
-#### （2）控制器
-
-控制器主要负责**数据接收，数据验证，函数调用，响应数据返回**，其他业务逻辑全部在service进行，例如：
+执行该命令之前，Go环境必须已经安装。
 
 ```go
-// 用户登录
-func Login(ctx *gin.Context) {
-    // 二次封装上下文
-	context := app.Request{Context: ctx}
-    // 接收数据
-	data := context.Params()
-    // 响应数据，并以json格式返回
-	context.Json(UserService.Login(UserValidate.Login(data)))
-}
+go mod download
 ```
 
-#### （3）验证器
+#### （4）程序启动
 
-验证规则文档：https://juejin.cn/post/6847902214279659533
+（1）编译后启动（推荐正式环境使用）
 
-以用户登录验证器为例：
-
-```go
-package user
-
-import (
-	"fp-back-user/app/utils"
-	"fp-back-user/app/validates"
-	"github.com/mitchellh/mapstructure"
-)
-
-// 这里是需要编写的地方，其中验证规则在结构体标签validate里面
-type LoginValidate struct {
-	User     string `json:"user" validate:"required,min=5,max=15" label:"用户名"`
-	Password string `json:"password" validate:"required,min=6,max=15" label:"密码"`
-}
-
-// Login 登录验证器
-// @param map 待验证数据
-func Login(data map[string]interface{}) map[string]interface{} {
-	var login LoginValidate
-
-	// map赋值给结构体
-	if err := mapstructure.Decode(data, &login); err != nil {
-        // 统一的异常捕捉返回
-		panic(err.Error())
-	}
-
-	if err := validates.Validate(login); err != nil {
-        // 统一的异常捕捉返回
-		panic(err.Error())
-	}
-
-	toMap, err := utils.ToMap(&login, "json")
-	if err != nil {
-        // 统一的异常捕捉返回
-		panic(err.Error())
-	}
-
-	return toMap
-}
+```shell
+go build -o herman . # 项目编译成二进制文件herman
+herman server --host=0.0.0.0 --port=8000 --migrate=true # host和port是可选的，但是migtate首次运行程序是必须的，会自动帮你迁移数据表到数据库
 ```
 
-#### （4）逻辑服务
+（2）非编译启动
 
-服务主要负责判断，模型调用等等逻辑处理，以用户登录service为例：
-
-```go
-package user
-
-import (
-	"fmt"
-	userConstant "fp-back-user/app/constants/user"
-	"fp-back-user/app/models"
-	"fp-back-user/app/utils"
-)
-
-// Login 用户登录
-// @param map data 前端请求数据
-func Login(data map[string]interface{}) interface{} {
-    // 模型调用
-	info, err := models.GetUserInfo(fmt.Sprintf("%v", data["user"]))
-	if err != nil {
-        // 统一的异常捕捉返回
-		panic(err.Error())
-	}
-
-	// 密码验证
-	if !utils.ComparePasswords(info.Password, fmt.Sprintf("%v", data["password"])) {
-        // 统一的异常捕捉返回
-		panic(userConstant.PasswordError)
-	}
-
-	// 返回数据给控制器
-	return utils.GenerateToken(&utils.UserClaims{UserId: info.Id, Issuer: info.User})
-}
-
+```shell
+go run main.go server --host=0.0.0.0 --port=8000 --migrate=true # 首次非编译启动程序，host和port也是可选的
 ```
 
-#### （5）仓储层
+（3）热重载启动（推荐开发环境使用）
 
-模型主要查找数据库数据返回给service，以获取用户信息为为例：
+该启动方式运行之前，**必须要完成数据库迁移工作**，否则会发生致命错误。使用该功能要求Go 的版本为 1.16及以上。
 
-```go
-// User 实例化结构体并重写BaseRepository
-var User = &UserRepository{BaseRepository{Model: new(models.Users)}}
-
-type UserRepository struct {
-BaseRepository
-}
-
-// GetUserInfo 获取用户信息
-// @param string user 用户名
-// @return *Users error 返回当前user用户的信息和错误信息
-func (u UserRepository) GetUserInfo(user string) (*models.Users, error) {
-var users models.Users
-err := common.Db.Where("user = ?", user).First(&users).Error
-
-if err != nil && err != gorm.ErrRecordNotFound {
-panic(UserConstant.GetUserInfoFail)
-}
-
-return &users, nil
-}
+```bash
+go install github.com/cosmtrek/air@latest # 如果已经安装则无需操作此步
 ```
-#### （7）数据模型
+您可以执行以下命令初始化，把默认配置添加到当前路径下的`.air.toml` 文件。
 
-```go
-type Users struct {
-	Id           uint       `json:"id" gorm:"primary_key" gorm:"comment:主键ID"`
-	User         string     `json:"user" gorm:"comment:用户名"`
-	Password     string     `json:"password" gorm:"comment:用户密码"`
-	Photo        string     `json:"photo" gorm:"comment:用户头像"`
-	Nickname     string     `json:"nickname" gorm:"comment:昵称"`
-	Name         string     `json:"name" gorm:"comment:真实姓名"`
-	Card         string     `json:"card" gorm:"comment:身份证号码"`
-	Sex          string     `json:"sex" gorm:"comment:性别(0为女,1为男，2为保密)"`
-	Age          int        `json:"age" gorm:"comment:年龄"`
-	Region       string     `json:"region" gorm:"comment:地区"`
-	Phone        string     `json:"phone" gorm:"comment:手机号码"`
-	Email        string     `json:"email" gorm:"comment:邮箱"`
-	Introduction string     `json:"introduction" gorm:"comment:简介"`
-	Status       string     `json:"status" gorm:"comment:状态(0已停用,1已启用)"`
-	SignOutIp    string     `json:"sign_out_ip" gorm:"comment:最后登录IP地址"`
-	SignTotal    string     `json:"sign_total" gorm:"comment:登录总数"`
-	SignOutAt    string     `json:"sign_out_at" gorm:"comment:最后登录时间"`
-	CreatedAt    time.Time  `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt    time.Time  `json:"updated_at" gorm:"comment:更新时间"`
-	DeletedAt    *time.Time `json:"deleted_at" sql:"index" gorm:"comment:删除时间"`
-}
+```bash
+air init
 ```
 
-#### （6）中间件
+热重载启动：
 
-中间件编写与其他业务逻辑基本相同，编写完成之后可以到路由文件或者main.go文件进行调用即可，以异常捕捉中间件为例：
-
-第一步：编写中间件
-
-```go
-// CatchError 异常捕捉
-func CatchError() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		this := app.Gin{C: ctx}
-		defer func() {
-			if err := recover(); err != nil {
-				// 没有定义
-				this.Response(app.C(constants.Error), app.M(err.(string)))
-				this.C.Abort()
-			}
-		}()
-		this.C.Next()
-	}
-}
+```bash
+air
 ```
 
-第二步：在合适代码中调用
+## 2. 架构
 
-```go
-	e := gin.New()
-	// 注册中间件
-	e.Use(middlewares.CatchError())
-```
+### 生命周期
 
-#### （7）工具类
+使用一门技术，了解它的生命周期是必不可少，只有你去了解它，使用起来才会更加自信。以下是Herman处理一个HTTP请求的流程：
 
-工具类是一个文件有一个独立的功能，比如结构体转换为Map：
+- 应用入口：Golang大部分项目都是`main.go`文件入口，Herman也不例外，在没有编译成二进制的前提下，入口从`main.go`文件开始。
+- 服务注册：进入cobra的init函数进行配置，日志初始化；框架版本，服务，数据库迁移，JWT令牌注册。
+- 设置运行模式：采用Gin框架设置当前的运行模式。
+- Gin框架启动：注册核心中间件，初始化路由，监听HTTP请求。
+- 控制器：接收请求上下文，处理请求参数，验证器和服务调用，以及响应返回。
+- 验证器：接收控制器处理好的参数进行验证，验证通过的参数返回给验证器。
+- 服务层：接收验证器验证通过的参数，调用仓储层获取数据库数据，然后把数据返回给控制器。
+- 仓储层：这一层又被称为数据库模型与数据交互的桥梁，主要操作数据库模型，再次封装增删改查，实现代码高度解耦。
+- 模型层：与数据库数据表一对一绑定，数据表字段与模型结构体绑定。
+- 请求响应：所有逻辑处理完成，数据由控制器响应返回。
 
-```go
-// ToMap 结构体转为Map[string]interface{}
-// @param interface in 待转结构体
-// @param string tagName 根据指定结构体标签作为key
-func ToMap(in interface{}, tagName string) (map[string]interface{}, error) {
-	out := make(map[string]interface{})
-	v := reflect.ValueOf(in)
+### 容器
 
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
+Golang虽然是一门面向过程的语言，但是也引入了容器的概念，对项目核心的对象，比如Redis，MySQL，Casbin等都已存放在`/bootstrap/core/Container.go`文件中。
 
-	// 非结构体返回错误提示
-	if v.Kind() != reflect.Struct {
-		return nil, fmt.Errorf("ToMap only accepts struct or struct pointer; got %T", v)
-	}
+### 中间件
 
-	t := v.Type()
-	// 遍历结构体字段,指定tagName值为map中key;字段值为map中value
-	for i := 0; i < v.NumField(); i++ {
-		fi := t.Field(i)
-		if tagValue := fi.Tag.Get(tagName); tagValue != "" {
-			out[tagValue] = v.Field(i).Interface()
-		}
-	}
 
-	return out, nil
-}
-```
 
-一般文件里不会出现其他的功能，比如结构体转Map里面不应该出现结构体转切片等逻辑。
+### 命令行
 
+
+
+### 队列
+
+
+
+### 缓存
+
+
+
+### 日志
+
+
+
+### 辅助函数
+
+
+
+### 权限模型
+
+
+
+### 配置
+
+## 3. 路由
+
+
+
+## 4. 控制器
+
+
+
+## 5.验证器
+
+
+
+## 6. 服务
+
+
+
+## 7. 仓储
+
+
+
+## 8. 数据库模型
+
+
+
+## 9. 响应
+
+
+
+## 10. 测试
+
+
+
+## 11. 数据库迁移
+
+
+
+## 12. 数据填充
