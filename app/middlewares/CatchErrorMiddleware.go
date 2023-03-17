@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
+	"github.com/herman-hang/herman/bootstrap/core"
 	"net/http"
 )
 
@@ -16,9 +17,12 @@ func CatchError() gin.HandlerFunc {
 			if data := recover(); data != nil {
 				switch data.(type) {
 				case string:
-					context.Json(nil, fmt.Sprintf("%s", data), http.StatusInternalServerError)
+					data := fmt.Sprintf("%s", data)
+					core.Log.Errorln(data)
+					context.Json(nil, data, http.StatusInternalServerError)
 				case map[string]interface{}:
 					data := data.(map[string]interface{})
+					core.Log.Errorln(data)
 					context.Json(nil, data["message"], data["code"])
 				}
 				ctx.Abort()

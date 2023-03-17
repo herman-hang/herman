@@ -449,33 +449,328 @@ jobs.Dispatch(data,jobs.SendSms)
 
 ### 缓存
 
+目前框架只支持Redis缓存，对象挂载在`/bootstrap/core/Container.go`中，使用前要先设置上下文：
 
+```go
+// 设置上下文
+ctx := context.Background()
+```
+
+设置一个key值
+
+```go
+val, err := core.Redis.Get(ctx, "key").Result()
+fmt.Println(val)
+```
+
+取出一个key值
+
+```go
+get := core.Redis.Get(ctx, "key")
+fmt.Println(get.Val(), get.Err())
+```
+
+设置一个key值并设置过期时间
+
+```go
+core.Redis.Set(ctx, "key", 1, time.Minute*30)
+```
+
+更多Redis扩展：https://redis.uptrace.dev/zh/guide/
 
 ### 日志
 
+日志集成Zap，这是一个强大的日志库，它在Herman中起到很关键的作用。
 
+```go
+// 记录一个日志
+core.Log.info(data)
+// 记录一个日志并换行
+core.Log.infoln(data)
+// 调式
+core.Log.Debug(data)
+// 记录一个错误
+core.Log.Error(data)
+// 记录一个错误并换行
+core.Log.Errorln(data)
+// 记录一个错误并终止进程
+core.Log.Fatal(data)
+```
+
+更多API文档：https://pkg.go.dev/go.uber.org/zap
 
 ### 辅助函数
 
+辅助函数又称工具类，主要存放在`/app/utils`中，如果项目中存在一些碎片化的代码，想把它做进一步封装，就可以在该目录下创建一个工具文件，在里面完成响应的封装。比如我下方做了一个验证码工厂：
 
+```go
+// Factory 初始化滑块验证码
+// @return factory 返回一个验证码工厂
+func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验配置模块（具体参数可从业务系统配置文件自定义）
+	// 行为校验初始化
+	factory = CaptchaService.NewCaptchaServiceFactory(
+		CaptchaConfig.BuildConfig(settings.Config.Captcha.CacheType,
+			settings.Config.Captcha.ResourcePath,
+			&CaptchaConfig.WatermarkConfig{
+				Text: settings.Config.Captcha.Text,
+			},
+			nil, nil, settings.Config.Captcha.CacheExpireSec))
+	// 注册内存缓存
+	factory.RegisterCache(Constant.MemCacheKey, CaptchaService.NewMemCacheService(CaptchaConstant.CacheMaxNumber))
+	// 注册自定义配置redis数据库
+	factory.RegisterCache(Constant.RedisCacheKey, CaptchaService.NewConfigRedisCacheService([]string{fmt.Sprintf("%s:%d",
+		settings.Config.Redis.Host,
+		settings.Config.Redis.Port,
+	)},
+		settings.Config.Redis.UserName,
+		settings.Config.Redis.Password,
+		false,
+		settings.Config.Redis.Db,
+	))
+	// 注册文字点选验证码服务
+	factory.RegisterService(Constant.ClickWordCaptcha, CaptchaService.NewClickWordCaptchaService(factory))
+	// 注册滑动拼图验证码服务
+	factory.RegisterService(Constant.BlockPuzzleCaptcha, CaptchaService.NewBlockPuzzleCaptchaService(factory))
+
+	return factory
+}
+
+```
+
+封装好之后，在框架那个地方都可以调用，非常方便。
 
 ### 权限模型
 
+Casbin是一种轻量级的开源访问控制框架，支持多种访问控制模型，如RBAC, ABAC和ACL。框架中已经采用了RBAC，适配GORM来做角色资源管理，可以灵活管理角色的权限。核心封装代码在`/bootstrap/casbin/Casbin.go`。框架Casbin的对象挂载在容器`/bootstrap/core/Container.go`，调用：
 
+```go
+success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
+```
+
+更多学习：https://casbin.org/zh/docs/category/the-basics
 
 ### 配置
 
+框架的所有配置都是通过读取根目录下的`config.yaml`文件所得，并且存放在`/config`目录中，调用方式：
+
+```go
+settings.Config
+```
+
+比如获取MySQL的配置
+
+```go
+settings.Config.Mysql
+```
+
+当前，如果你不想创建配置文件作映射，也可以直接获取环境文件`config.yaml`的配置，但是不建议这么操作。
+
+```go
+viper.Get("app")
+```
+
 ## 3. 路由
 
+路由沿用了Gin集成的功能，所有路由定义在`/routers/Router.go`，以下例子：
 
+```go
+func InitRouter(rootEngine *gin.Engine) *gin.Engine {
+	// 测试路由
+	rootEngine.GET("/", func(context *gin.Context) {
+		response := app.Request{Context: context}
+		response.Success(app.D(map[string]interface{}{
+			"message": "Welcome to Herman!",
+		}))
+	})
+	// 设置路由前缀
+	api := rootEngine.Group(settings.Config.AppPrefix)
+	// 获取验证码
+	api.GET("/captcha", CaptchaController.GetCaptcha)
+	// 检查验证码正确性
+	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
+
+	// 用户模块
+	userRouter := api.Group("/user", middlewares.Jwt("user"))
+	{
+		mobile.Router(userRouter)
+	}
+
+	// 后台模块
+	adminRouter := api.Group("/admin", middlewares.Jwt("admin"), middlewares.CheckPermission())
+	{
+		admin.Router(adminRouter)
+	}
+
+	return rootEngine
+}
+```
 
 ## 4. 控制器
 
+控制器层面的责任非常明确，只负责**接收上下文**，**获取参数**，**调用**以及**响应**，不做其他任何操作。调用这里包括调用验证器验证参数，调用服务层处理逻辑，然后响应返回。
 
+```go
+// AddAdmin 管理员添加
+// @param *gin.Context ctx 上下文
+// @return void
+func AddAdmin(ctx *gin.Context) {
+	context := app.Request{Context: ctx} // 上下文二次封装
+	data := context.Params() // 获取参数
+	AdminService.Add(AdminValidate.Add.Check(data)) // 调用验证器验证参数，然后调用服务层处理逻辑
+	context.Json(nil) // 响应返回
+}
+```
 
 ## 5.验证器
 
+验证器定义：
 
+```go
+// Add 重写验证器结构体，切记不使用引用，而是拷贝
+var Add = validates.Validates{Validate: AddValidate{}}
+
+// AddValidate 管理员添加验证规则
+type AddValidate struct {
+	User         string       `json:"user" validate:"required,min=5,max=15" label:"用户名"`
+	Password     string       `json:"password" validate:"required,min=6,max=15" label:"密码"`
+	Roles        []role.Roles `json:"roles" validate:"required" label:"选择角色"`
+	Photo        string       `json:"photo" validate:"omitempty,url,max=255" label:"头像"`
+	Name         string       `json:"name" validate:"omitempty,max=20" label:"真实姓名"`
+	Card         string       `json:"card" validate:"omitempty,max=20" label:"身份证号码"`
+	Sex          uint8        `json:"sex" validate:"required,oneof=1 2 3" label:"性别"`
+	Age          uint8        `json:"age" validate:"required,min=0,max=120" label:"年龄"`
+	Region       string       `json:"region" validate:"omitempty,max=255" label:"住址"`
+	Phone        string       `json:"phone" validate:"omitempty,len=11" label:"手机号码"`
+	Email        string       `json:"email" validate:"omitempty,email" label:"邮箱"`
+	Introduction string       `json:"introduction" validate:"omitempty" label:"简介"`
+	State        uint8        `json:"state" validate:"required,oneof=1 2" label:"状态"`
+	Sort         uint         `json:"sort" validate:"omitempty" label:"排序"`
+}
+```
+
+如果有对验证器公共结构体进行重写，那么久可以使用结构体的公共方法check，上面控制器的例子就是使用了验证器的公共方法。
+
+```go
+// Check 验证方法
+// @param map[string]interface{} data 待验证数据
+// @return void
+func (base Validates) Check(data map[string]interface{}) (toMap map[string]interface{}) {
+	// map赋值给结构体
+	if err := mapstructure.WeakDecode(data, &base.Validate); err != nil {
+		panic(constants.MapToStruct)
+	}
+	if err := Validate(base.Validate); err != nil {
+		panic(err.Error())
+	}
+
+	toMap, err := utils.ToMap(base.Validate, "json")
+
+	if err != nil {
+		panic(constants.StructToMap)
+	}
+	return toMap
+}
+```
+
+如果没有额外的业务扩展，这样是非常便利了，只关注验证规则如何去定义就可以。当然，如果你需要做一些验证扩展也是可以的，比如管理员登录：
+
+- 控制器
+
+```go
+// Login 管理员登录
+// @param *gin.Context ctx 上下文
+// @return void
+func Login(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	context.Json(AdminService.Login(AdminValidate.Login(data)), AdminConstant.LoginSuccess)
+}
+```
+
+- 验证器
+
+```go
+
+// CaptchaLoginValidate 管理员登录验证结构体
+type CaptchaLoginValidate struct {
+	User        string `json:"user" validate:"required,min=5,max=15" label:"用户名"`
+	Password    string `json:"password" validate:"required,min=6,max=15" label:"密码"`
+	CaptchaType int    `json:"captchaType" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
+	Token       string `json:"token" validate:"required" label:"验证码Token"`
+	PointJson   string `json:"pointJson" validate:"required" label:"验证码PointJson"`
+}
+
+// ExcludeCaptchaLoginValidate 管理员登录排除验证码相关验证结构体
+type ExcludeCaptchaLoginValidate struct {
+	User     string `json:"user" validate:"required,min=5,max=15" label:"用户名"`
+	Password string `json:"password" validate:"required,min=6,max=15" label:"密码"`
+}
+
+// Login 登录验证器
+// @param map[string]interface{} data 待验证数据
+// @return toMap 返回验证通过的数据
+func Login(data map[string]interface{}) (toMap map[string]interface{}) {
+	// 判断是否需要验证码
+	if !settings.Config.Captcha.Switch {
+		return excludeCaptchaLogin(data)
+	}
+	return captchaLogin(data)
+}
+
+// captchaLogin 验证码登录验证器
+// @param map[string]interface{} data 待验证数据
+// @return toMap 返回验证通过的数据
+func captchaLogin(data map[string]interface{}) (toMap map[string]interface{}) {
+	var login CaptchaLoginValidate
+	// map赋值给结构体
+	if err := mapstructure.WeakDecode(data, &login); err != nil {
+		panic(constants.MapToStruct)
+	}
+
+	if err := validates.Validate(login); err != nil {
+		panic(err.Error())
+	}
+
+	// 验证码二次验证
+	err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Verification(fmt.Sprintf("%s", data["token"]),
+		fmt.Sprintf("%s", data["PointJson"]))
+	if err != nil {
+		panic(CaptchaConstant.CheckCaptchaError)
+	}
+
+	toMap, err = utils.ToMap(&login, "json")
+	if err != nil {
+		panic(constants.StructToMap)
+	}
+
+	return toMap
+}
+
+// excludeCaptchaLogin 排除验证码登录验证器
+// @param map[string]interface{} data 待验证数据
+// @return toMap 返回验证通过的数据
+func excludeCaptchaLogin(data map[string]interface{}) (toMap map[string]interface{}) {
+	var login ExcludeCaptchaLoginValidate
+	// map赋值给结构体
+	if err := mapstructure.WeakDecode(data, &login); err != nil {
+		panic(constants.MapToStruct)
+	}
+
+	if err := validates.Validate(login); err != nil {
+		panic(err.Error())
+	}
+
+	toMap, err := utils.ToMap(&login, "json")
+	if err != nil {
+		panic(constants.StructToMap)
+	}
+
+	return toMap
+}
+
+```
+
+业务需要扩展验证器，可以直接在定义验证器文件中自定义规则即可，比如上面的例子就是把管理员登录是否需要验证码做了2种场景验证。
 
 ## 6. 服务
 
