@@ -774,31 +774,839 @@ func excludeCaptchaLogin(data map[string]interface{}) (toMap map[string]interfac
 
 ## 6. 服务
 
+服务层主要责任是逻辑处理，服务层没有什么约束，可以调用仓储层，工具类等等，但是这里值得注意的是，如果需要开启数据库事务的，必须要在这一层开启，然后在事务中进行多维度调用。例子如下：
 
+```go
+err := core.Db.Transaction(func(tx *gorm.DB) error {
+   // casbin重新初始化
+   _, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
+   // 判断角色Key是否存在
+   if isExist, _ := repositories.Role(tx).KeyIsExist(data["role"].(string)); isExist {
+      return errors.New(RoleConstant.KeyExist)
+   }
+   roles := data["roles"]
+   rules := data["rules"]
+   delete(data, "roles")
+   delete(data, "rules")
+   // 添加角色信息
+   roleInfo, err := repositories.Role(tx).Insert(data)
+   if err != nil {
+      return errors.New(RoleConstant.AddFail)
+   }
+   // 添加策略
+   if err := AddPolicies(roles.([]role.Roles), rules.([]role.Rules), roleInfo); err != nil {
+      return err
+   }
+   return nil
+})
+```
+
+如果有使用到Casbin，那么Casbin的Db也需要更新，比如上面代码的：
+
+```go
+_, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
+```
+
+如果遇到错误，必须要把错误返回，否则事务不会进行回滚，比如上面的代码：
+
+```go
+roleInfo, err := repositories.Role(tx).Insert(data)
+if err != nil {
+    return errors.New(RoleConstant.AddFail)
+}
+```
 
 ## 7. 仓储
 
+仓储层是位于Service层和Model层之间，是对Model层的进一步封装。仓储层公共方法已有**新增**，**更新**，**删除**，**根据查询条件获取详情**，**查询数据是否存在**，**获取列表数据**，**获取全部数据**。代码如下：
 
+```go
+package repositories
+
+import (
+	"github.com/herman-hang/herman/app/constants"
+	"github.com/herman-hang/herman/app/utils"
+	"github.com/mitchellh/mapstructure"
+	"gorm.io/gorm"
+)
+
+// BaseRepository 公共仓储层
+type BaseRepository struct {
+	Model interface{}
+	Db    *gorm.DB
+}
+
+// PageInfo 分页结构体
+type PageInfo struct {
+	Page     int64  `json:"page"`     // 页码
+	PageSize int64  `json:"pageSize"` // 每页大小
+	Keywords string `json:"keywords"` // 关键字
+}
+
+// Insert 新增
+// @param map[string]interface{} data 待添加数据
+// @return toMap err 查询数据，错误信息
+func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[string]interface{}, err error) {
+	// 初始化ID，让ID持续自增
+	data["id"] = constants.InitId
+	if err := mapstructure.WeakDecode(data, base.Model); err != nil {
+		return nil, err
+	}
+	if err := base.Db.Create(base.Model).Error; err != nil {
+		return nil, err
+	}
+	// 模型拷贝
+	tempStruct := base.Model
+	toMap, err = utils.ToMap(tempStruct, "json")
+	if err != nil {
+		return nil, err
+	}
+	return toMap, nil
+}
+
+// Find 根据查询条件获取详情
+// @param map[string]interface{} condition 查询条件
+// @param []string fields 查询指定字段
+// @return data err 详情数据，错误信息
+func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]string) (info map[string]interface{}, err error) {
+	data := make(map[string]interface{})
+	info = make(map[string]interface{})
+	if len(fields) > 0 {
+		if err := base.Db.Model(&base.Model).Where(condition).Select(fields[0]).Find(&data).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err := base.Db.Model(&base.Model).Where(condition).Find(&data).Error; err != nil {
+			return nil, err
+		}
+	}
+	if len(data) > 0 {
+		for k, v := range data {
+			// 下划线转为小驼峰
+			info[utils.UnderscoreToLowerCamelCase(k)] = v
+		}
+	}
+	return info, nil
+}
+
+// Update 更新
+// @param []uint ids 查询条件
+// @param map[string]interface{} attributes 待更新数据
+// @return error 错误信息
+func (base *BaseRepository) Update(ids []uint, data map[string]interface{}) error {
+	var attributes = make(map[string]interface{})
+	// 驼峰转下划线
+	for k, v := range data {
+		k := utils.ToSnakeCase(k)
+		attributes[k] = v
+	}
+	if err := base.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete 删除
+// @param []uint ids 主键ID
+// @return error 错误信息
+func (base *BaseRepository) Delete(ids []uint) error {
+	if err := base.Db.Delete(&base.Model, ids).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// IsExist 查询数据是否存在
+// @param map[string]interface{} condition 查询条件
+// @return bool 返回一个bool值
+func (base *BaseRepository) IsExist(condition map[string]interface{}) bool {
+	data := make(map[string]interface{})
+	err := base.Db.Model(&base.Model).Where(condition).Find(&data).Error
+	if err != nil && len(data) > constants.LengthByZero {
+		return true
+	}
+	return false
+}
+
+// GetList 获取列表数据
+// @param string query 查询条件
+// @param []string fields 查询指定字段
+// @param string order 排序条件
+// @param map[string]interface{} pageInfo 列表分页和关键词数据
+// @return list total pageNum err 返回列表，总条数，总页码数，错误信息
+func (base *BaseRepository) GetList(query string, fields []string, order string, pageInfo ...map[string]interface{}) (data map[string]interface{}, err error) {
+	var (
+		page    PageInfo
+		total   int64
+		pageNum int64
+		list    []map[string]interface{}
+	)
+	if len(pageInfo) > 0 {
+		if err := mapstructure.WeakDecode(pageInfo[0], &page); err != nil {
+			panic(constants.MapToStruct)
+		}
+	}
+	// 总条数
+	base.Db.Model(&base.Model).Count(&total)
+	// 计算总页数
+	if page.PageSize != 0 && total%page.PageSize != 0 {
+		pageNum = total / page.PageSize
+		pageNum++
+	}
+	// 示例 query = fmt.Sprintf(" dns like '%%%s' ", createDbnameInfo.DNS)
+	err = base.Db.Model(&base.Model).
+		Select(fields).
+		Where(query).
+		Order(order).
+		Limit(int(page.PageSize)).
+		Offset(int((page.Page - 1) * page.PageSize)).
+		Find(&list).Error
+	if err != nil {
+		return nil, err
+	}
+	data = map[string]interface{}{
+		"list":     list,          // 数据
+		"total":    total,         // 总条数
+		"pageNum":  pageNum,       // 总页数
+		"pageSize": page.PageSize, // 每页大小
+		"page":     page.Page,     // 当前页码
+	}
+	return data, nil
+}
+
+// GetAllData 获取全部数据
+// @param []string fields 查询指定字段
+// @return list err 返回列表，错误信息
+func (base *BaseRepository) GetAllData(fields []string) (data []map[string]interface{}, err error) {
+	if len(fields) > 0 {
+		if err := base.Db.Model(&base.Model).Select(fields).Find(&data).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err := base.Db.Model(&base.Model).Find(&data).Error; err != nil {
+			return nil, err
+		}
+	}
+	return data, nil
+}
+
+```
+
+在仓储层中要使用以上方法，你需要根据Model创建对应的子仓储，然后继承公共方法的`BaseRepository`结构体才能使用，比如一下是管理员的仓储层。
+
+```go
+package repositories
+
+import (
+	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
+	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/bootstrap/core"
+	"gorm.io/gorm"
+)
+
+// AdminRepository 管理员表仓储层
+type AdminRepository struct {
+	BaseRepository
+}
+
+// Admin 实例化管理员表仓储层
+// @param *gorm.DB tx 事务
+// @return AdminRepository 返回管理员表仓储层
+func Admin(tx ...*gorm.DB) *AdminRepository {
+	if len(tx) > 0 && tx[0] != nil {
+		return &AdminRepository{BaseRepository{Model: new(models.Admin), Db: tx[0]}}
+	}
+
+	return &AdminRepository{BaseRepository{Model: new(models.Admin), Db: core.Db}}
+}
+
+// GetAdminInfo 获取管理员信息
+// @param interface{} attributes 管理员id或者管理员user
+// @return admin 返回当前管理员的信息
+func (u AdminRepository) GetAdminInfo(attributes interface{}) (admin *models.Admin) {
+	var err error
+	switch attributes.(type) {
+	case uint:
+		err = core.Db.Where("id = ?", attributes).Find(&admin).Error
+	case string:
+		err = core.Db.Where("user = ?", attributes).Find(&admin).Error
+
+	}
+	if err != nil {
+		panic(AdminConstant.GetAdminInfoFail)
+	}
+
+	return admin
+}
+```
+
+重点在这里：
+
+```go
+// AdminRepository 管理员表仓储层
+type AdminRepository struct {
+	BaseRepository
+}
+```
+
+另外，每个子仓储都必须写上实例化方法：
+
+```go
+// Admin 实例化管理员表仓储层
+// @param *gorm.DB tx 事务
+// @return AdminRepository 返回管理员表仓储层
+func Admin(tx ...*gorm.DB) *AdminRepository {
+	if len(tx) > 0 && tx[0] != nil {
+		return &AdminRepository{BaseRepository{Model: new(models.Admin), Db: tx[0]}}
+	}
+
+	return &AdminRepository{BaseRepository{Model: new(models.Admin), Db: core.Db}}
+}
+```
+
+根据不懂的仓储层，实例化结构体要随之改变。比如上面的是管理员仓储层，那么实例化的就是管理员仓储层的结构体。完成了上面的操作之后，这些方法就能在Service层调用了，比如：
+
+```go
+// 获取管理员信息
+admin := repositories.Admin().GetAdminInfo(fmt.Sprintf("%s", data["user"]))
+```
+
+我这里举例只调用子仓储的一个方法，你还可以通过`repositories.Admin()`去调用公共方法。
 
 ## 8. 数据库模型
 
+每个模型对应一张数据表，结构体成员采用大驼峰命名，json标签的反射字段采用小驼峰命名，gorm标签的column属性命名与数据库字段对应。例子如下：
 
+```go
+package models
+
+import (
+	"gorm.io/gorm"
+	"time"
+)
+
+// Admin 管理员结构体
+type Admin struct {
+	Id           uint           `json:"id" gorm:"column:id;primary_key;comment:管理员ID"`
+	User         string         `json:"user" gorm:"column:user;comment:管理员用户名"`
+	Password     string         `json:"password" gorm:"column:password;comment:管理员密码"`
+	Photo        string         `json:"photo" gorm:"column:photo;comment:管理员头像"`
+	Name         string         `json:"name" gorm:"column:name;comment:真实姓名"`
+	Card         string         `json:"card" gorm:"column:card;comment:身份证号码"`
+	Sex          uint8          `json:"sex" gorm:"column:sex;default:3;comment:性别(1为女,2为男，3为保密)"`
+	Age          uint8          `json:"age" gorm:"column:age;default:0;comment:年龄"`
+	Region       string         `json:"region" gorm:"column:region;comment:地区"`
+	Phone        string         `json:"phone" gorm:"column:phone;comment:手机号码"`
+	Email        string         `json:"email" gorm:"column:email;comment:邮箱"`
+	Introduction string         `json:"introduction" gorm:"column:introduction;comment:简介"`
+	State        uint8          `json:"state" gorm:"column:state;default:2;comment:状态(1已停用,2已启用)"`
+	Sort         uint           `json:"sort" gorm:"column:sort;default:0;comment:排序"`
+	LoginOutIp   string         `json:"loginOutIp" gorm:"column:login_out_ip;comment:上一次登录IP地址"`
+	LoginTotal   uint           `json:"loginTotal" gorm:"column:login_total;default:0;comment:登录总数"`
+	LoginOutAt   time.Time      `json:"loginOutAt" gorm:"column:login_out_at;default:1970-01-01 00:00:00;comment:上一次登录时间"`
+	CreatedAt    time.Time      `json:"createdAt" gorm:"column:created_at;comment:创建时间"`
+	UpdatedAt    time.Time      `json:"updatedAt" gorm:"column:updated_at;comment:更新时间"`
+	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;index;comment:删除时间"`
+}
+
+// TableName 设置用户表名
+func (Admin) TableName() string {
+	return "admin"
+}
+
+```
+
+其中TableName()是必须的，然后返回一个`string`类型为数据表名称。
 
 ## 9. 响应
 
+统一响应方法在`/app/Response.go`，代码如下：
 
+```go
+package app
+
+import (
+	"fmt"
+	"github.com/herman-hang/herman/app/constants"
+	"github.com/herman-hang/herman/app/utils"
+	"net/http"
+)
+
+// Response 响应信息结构体
+type Response struct {
+	HttpCode int         `json:"-"`
+	Code     int         `json:"code"`
+	Message  string      `json:"message"`
+	Data     interface{} `json:"data"`
+}
+
+// Option 定义配置选项函数（关键）
+type Option func(*Response)
+
+// C 设置JSON结构状态码
+// @param int code 状态码
+// @return Option 返回配置选项函数
+func C(code int) Option {
+	return func(this *Response) {
+		this.Code = code
+	}
+}
+
+// M 设置响应信息
+// @param string message 自定义响应信息
+// @return Option 返回配置选项函数
+func M(message string) Option {
+	return func(this *Response) {
+		this.Message = message
+	}
+}
+
+// D 设置响应参数
+// @param interface{} data 响应数据
+// @return Option 返回配置选项函数
+func D(data interface{}) Option {
+	return func(this *Response) {
+		this.Data = data
+	}
+}
+
+// H 设置HTTP响应状态码
+// @param int HttpCode HTTP状态码，比如：200，500等
+// @return Option 返回配置选项函数
+func H(HttpCode int) Option {
+	return func(this *Response) {
+		this.HttpCode = HttpCode
+	}
+}
+
+// Success 方法一：响应函数
+// @param *Gin g 上下文结构体
+// @param Option opts 接收多个配置选项函数参数，可以是C，M，D，H
+func (r *Request) Success(opts ...Option) {
+	defaultResponse := &Response{
+		HttpCode: http.StatusOK,
+		Code:     http.StatusOK,
+		Message:  constants.Success,
+		Data:     nil,
+	}
+
+	// 依次调用opts函数列表中的函数，为结构体成员赋值
+	for _, o := range opts {
+		o(defaultResponse)
+	}
+	// 响应http请求
+	r.Context.JSON(defaultResponse.HttpCode, defaultResponse)
+	return
+}
+
+// Json 方法二：响应函数（所有字段转小驼峰写法）
+// @param interface{} data 接收响应参数
+// @param args 第一个参数为message，第二个参数为code
+func (r *Request) Json(data interface{}, args ...interface{}) {
+	var jsonString []byte
+	// 将数据转为json格式返回
+	camelJson, _ := utils.CamelJSON(data)
+	switch len(args) {
+	case 0:
+		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, http.StatusOK, constants.Success, camelJson))
+	case 1:
+		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, http.StatusOK, args[0], camelJson))
+	case 2:
+		jsonString = []byte(fmt.Sprintf(`{"code":%d,"message":"%s","data":%s}`, args[1], args[0], camelJson))
+	}
+	// 响应http请求
+	r.Context.Data(http.StatusOK, "application/json", jsonString)
+}
+
+```
+
+目前响应json有2种方法：
+
+```go
+	// 测试路由
+	rootEngine.GET("/", func(context *gin.Context) {
+		response := app.Request{Context: context}
+		response.Success(app.D(map[string]interface{}{
+			"message": "Welcome to Herman!",
+		}))
+	})
+```
+
+其中`response.Success()`参数中可以接收4个参数，每一个参数都是响应方法中的一个函数。比如上面就只调用了一个函数`app.D()`，根据业务需求，你还可以在`response.Success()`追加其他函数进去。
+
+另一种方法就是直接Json，比如：
+
+```go
+func Login(ctx *gin.Context) {
+   context := app.Request{Context: ctx}
+   data := context.Params()
+   context.Json(AdminService.Login(AdminValidate.Login(data)), AdminConstant.LoginSuccess)
+}
+```
+
+`context.Json()`方法第一个参数是data，第二个参数是message，第三个参数是code，必须严格根据这个顺序来传入，否则出错。
 
 ## 10. 测试
 
+单元测试核心代码位于`/bootstrap/core/test/TestSuite.go`，单元测试比较推荐使用套件测试，创建每个模块需要在`/tests`目录下进行，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/bootstrap/core/test/TestSuite.go`中，比如框架中的管理员登录：
 
+```go
+// AdminLogin 管理员登录
+// @return void
+func (s *SuiteCase) AdminLogin() {
+	var (
+		response app.Response
+		loginUri = s.AppPrefix + "/admin/login"
+	)
+	// map转json
+	_, _, w := s.Request("POST", loginUri, map[string]interface{}{
+		"user":     "admin",
+		"password": "123456",
+	})
+	// json转struct
+	_ = json.Unmarshal(w.Body.Bytes(), &response)
+	s.Authorization = response.Data.(string)
+}
+```
+
+封装后登录之后，需要在`SetupSuite()`方法中作逻辑处理，如下：
+
+```go
+// SetupSuite 测试套件前置函数
+// @return void
+func (s *SuiteCase) SetupSuite() {
+	settings.InitConfig()
+	servers.ZapLogs()
+	middlewares.Reload()
+	gin.SetMode(settings.Config.Mode)
+	e := gin.Default()
+	e.Use(middlewares.CatchError())
+	core.Engine = routers.InitRouter(e)
+	s.AppPrefix = settings.Config.AppPrefix
+	switch s.Guard {
+	case "admin":
+		s.AdminLogin()
+	default:
+		panic(MiddlewareConstant.GuardError)
+	}
+}
+```
+
+这样就可以在单测里面调用来的，每个单元测试都有一个套件方法，如下：
+
+```go
+// TestAdminTestSuite 管理员测试套件
+// @return void
+func TestAdminTestSuite(t *testing.T) {
+   suite.Run(t, &AdminTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+}
+```
+
+这里根据业务是必须定义的，实例化结构体要根据业务需求随之应变。`Guard: "admin"`则表示使用那个登录方法，我这里使用管理员登录，整个套件测试例子如下：
+
+```go
+package admin
+
+import (
+   "fmt"
+   "github.com/brianvoe/gofakeit/v6"
+   "github.com/herman-hang/herman/app/repositories"
+   "github.com/herman-hang/herman/bootstrap/core/test"
+   "github.com/herman-hang/herman/database/seeders/admin"
+   "github.com/herman-hang/herman/database/seeders/role"
+   "github.com/stretchr/testify/suite"
+   "testing"
+)
+
+// 管理员测试套件结构体
+type AdminTestSuite struct {
+   test.SuiteCase
+}
+
+var (
+   AdminLoginUri = "/admin/login"  // 管理员登录URI
+   AdminUri      = "/admin/admins" // 管理员URI
+)
+
+// TestLogin 测试管理员登录
+// @return void
+func (base *AdminTestSuite) TestLogin() {
+   base.Assert([]test.Case{
+      {
+         Method:  "POST",
+         Uri:     base.AppPrefix + AdminLoginUri,
+         Params:  map[string]interface{}{"user": "admin", "password": "123456"},
+         Code:    200,
+         Message: "登录成功",
+      },
+   })
+}
+
+// TestAddAdmin 测试添加管理员
+// @return void
+func (base *AdminTestSuite) TestAddAdmin() {
+   roleInfo, _ := repositories.Role().Insert(role.Role())
+   adminInfo := admin.Admin()
+   adminInfo["roles"] = []map[string]interface{}{
+      {
+         "name": roleInfo["name"].(string),
+         "role": roleInfo["role"].(string),
+      },
+   }
+   base.Assert([]test.Case{
+      {
+         Method:  "POST",
+         Uri:     base.AppPrefix + AdminUri,
+         Params:  adminInfo,
+         Code:    200,
+         Message: "操作成功",
+      },
+   })
+}
+
+// TestModifyAdmin 测试修改管理员
+// @return void
+func (base *AdminTestSuite) TestModifyAdmin() {
+   roleInfo, _ := repositories.Role().Insert(role.Role())
+   adminInfo := admin.Admin()
+   adminInfo["roles"] = []map[string]interface{}{
+      {
+         "name": roleInfo["name"].(string),
+         "role": roleInfo["role"].(string),
+      },
+   }
+   info, _ := repositories.Admin().Insert(adminInfo)
+   base.Assert([]test.Case{
+      {
+         Method: "PUT",
+         Uri:    base.AppPrefix + AdminUri,
+         Params: map[string]interface{}{
+            "id":           info["id"],
+            "user":         gofakeit.Username(),
+            "password":     gofakeit.Password(false, false, true, false, false, 10),
+            "photo":        gofakeit.ImageURL(100, 100),
+            "roles":        adminInfo["roles"],
+            "name":         gofakeit.Name(),
+            "card":         "450981200008272525",
+            "sex":          gofakeit.RandomInt([]int{1, 2, 3}),
+            "age":          gofakeit.Number(18, 60),
+            "region":       gofakeit.Country(),
+            "phone":        "18888888888",
+            "email":        gofakeit.Email(),
+            "introduction": gofakeit.Sentence(10),
+            "state":        gofakeit.RandomInt([]int{1, 2}),
+            "sort":         gofakeit.Number(1, 100),
+         },
+         Code:    200,
+         Message: "操作成功",
+      },
+   })
+}
+
+// TestDeleteAdmin 测试根据ID获取管理员详情
+// @return void
+func (base *AdminTestSuite) TestFindAdmin() {
+   roleInfo, _ := repositories.Role().Insert(role.Role())
+   adminInfo := admin.Admin()
+   adminInfo["roles"] = []map[string]interface{}{
+      {
+         "name": roleInfo["name"].(string),
+         "role": roleInfo["role"].(string),
+      },
+   }
+   info, _ := repositories.Admin().Insert(adminInfo)
+   base.Assert([]test.Case{
+      {
+         Method:  "GET",
+         Uri:     base.AppPrefix + AdminUri + "/" + fmt.Sprintf("%d", info["id"]),
+         Params:  nil,
+         Code:    200,
+         Message: "操作成功",
+      },
+   })
+}
+
+// TestGetAdminList 测试删除管理员
+// @return void
+func (base *AdminTestSuite) TestRemoveAdmin() {
+   roleInfo, _ := repositories.Role().Insert(role.Role())
+   adminInfo := admin.Admin()
+   adminInfo["roles"] = []map[string]interface{}{
+      {
+         "name": roleInfo["name"].(string),
+         "role": roleInfo["role"].(string),
+      },
+   }
+   info, _ := repositories.Admin().Insert(adminInfo)
+   base.Assert([]test.Case{
+      {
+         Method: "DELETE",
+         Uri:    base.AppPrefix + AdminUri,
+         Params: map[string]interface{}{
+            "id": []uint{info["id"].(uint)},
+         },
+         Code:    200,
+         Message: "操作成功",
+      },
+   })
+}
+
+// TestGetAdminList 测试获取管理员列表
+// @return void
+func (base *AdminTestSuite) TestListAdmin() {
+   roleInfo, _ := repositories.Role().Insert(role.Role())
+   adminInfo := admin.Admin()
+   adminInfo["roles"] = []map[string]interface{}{
+      {
+         "name": roleInfo["name"].(string),
+         "role": roleInfo["role"].(string),
+      },
+   }
+   _, _ = repositories.Admin().Insert(adminInfo)
+   base.Assert([]test.Case{
+      {
+         Method:  "GET",
+         Uri:     base.AppPrefix + AdminUri,
+         Params:  map[string]interface{}{"page": 1, "pageSize": 2, "keywords": ""},
+         Code:    200,
+         Message: "操作成功",
+         IsList:  true,
+         Fields: []string{
+            "id",
+            "user",
+            "photo",
+            "sort",
+            "state",
+            "phone",
+            "email",
+            "name",
+            "card",
+            "introduction",
+            "sex",
+            "age",
+            "region",
+            "createdAt",
+         },
+      },
+   })
+}
+
+// TestAdminTestSuite 管理员测试套件
+// @return void
+func TestAdminTestSuite(t *testing.T) {
+   suite.Run(t, &AdminTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+}
+```
 
 ## 11. 数据库迁移
 
+目前数据库迁移功能已经非常强大，支持数据库版本更新，版本回滚，强制删除，更新回滚指定版本等等，数据库迁移文件位于`/database/migrations`目录下，命名格式`版本号_文件描述_迁移属性.sql`，其中版本号可以自定义，推荐用自然数自增，避免出现不可预估的问题，迁移文件必须是成对存在的，有迁移文件就必须有回滚文件，比如创建了一个迁移文件`1_init.up.sql`，那么回滚文件`1_init.down.sql`就必须存在，否在操作数据库迁移时会出错。根据需求可以执行以下命令：
 
+- 数据库迁移
+
+```shell
+herman --status=true --direction=up
+```
+
+简写：
+
+```shell
+herman -s true -d up
+```
+
+- 数据库回滚
+
+```shell
+herman --status=true --direction=down
+```
+
+简写：
+
+```shell
+herman -s true -d down
+```
+
+- 强制执行指定版本的文件
+
+```shell
+herman --status=true --direction=force --version=1 # 强制执行版本号为1的迁移文件
+```
+
+简写：
+
+```shell
+herman -s true -d force -v 1 # 强制执行版本号为1的迁移文件
+```
+
+- 迁移1个版本
+
+```shell
+herman --status=true --direction=up --number=1
+```
+
+简写：
+
+```shell
+herman -s true -d up -n 1
+```
+
+- 回滚1个版本
+
+```shell
+herman --status=true --direction=down --number=1
+```
+
+简写：
+
+```shell
+herman -s true -d down -n 1
+```
+
+- 强制删除数据库
+
+```shell
+herman --status=true --direction=drop
+```
+
+简写：
+
+```shell
+herman -s true -d drop
+```
 
 ## 12. 数据填充
 
+数据填充位于`/database/seeders`，该目录下的每个模块都是对应于控制器。数据填充采用的是`brianvoe/gofakeit`，填充例子如下：
 
+```go
+package admin
+
+import (
+   "github.com/brianvoe/gofakeit/v6"
+)
+
+// Admin 管理员填充器
+func Admin() map[string]interface{} {
+   return map[string]interface{}{
+      "user":         gofakeit.Username(),
+      "password":     gofakeit.Password(false, false, true, false, false, 10),
+      "photo":        gofakeit.ImageURL(100, 100),
+      "name":         gofakeit.Name(),
+      "card":         "450981200008272525",
+      "sex":          gofakeit.RandomInt([]int{1, 2, 3}),
+      "age":          gofakeit.Number(18, 60),
+      "region":       gofakeit.Country(),
+      "phone":        "18888888888",
+      "email":        gofakeit.Email(),
+      "introduction": gofakeit.Sentence(10),
+      "state":        gofakeit.RandomInt([]int{1, 2}),
+      "sort":         gofakeit.Number(1, 100),
+   }
+}
+```
+
+更多规则：https://github.com/brianvoe/gofakeit
 
 ## 13. License
 
+Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html
