@@ -105,13 +105,13 @@ func (base *BaseRepository) IsExist(condition map[string]interface{}) bool {
 	return false
 }
 
-// GetList 获取列表数据
+// List 获取列表数据
 // @param string query 查询条件
 // @param []string fields 查询指定字段
 // @param string order 排序条件
 // @param map[string]interface{} pageInfo 列表分页和关键词数据
 // @return list total pageNum err 返回列表，总条数，总页码数，错误信息
-func (base *BaseRepository) GetList(query string, fields []string, order string, pageInfo ...map[string]interface{}) (data map[string]interface{}, err error) {
+func (base *BaseRepository) List(query string, fields []string, order string, pageInfo ...map[string]interface{}) (data map[string]interface{}, err error) {
 	var (
 		page    PageInfo
 		total   int64

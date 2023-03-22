@@ -7,6 +7,7 @@ import (
 	FileController "github.com/herman-hang/herman/app/controllers/file"
 	MenuController "github.com/herman-hang/herman/app/controllers/menu"
 	RoleController "github.com/herman-hang/herman/app/controllers/role"
+	SystemController "github.com/herman-hang/herman/app/controllers/system"
 )
 
 // Router 后台相关路由
@@ -25,6 +26,8 @@ func Router(router *gin.RouterGroup) {
 	router.DELETE("/admins", AdminController.RemoveAdmin)
 	// 管理员列表
 	router.GET("/admins", AdminController.ListAdmin)
+	// 管理员日志列表
+	router.GET("/admin/logs", AdminController.LogList)
 
 	// 添加角色
 	router.POST("/roles", RoleController.AddRole)
@@ -76,4 +79,10 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/files/download/:id", FileController.DownloadFile)
 	// 图片预览
 	router.GET("/files/preview/:id", FileController.PreviewFile)
+
+	// 系统设置信息
+	router.GET("/system", SystemController.FindSystem)
+	// 修改系统设置信息
+	router.PUT("/system", SystemController.ModifySystem)
+
 }

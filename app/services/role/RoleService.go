@@ -160,7 +160,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 	}
 	// 排序
 	order := "created_at desc"
-	list, err := repositories.Role().GetList(query, fields, order, data)
+	list, err := repositories.Role().List(query, fields, order, data)
 	if err != nil {
 		panic(RoleConstant.GetListFail)
 	}

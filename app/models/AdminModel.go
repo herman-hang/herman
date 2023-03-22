@@ -29,7 +29,7 @@ type Admin struct {
 	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;index;comment:删除时间"`
 }
 
-// TableName 设置用户表名
+// TableName 设置表名
 func (Admin) TableName() string {
 	return "admin"
 }

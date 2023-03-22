@@ -295,5 +295,64 @@ CREATE TABLE `schema_migrations`
 -- Records of schema_migrations
 -- ----------------------------
 
+-- ----------------------------
+-- Table structure for system
+-- ----------------------------
+DROP TABLE IF EXISTS `system`;
+CREATE TABLE `system`
+(
+    `id`           int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '系统设置ID',
+    `name`         varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '网站名称',
+    `title`        varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网站标题',
+    `description`  varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网站描述',
+    `keywords`     varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '网站关键词',
+    `logo_file_id` int(10) UNSIGNED NULL DEFAULT NULL COMMENT 'LOGO文件ID',
+    `ico_file_id`  int(10) UNSIGNED NULL DEFAULT NULL COMMENT 'ICO文件ID',
+    `record`       varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备案号',
+    `copyright`    varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '底部版权声明',
+    `is_website` tinyint(4) DEFAULT '2' COMMENT '网站开关（1：关，2开）',
+    `email`        varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮箱',
+    `telephone`    varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '电话',
+    `address`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '地址',
+    `created_at`   datetime                                               NOT NULL COMMENT '创建时间',
+    `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
+    `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统设置表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of system
+-- ----------------------------
+INSERT INTO `system`
+VALUES (1, 'Herman框架', '专注于后端快速上手的一款框架',
+        'Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，专注于后端快速上手的一款开源，简单，轻量框架。 ',
+        'herman,golang,gin,kafka,casbin,mysql,redis,gorm,cobra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        '2023-03-22 22:10:14', '2023-03-22 22:10:17', NULL);
+
+
+-- ----------------------------
+-- Table structure for admin_log
+-- ----------------------------
+
+CREATE TABLE `admin_log`
+(
+    `id`         int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '管理员日志ID',
+    `type`       tinyint(4) NOT NULL COMMENT '日志类型（1登录日志，2操作日志）',
+    `admin_id`   int(10) unsigned NOT NULL COMMENT '管理员ID',
+    `ip`         varchar(30)  NOT NULL COMMENT 'IP地址',
+    `path`       varchar(100) NOT NULL COMMENT '请求路由',
+    `method`     varchar(20)  NOT NULL COMMENT '请求方法',
+    `remark`     varchar(50) DEFAULT NULL COMMENT '备注',
+    `created_at` datetime     NOT NULL COMMENT '创建时间',
+    `updated_at` datetime     NOT NULL COMMENT '更新时间',
+    `deleted_at` datetime    DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    KEY          `idx_admin_id` (`admin_id`) USING BTREE COMMENT '管理员索引'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员日志表';
+
+-- ----------------------------
+-- Records of admin_log
+-- ----------------------------
+
 SET
 FOREIGN_KEY_CHECKS = 1;

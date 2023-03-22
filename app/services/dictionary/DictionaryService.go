@@ -76,7 +76,7 @@ func ListDictionary(data map[string]interface{}) map[string]interface{} {
 	}
 	// 排序
 	order := "created_at desc"
-	list, err := repositories.Dictionary().GetList(query, fields, order, data)
+	list, err := repositories.Dictionary().List(query, fields, order, data)
 	if err != nil {
 		panic(DictionaryConstant.GetListFail)
 	}

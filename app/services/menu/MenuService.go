@@ -87,7 +87,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 	// 排序
 	order := "created_at desc"
 	// 执行查询
-	list, err := repositories.Menu().GetList(query, fields, order, data)
+	list, err := repositories.Menu().List(query, fields, order, data)
 	if err != nil {
 		panic(MenuConstant.GetListFail)
 	}

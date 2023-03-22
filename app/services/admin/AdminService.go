@@ -175,7 +175,7 @@ func List(data map[string]interface{}) map[string]interface{} {
 	// 排序
 	order := "created_at desc"
 	// 执行查询
-	list, err := repositories.Admin().GetList(query, fields, order, data)
+	list, err := repositories.Admin().List(query, fields, order, data)
 	if err != nil {
 		panic(AdminConstant.GetAdminListFail)
 	}

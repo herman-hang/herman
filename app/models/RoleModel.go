@@ -18,7 +18,7 @@ type Role struct {
 	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;index;comment:删除时间"`
 }
 
-// TableName 设置角色表名
+// TableName 设置表名
 func (Role) TableName() string {
 	return "roles"
 }

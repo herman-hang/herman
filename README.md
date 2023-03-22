@@ -188,6 +188,52 @@ go install github.com/cosmtrek/air@latest # 如果已经安装则无需操作此
 air init
 ```
 
+配置示例：
+
+```toml
+# [Air](https://github.com/cosmtrek/air) TOML 格式的配置文件
+
+# 工作目录
+# 使用 . 或绝对路径，请注意 `tmp_dir` 目录必须在 `root` 目录下
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# 只需要写你平常编译使用的shell命令。你也可以使用 `make`
+cmd = "go build -o ./tmp/herman.exe ."
+# 由`cmd`命令得到的二进制文件名
+bin = "tmp\\herman.exe server"
+# 监听以下文件扩展名的文件.
+include_ext = ["go", "tpl", "tmpl", "html"]
+# 忽略这些文件扩展名或目录
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
+# 监听以下指定目录的文件
+include_dir = []
+# 排除以下文件
+exclude_file = []
+# 如果文件更改过于频繁，则没有必要在每次更改时都触发构建。可以设置触发构建的延迟时间
+delay = 1000 # ms
+# 发生构建错误时，停止运行旧的二进制文件。
+stop_on_error = true
+# air的日志文件名，该日志文件放置在你的`tmp_dir`中
+log = "air_errors.log"
+
+[log]
+# 显示日志时间
+time = true
+
+[color]
+# 自定义每个部分显示的颜色。如果找不到颜色，使用原始的应用程序日志。
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+# 退出时删除tmp目录
+clean_on_exit = true
+```
+
 热重载启动：
 
 ```bash
@@ -1505,73 +1551,79 @@ func TestAdminTestSuite(t *testing.T) {
 - 数据库迁移
 
 ```shell
-herman --status=true --direction=up
+herman migrate --status=true --direction=up
 ```
 
 简写：
 
 ```shell
-herman -s true -d up
+herman migrate -s true
+```
+
+或：
+
+```shell
+herman migrate -s true -d up
 ```
 
 - 数据库回滚
 
 ```shell
-herman --status=true --direction=down
+herman migrate --status=true --direction=down
 ```
 
 简写：
 
 ```shell
-herman -s true -d down
+herman migrate -s true -d down
 ```
 
 - 强制执行指定版本的文件
 
 ```shell
-herman --status=true --direction=force --version=1 # 强制执行版本号为1的迁移文件
+herman migrate --status=true --direction=force --version=1 # 强制执行版本号为1的迁移文件
 ```
 
 简写：
 
 ```shell
-herman -s true -d force -v 1 # 强制执行版本号为1的迁移文件
+herman migrate -s true -d force -v 1 # 强制执行版本号为1的迁移文件
 ```
 
 - 迁移1个版本
 
 ```shell
-herman --status=true --direction=up --number=1
+herman migrate --status=true --direction=up --number=1
 ```
 
 简写：
 
 ```shell
-herman -s true -d up -n 1
+herman migrate -s true -d up -n 1
 ```
 
 - 回滚1个版本
 
 ```shell
-herman --status=true --direction=down --number=1
+herman migrate --status=true --direction=down --number=1
 ```
 
 简写：
 
 ```shell
-herman -s true -d down -n 1
+herman migrate -s true -d down -n 1
 ```
 
 - 强制删除数据库
 
 ```shell
-herman --status=true --direction=drop
+herman migrate --status=true --direction=drop
 ```
 
 简写：
 
 ```shell
-herman -s true -d drop
+herman migrate -s true -d drop
 ```
 
 ## 12. 数据填充
