@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-      - redis
-      - kafka
-
   db:
     image: mysql:latest
     restart: always
@@ -24,7 +15,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6380:6380"
 
   kafka:
     image: wurstmeister/kafka
@@ -39,3 +30,12 @@ services:
 
   zookeeper:
     image: wurstmeister/zookeeper:latest
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+      - kafka

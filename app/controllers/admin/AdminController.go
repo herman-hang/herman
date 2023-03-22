@@ -56,7 +56,7 @@ func RemoveAdmin(ctx *gin.Context) {
 	context.Json(nil)
 }
 
-// ListAdmin 删除管理员
+// ListAdmin 管理员列表
 // @param *gin.Context ctx 上下文
 // @return void
 func ListAdmin(ctx *gin.Context) {

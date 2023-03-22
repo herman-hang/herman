@@ -8,13 +8,6 @@ import (
 	"mime/multipart"
 )
 
-// Storage 文件存储接口实现
-type Storage interface {
-	Upload(key string, content []byte) error
-	Download(key string) ([]byte, error)
-	Preview(key string) error
-}
-
 // Upload 文件上传
 // @param ctx *gin.Context 上下文
 // @param files []*multipart.FileHeader 文件对象切片
