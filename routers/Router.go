@@ -35,7 +35,7 @@ func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	}
 
 	// 后台模块
-	adminRouter := api.Group("/admin", middlewares.Jwt("admin"), middlewares.CheckPermission())
+	adminRouter := api.Group("/admin", middlewares.Jwt("admin"), middlewares.CheckPermission(), middlewares.AdminLogger())
 	{
 		admin.Router(adminRouter)
 	}

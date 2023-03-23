@@ -14,7 +14,7 @@ import (
 func Login(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(AdminService.Login(AdminValidate.Login(data)), AdminConstant.LoginSuccess)
+	context.Json(AdminService.Login(AdminValidate.Login(data), ctx), AdminConstant.LoginSuccess)
 }
 
 // AddAdmin 管理员添加

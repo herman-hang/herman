@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
 	"github.com/herman-hang/herman/app/repositories"
@@ -12,13 +13,15 @@ import (
 	"github.com/herman-hang/herman/bootstrap/casbin"
 	"github.com/herman-hang/herman/bootstrap/core"
 	"gorm.io/gorm"
+	"net/http"
 	"time"
 )
 
 // Login 管理员登录
 // @param map[string]interface{} data 前端请求数据
+// @param *gin.Context c 上下文
 // @return interface{} 返回一个token值
-func Login(data map[string]interface{}) interface{} {
+func Login(data map[string]interface{}, c *gin.Context) interface{} {
 	// 获取管理员信息
 	admin := repositories.Admin().GetAdminInfo(fmt.Sprintf("%s", data["user"]))
 	if len(admin.User) == AdminConstant.NotExist {
@@ -32,17 +35,20 @@ func Login(data map[string]interface{}) interface{} {
 	errorNumber, err := core.Redis.Get(ctx, key).Int()
 	// 判断是否登录次数过多
 	if err != redis.Nil && errorNumber > AdminConstant.LoginErrorLimitNumber {
+		LogWriter(data["user"].(string), http.StatusInternalServerError, AdminConstant.ErrorLoginOverload, c)
 		panic(AdminConstant.ErrorLoginOverload)
 	}
 	// 密码验证
 	if !utils.ComparePasswords(admin.Password, fmt.Sprintf("%s", data["password"])) {
 		core.Redis.Set(ctx, key, errorNumber+AdminConstant.Increment, time.Minute*AdminConstant.KeyValidity)
+		LogWriter(data["user"].(string), http.StatusInternalServerError, AdminConstant.PasswordError, c)
 		panic(AdminConstant.PasswordError)
 	}
 	// 登录总数自增
 	if err = repositories.Admin().Update([]uint{admin.Id}, map[string]interface{}{"login_total": admin.LoginTotal + 1}); err != nil {
 		return nil
 	}
+	LogWriter(data["user"].(string), http.StatusOK, AdminConstant.LoginSuccess, c)
 	// 返回token
 	return utils.GenerateToken(&utils.Claims{Uid: admin.Id, Guard: "admin"})
 }

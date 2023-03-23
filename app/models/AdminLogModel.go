@@ -14,6 +14,8 @@ type AdminLog struct {
 	Path      string         `json:"path" gorm:"column:path;comment:请求路由"`
 	Method    string         `json:"method" gorm:"column:method;comment:请求方法"`
 	Remark    string         `json:"remark" gorm:"column:remark;comment:备注"`
+	Code      uint16         `json:"code" gorm:"column:code;comment:响应状态码"`
+	State     uint16         `json:"state" gorm:"column:state;comment:状态（1失败，2成功）"`
 	CreatedAt time.Time      `json:"createdAt" gorm:"column:created_at;comment:创建时间"`
 	UpdatedAt time.Time      `json:"updatedAt" gorm:"column:updated_at;comment:更新时间"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;index;comment:删除时间"`
