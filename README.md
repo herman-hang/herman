@@ -62,7 +62,7 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 - 目录名称采用小驼峰命名（首字母小写）
 - .go文件采用大驼峰命名（首字母大写），例如：`User`，`UserController`
 - 配置文件采用大驼峰命名（首字母大写），例如：`SmsConfig.go`
-- 数据库迁移文件采用下划线命名，例如：`1_init.down.sql`，`1_init.up.sql`，1为版本号，init为自定义名称，down代表回滚，up代码更新。
+- 数据库迁移文件采用下划线命名，例如：`1_init.down.sql`，`1_init.up.sql`，1为版本号，init为自定义名称，down代表回滚，up代表迁移。
 - 资源文件(图片，CSS文件，JS文件等)均采用蛇形命名，例如CSS文件：`test.css`，`test_user.css`，以此类推
 - 测试文件命名根据控制器文件加`_test.go`，例如：`UserController_test.go`，`_test.go`是golang强制遵循的规范
 
@@ -400,7 +400,7 @@ func init() {
 （1）查看框架版本号
 
 ```shell
-herman version # Herman version: 1.3.0
+herman version # Herman version: 1.0.0
 ```
 
 （2）数据库迁移
@@ -546,7 +546,7 @@ core.Log.Fatal(data)
 
 ### 辅助函数
 
-辅助函数又称工具类，主要存放在`/app/utils`中，如果项目中存在一些碎片化的代码，想把它做进一步封装，就可以在该目录下创建一个工具文件，在里面完成响应的封装。比如我下方做了一个验证码工厂：
+辅助函数又称工具类，主要存放在`/app/utils`中，如果项目中存在一些碎片化的代码，想把它做进一步封装，就可以在该目录下创建一个工具文件，在里面完成相应的封装。比如我下方做了一个验证码工厂：
 
 ```go
 // Factory 初始化滑块验证码
@@ -608,7 +608,7 @@ settings.Config
 settings.Config.Mysql
 ```
 
-当前，如果你不想创建配置文件作映射，也可以直接获取环境文件`config.yaml`的配置，但是不建议这么操作。
+当然，如果你不想创建配置文件作映射，也可以直接获取环境文件`config.yaml`的配置，但是不建议这么操作。
 
 ```go
 viper.Get("app")
@@ -616,7 +616,7 @@ viper.Get("app")
 
 ## 3. 路由
 
-路由沿用了Gin集成的功能，所有路由定义在`/routers/Router.go`，以下例子：
+路由沿用了Gin集成的功能，所有路由定义都在`/routers/Router.go`，例子：
 
 ```go
 func InitRouter(rootEngine *gin.Engine) *gin.Engine {
@@ -693,7 +693,7 @@ type AddValidate struct {
 }
 ```
 
-如果有对验证器公共结构体进行重写，那么久可以使用结构体的公共方法check，上面控制器的例子就是使用了验证器的公共方法。
+如果有对验证器公共结构体进行重写，那么就可以使用结构体的公共方法check，上面控制器的例子就是使用了验证器的公共方法。
 
 ```go
 // Check 验证方法
@@ -815,7 +815,7 @@ func excludeCaptchaLogin(data map[string]interface{}) (toMap map[string]interfac
 
 ```
 
-业务需要扩展验证器，可以直接在定义验证器文件中自定义规则即可，比如上面的例子就是把管理员登录是否需要验证码做了2种场景验证。
+业务需要扩展验证器，可以直接在验证器文件中自定义规则即可，比如上面的例子就是把管理员登录是否需要验证码做了2种场景验证。
 
 ## 6. 服务
 
@@ -852,7 +852,7 @@ err := core.Db.Transaction(func(tx *gorm.DB) error {
 _, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
 ```
 
-如果遇到错误，必须要把错误返回，否则事务不会进行回滚，比如上面的代码：
+如果遇到错误，必须要把错误返回，否则事务不会进行回滚，比如上面代码：
 
 ```go
 roleInfo, err := repositories.Role(tx).Insert(data)
@@ -861,9 +861,11 @@ if err != nil {
 }
 ```
 
+有错误返回，数据库会进行回滚。
+
 ## 7. 仓储
 
-仓储层是位于Service层和Model层之间，是对Model层的进一步封装。仓储层公共方法已有**新增**，**更新**，**删除**，**根据查询条件获取详情**，**查询数据是否存在**，**获取列表数据**，**获取全部数据**。代码如下：
+仓储层是位于Service层和Model层之间，是对Model层进一步封装。仓储层公共方法已有**新增**，**更新**，**删除**，**根据查询条件获取详情**，**查询数据是否存在**，**获取列表数据**，**获取全部数据**。代码如下：
 
 ```go
 package repositories
@@ -1037,7 +1039,7 @@ func (base *BaseRepository) GetAllData(fields []string) (data []map[string]inter
 
 ```
 
-在仓储层中要使用以上方法，你需要根据Model创建对应的子仓储，然后继承公共方法的`BaseRepository`结构体才能使用，比如一下是管理员的仓储层。
+在仓储层中要使用以上方法，你需要根据Model创建对应的子仓储，然后继承公共的`BaseRepository`结构体才能使用，比如一下是管理员的仓储层。
 
 ```go
 package repositories
@@ -1116,7 +1118,7 @@ func Admin(tx ...*gorm.DB) *AdminRepository {
 admin := repositories.Admin().GetAdminInfo(fmt.Sprintf("%s", data["user"]))
 ```
 
-我这里举例只调用子仓储的一个方法，你还可以通过`repositories.Admin()`去调用公共方法。当然，如果上面已经封装好的方法仍然无法满足你的需求，你可以在子仓储中使用GORM模型进行扩展，具体更多方法：https://gorm.io/zh_CN/docs/
+我这里举例只调用了子仓储的一个方法，你还可以通过`repositories.Admin()`去调用公共方法。当然，如果上面已经封装好的方法仍然无法满足你的需求，你可以在子仓储中使用GORM模型进行扩展，GORM更多方法：https://gorm.io/zh_CN/docs/
 
 ## 8. 数据库模型
 
@@ -1161,7 +1163,7 @@ func (Admin) TableName() string {
 
 ```
 
-其中TableName()是必须的，然后返回一个`string`类型为数据表名称。
+其中TableName()是必须的，需要返回一个`string`类型为数据表名称。
 
 ## 9. 响应
 
@@ -1265,7 +1267,7 @@ func (r *Request) Json(data interface{}, args ...interface{}) {
 
 ```
 
-目前响应json有2种方法：
+目前响应json有2种方法，下面是其中一种：
 
 ```go
 	// 测试路由
@@ -1277,7 +1279,7 @@ func (r *Request) Json(data interface{}, args ...interface{}) {
 	})
 ```
 
-其中`response.Success()`参数中可以接收4个参数，每一个参数都是响应方法中的一个函数。比如上面就只调用了一个函数`app.D()`，根据业务需求，你还可以在`response.Success()`追加其他函数进去。
+其中`response.Success()`参数中可以接收4个参数，每一个参数都是响应方法中的一个函数。比如上面就只调用了一个函数`app.D()`，根据业务需求，你还可以在`response.Success()`追加其他函数进去，比如`app.H()`，`app.C()`，`app.M()`。
 
 另一种方法就是直接Json，比如：
 
@@ -1293,7 +1295,7 @@ func Login(ctx *gin.Context) {
 
 ## 10. 测试
 
-单元测试核心代码位于`/bootstrap/core/test/TestSuite.go`，单元测试比较推荐使用套件测试，创建每个模块需要在`/tests`目录下进行，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/bootstrap/core/test/TestSuite.go`中，比如框架中的管理员登录：
+单元测试核心代码位于`/bootstrap/core/test/TestSuite.go`，单元测试比较推荐使用套件测试，每个模块需要在`/tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/bootstrap/core/test/TestSuite.go`中，比如框架中的管理员登录：
 
 ```go
 // AdminLogin 管理员登录
@@ -1337,7 +1339,7 @@ func (s *SuiteCase) SetupSuite() {
 }
 ```
 
-这样就可以在单测里面调用来的，每个单元测试都有一个套件方法，如下：
+这样就可以在单测里面调用来的，每个单元测试都有一个测试套件方法，如下：
 
 ```go
 // TestAdminTestSuite 管理员测试套件
@@ -1347,7 +1349,7 @@ func TestAdminTestSuite(t *testing.T) {
 }
 ```
 
-这里根据业务是必须定义的，实例化结构体要根据业务需求随之应变。`Guard: "admin"`则表示使用那个登录方法，我这里使用管理员登录，整个套件测试例子如下：
+这里根据业务是必须定义的，实例化结构体要根据业务需求随之应变。`Guard: "admin"`表示使用管理员登录方法，整个套件测试例子如下：
 
 ```go
 package admin
@@ -1545,7 +1547,7 @@ func TestAdminTestSuite(t *testing.T) {
 
 ## 11. 数据库迁移
 
-目前数据库迁移功能已经非常强大，支持数据库版本更新，版本回滚，强制删除，更新回滚指定版本等等，数据库迁移文件位于`/database/migrations`目录下，命名格式`版本号_文件描述_迁移属性.sql`，其中版本号可以自定义，推荐用自然数自增，避免出现不可预估的问题，迁移文件必须是成对存在的，有迁移文件就必须有回滚文件，比如创建了一个迁移文件`1_init.up.sql`，那么回滚文件`1_init.down.sql`就必须存在，否在操作数据库迁移时会出错。根据需求可以执行以下命令：
+目前数据库迁移功能已经非常强大，支持数据库版本更新，版本回滚，强制删除，更新回滚指定版本等等，数据库迁移文件位于`/database/migrations`目录下，命名格式`版本号_文件描述_迁移属性.sql`，其中版本号可以自定义，推荐用自然数自增，避免出现不可预估的问题，迁移文件必须是成对存在的，有迁移文件就必须有回滚文件，比如创建了一个迁移文件`1_init.up.sql`，那么回滚文件`1_init.down.sql`就必须存在，并且文件内容(DDL)不能为空，否则在操作数据库迁移时会出错。根据需求可以执行以下命令：
 
 - 数据库迁移
 
