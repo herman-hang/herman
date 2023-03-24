@@ -7,8 +7,8 @@ import (
 	RoleConstant "github.com/herman-hang/herman/app/constants/role"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/validates/role"
-	"github.com/herman-hang/herman/bootstrap/casbin"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/casbin"
+	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 )
 

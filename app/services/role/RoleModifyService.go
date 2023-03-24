@@ -1,7 +1,7 @@
 package role
 
 import (
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 )
 
 // DeleteRole 删除当前用户继承的所有角色和权限

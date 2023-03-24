@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"golang.org/x/net/context"
 	"io/ioutil"

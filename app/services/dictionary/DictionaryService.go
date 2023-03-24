@@ -5,7 +5,7 @@ import (
 	"fmt"
 	DictionaryConstant "github.com/herman-hang/herman/app/constants/dictionary"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 )
 
@@ -45,13 +45,12 @@ func FindDictionary(data map[string]interface{}) map[string]interface{} {
 // @return void
 func RemoveDictionary(data map[string]interface{}) {
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		core.Db = tx
 		ids := data["id"].([]uint)
-		if err := repositories.Dictionary().Delete(ids); err != nil {
+		if err := repositories.Dictionary(tx).Delete(ids); err != nil {
 			return errors.New(DictionaryConstant.DeleteFail)
 		}
 		// 删除数据字典下的明细值
-		_ = repositories.Dictionary().DeleteByDictionaryId(ids)
+		_ = repositories.Dictionary(tx).DeleteByDictionaryId(ids)
 		return nil
 	})
 	if err != nil {

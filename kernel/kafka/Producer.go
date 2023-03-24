@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
 	"time"

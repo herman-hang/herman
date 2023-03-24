@@ -5,9 +5,9 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/herman-hang/herman/app/constants"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/bootstrap/core"
-	"github.com/herman-hang/herman/bootstrap/core/test"
 	"github.com/herman-hang/herman/database/seeders/dictionary"
+	"github.com/herman-hang/herman/kernel/core"
+	"github.com/herman-hang/herman/kernel/core/test"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )

@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	middlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
 	"github.com/herman-hang/herman/app/models"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 )
 
 // CheckPermission 权限检测

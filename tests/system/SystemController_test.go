@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/herman-hang/herman/bootstrap/core/test"
 	"github.com/herman-hang/herman/database/seeders/system"
+	"github.com/herman-hang/herman/kernel/core/test"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )

@@ -2,7 +2,7 @@ package jobs
 
 import (
 	"fmt"
-	"github.com/herman-hang/herman/bootstrap/kafka"
+	"github.com/herman-hang/herman/kernel/kafka"
 )
 
 // ExecConsumer 调用消费者执行消费

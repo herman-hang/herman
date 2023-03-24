@@ -21,7 +21,7 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 │  ├─validates ------------------------------------------------ 验证器目录
 │  ├─Request.go ----------------------------------------------- 请求对象库
 │  └─Response.go ---------------------------------------------- 响应对象库
-├─bootstrap --------------------------------------------------- 程序核心目录
+├─kernel ------------------------------------------------------ 框架核心目录
 ├─config ------------------------------------------------------ 配置文件目录
 ├─database ---------------------------------------------------- 数据库相关目录
 │  ├─migrations ----------------------------------------------- 数据迁移目录
@@ -258,7 +258,7 @@ air
 
 ### 容器
 
-Golang虽然是一门面向过程的语言，但是Herman也引入了容器的概念，对项目核心的对象，比如Redis，MySQL，Casbin等都存放在`/bootstrap/core/Container.go`文件中。
+Golang虽然是一门面向过程的语言，但是Herman也引入了容器的概念，对项目核心的对象，比如Redis，MySQL，Casbin等都存放在`/kernel/core/Container.go`文件中。
 
 ```go
 package core
@@ -352,7 +352,7 @@ adminRouter := api.Group("/admin", middlewares.Jwt("admin"), middlewares.CheckPe
 
 ### 命令行
 
-命令行核心采用cobra实现，主要存放在`/app/command`，命令注册在`/bootstrap/casbin/Casbin.go`文件，比如以下例子：
+命令行核心采用cobra实现，主要存放在`/app/command`，命令注册在`/kernel/casbin/Casbin.go`文件，比如以下例子：
 
 ```go
 // HermanVersionCmd 获取herman版本号
@@ -494,7 +494,7 @@ jobs.Dispatch(data,jobs.SendSms)
 
 ### 缓存
 
-目前框架只支持Redis缓存，对象挂载在`/bootstrap/core/Container.go`中，使用前要先设置上下文：
+目前框架只支持Redis缓存，对象挂载在`/kernel/core/Container.go`中，使用前要先设置上下文：
 
 ```go
 // 设置上下文
@@ -586,7 +586,7 @@ func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验
 
 ### 权限模型
 
-Casbin是一种轻量级的开源访问控制框架，支持多种访问控制模型，如RBAC, ABAC和ACL。框架中已经采用了RBAC，适配GORM来做角色资源管理，可以灵活管理角色的权限。核心封装代码在`/bootstrap/casbin/Casbin.go`。框架Casbin的对象挂载在容器`/bootstrap/core/Container.go`，调用：
+Casbin是一种轻量级的开源访问控制框架，支持多种访问控制模型，如RBAC, ABAC和ACL。框架中已经采用了RBAC，适配GORM来做角色资源管理，可以灵活管理角色的权限。核心封装代码在`/kernel/casbin/Casbin.go`。框架Casbin的对象挂载在容器`/kernel/core/Container.go`，调用：
 
 ```go
 success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
@@ -1047,7 +1047,7 @@ package repositories
 import (
 	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
 	"github.com/herman-hang/herman/app/models"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 )
 
@@ -1295,7 +1295,7 @@ func Login(ctx *gin.Context) {
 
 ## 10. 测试
 
-单元测试核心代码位于`/bootstrap/core/test/TestSuite.go`，单元测试比较推荐使用套件测试，每个模块需要在`/tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/bootstrap/core/test/TestSuite.go`中，比如框架中的管理员登录：
+单元测试核心代码位于`/kernel/core/test/TestSuite.go`，单元测试比较推荐使用套件测试，每个模块需要在`/tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/kernel/core/test/TestSuite.go`中，比如框架中的管理员登录：
 
 ```go
 // AdminLogin 管理员登录
@@ -1358,7 +1358,7 @@ import (
    "fmt"
    "github.com/brianvoe/gofakeit/v6"
    "github.com/herman-hang/herman/app/repositories"
-   "github.com/herman-hang/herman/bootstrap/core/test"
+   "github.com/herman-hang/herman/kernel/core/test"
    "github.com/herman-hang/herman/database/seeders/admin"
    "github.com/herman-hang/herman/database/seeders/role"
    "github.com/stretchr/testify/suite"

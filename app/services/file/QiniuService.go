@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"io"

@@ -7,7 +7,7 @@ import (
 	UserConstant "github.com/herman-hang/herman/app/constants/user"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/utils"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"time"
 )
 

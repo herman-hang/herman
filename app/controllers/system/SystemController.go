@@ -5,7 +5,7 @@ import (
 	"github.com/herman-hang/herman/app"
 	SystemService "github.com/herman-hang/herman/app/services/system"
 	SystemValidate "github.com/herman-hang/herman/app/validates/system"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 )
 
 // FindSystem 获取系统设置信息

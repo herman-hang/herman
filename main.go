@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/herman-hang/herman/bootstrap/cobra"
+	"github.com/herman-hang/herman/kernel/cobra"
 )
 
 // main 项目入口函数

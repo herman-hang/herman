@@ -3,7 +3,7 @@ package system
 import (
 	SystemConstant "github.com/herman-hang/herman/app/constants/system"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 )
 
 // Find 获取系统设置信息

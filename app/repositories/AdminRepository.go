@@ -3,7 +3,7 @@ package repositories
 import (
 	AdminConstant "github.com/herman-hang/herman/app/constants/admin"
 	"github.com/herman-hang/herman/app/models"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 )
 

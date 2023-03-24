@@ -5,7 +5,7 @@ import (
 	"fmt"
 	MenuConstant "github.com/herman-hang/herman/app/constants/menu"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 )
 
@@ -52,13 +52,15 @@ func Find(data map[string]interface{}) map[string]interface{} {
 // @return void
 func Remove(data map[string]interface{}) {
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		core.Db = tx
 		ids := data["id"].([]uint)
-		if err := repositories.Menu().Delete(ids); err != nil {
+		if err := repositories.Menu(tx).Delete(ids); err != nil {
 			return errors.New(MenuConstant.DeleteFail)
 		}
 		// 如果存在子菜单，则全部删除
-		_ = repositories.Menu().DeleteByMenuId(ids)
+		err := repositories.Menu(tx).DeleteByMenuId(ids)
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/herman-hang/herman/app"
 	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
 	"github.com/herman-hang/herman/app/middlewares"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/routers"
 	"github.com/herman-hang/herman/servers"
 	"github.com/herman-hang/herman/servers/settings"

@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"io/ioutil"
 	"mime/multipart"

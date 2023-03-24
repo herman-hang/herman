@@ -16,7 +16,6 @@ func AdminLogger() gin.HandlerFunc {
 		var state int
 		// 如果是登录请求则跳过
 		if VerifyRoute(ctx.Request.URL.Path, ctx.Request.Method, map[string]string{"/admin/login": "POST"}) {
-
 			return
 		}
 		admin, _ := ctx.Get("admin")

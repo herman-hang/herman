@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"github.com/herman-hang/herman/app/models"
-	"github.com/herman-hang/herman/bootstrap/core"
+	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 )
 
@@ -22,12 +22,13 @@ func Menu(tx ...*gorm.DB) *MenuRepository {
 }
 
 // DeleteByMenuId 根据父菜单ID删除子菜单
-// @param []uint id 管理员ID
+// @param []uint ids 管理员ID
 // @return error 返回一个错误信息
-func (base MenuRepository) DeleteByMenuId(id []uint) error {
-	err := core.Db.Where("pid IN ?", id).Delete(&base.Model).Error
+func (base MenuRepository) DeleteByMenuId(ids []uint) error {
+	err := base.Db.Where("pid IN ?", ids).Delete(&base.Model).Error
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
