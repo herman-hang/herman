@@ -63,8 +63,8 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 - .go文件采用大驼峰命名（首字母大写），例如：`User`，`UserController`
 - 配置文件采用大驼峰命名（首字母大写），例如：`SmsConfig.go`
 - 数据库迁移文件采用下划线命名，例如：`1_init.down.sql`，`1_init.up.sql`，1为版本号，init为自定义名称，down代表回滚，up代表迁移。
-- 资源文件(图片，CSS文件，JS文件等)均采用蛇形命名，例如CSS文件：`test.css`，`test_user.css`，以此类推
-- 测试文件命名根据控制器文件加`_test.go`，例如：`UserController_test.go`，`_test.go`是golang强制遵循的规范
+- 资源文件(图片，CSS文件，JS文件等)均采用蛇形命名，例如CSS文件：`test.css`，`test_user.css`，以此类推。
+- 测试文件命名根据控制器文件加`_test.go`，例如：`UserController_test.go`，`_test.go`是Golang强制遵循的规范。
 
 #### （2）函数、方法、结构体
 
