@@ -26,13 +26,13 @@ func Admin(tx ...*gorm.DB) *AdminRepository {
 // GetAdminInfo 获取管理员信息
 // @param interface{} attributes 管理员id或者管理员user
 // @return admin 返回当前管理员的信息
-func (u AdminRepository) GetAdminInfo(attributes interface{}) (admin *models.Admin) {
+func (base AdminRepository) GetAdminInfo(attributes interface{}) (admin *models.Admin) {
 	var err error
 	switch attributes.(type) {
 	case uint:
-		err = core.Db.Where("id = ?", attributes).Find(&admin).Error
+		err = base.Db.Where("id = ?", attributes).Find(&admin).Error
 	case string:
-		err = core.Db.Where("user = ?", attributes).Find(&admin).Error
+		err = base.Db.Where("user = ?", attributes).Find(&admin).Error
 
 	}
 	if err != nil {

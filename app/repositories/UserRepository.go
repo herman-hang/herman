@@ -25,8 +25,8 @@ func User(tx ...*gorm.DB) *UserRepository {
 // GetUserInfo 获取用户信息
 // @param interface{} attributes 用户id或者用户user
 // @return user 返回当前user用户的信息
-func (u UserRepository) GetUserInfo(attributes interface{}) (user models.Users) {
-	err := core.Db.Where("id = ?", attributes).Or("user = ?", attributes).Find(&user).Error
+func (base UserRepository) GetUserInfo(attributes interface{}) (user models.Users) {
+	err := base.Db.Where("id = ?", attributes).Or("user = ?", attributes).Find(&user).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		panic(UserConstant.GetUserInfoFail)
 	}
