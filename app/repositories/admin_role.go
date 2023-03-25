@@ -16,9 +16,9 @@ type AdminRoleRepository struct {
 // @return AdminRoleRepository 返回管理员角色中间表仓储层
 func AdminRole(tx ...*gorm.DB) *AdminRoleRepository {
 	if len(tx) > 0 && tx[0] != nil {
-		return &AdminRoleRepository{BaseRepository{Model: new(models.AdminRoleModel), Db: tx[0]}}
+		return &AdminRoleRepository{BaseRepository{Model: new(models.AdminRole), Db: tx[0]}}
 	}
-	return &AdminRoleRepository{BaseRepository{Model: new(models.AdminRoleModel), Db: core.Db}}
+	return &AdminRoleRepository{BaseRepository{Model: new(models.AdminRole), Db: core.Db}}
 }
 
 // DeleteByAdminId 根据管理员ID删除角色

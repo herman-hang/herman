@@ -25,7 +25,7 @@ func Menu(tx ...*gorm.DB) *MenuRepository {
 // @param []uint ids 管理员ID
 // @return error 返回一个错误信息
 func (base MenuRepository) DeleteByMenuId(ids []uint) error {
-	err := base.Db.Where("pid IN ?", ids).Delete(&base.Model).Error
+	err := base.Db.Where("pid IN (?)", ids).Delete(&base.Model).Error
 	if err != nil {
 		return err
 	}

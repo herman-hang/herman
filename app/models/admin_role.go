@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// AdminRoleModel 管理员角色中间表模型结构体
-type AdminRoleModel struct {
+// AdminRole 管理员角色中间表模型结构体
+type AdminRole struct {
 	Id        uint           `json:"id" gorm:"column:id;primary_key;comment:主键ID"`
 	AdminId   uint           `json:"adminId" gorm:"column:admin_id;comment:管理员ID"`
 	RoleKey   string         `json:"roleKey" gorm:"column:role_key;comment:角色KEY"`
@@ -16,6 +16,6 @@ type AdminRoleModel struct {
 }
 
 // TableName 设置表名
-func (AdminRoleModel) TableName() string {
+func (AdminRole) TableName() string {
 	return "admin_role"
 }

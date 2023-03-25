@@ -13,7 +13,7 @@ import (
 
 // Config 配置
 var (
-	Version = "1.4.1"
+	Version = "1.4.2"
 	Config  = new(config.App)
 )
 

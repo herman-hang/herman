@@ -100,7 +100,7 @@ func (base *DictionaryTestSuite) TestListDictionary() {
 			Params:  map[string]interface{}{"page": 1, "pageSize": 2, "keywords": ""},
 			Code:    200,
 			Message: constants.Success,
-			IsList:  true,
+			List:    true,
 			Fields:  []string{"id", "name", "code", "remark", "state", "createdAt"},
 		},
 	})

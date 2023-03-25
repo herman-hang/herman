@@ -163,7 +163,7 @@ func (base *AdminTestSuite) TestListAdmin() {
 			Params:  map[string]interface{}{"page": 1, "pageSize": 2, "keywords": ""},
 			Code:    200,
 			Message: "操作成功",
-			IsList:  true,
+			List:    true,
 			Fields: []string{
 				"id",
 				"user",

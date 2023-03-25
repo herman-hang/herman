@@ -1,8 +1,8 @@
 package cobra
 
 import (
-	"github.com/herman-hang/herman/app/command"
-	"github.com/herman-hang/herman/app/middlewares"
+	command "github.com/herman-hang/herman/cmd"
+	"github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/servers"
 	"github.com/herman-hang/herman/servers/settings"
 	"github.com/spf13/cobra"

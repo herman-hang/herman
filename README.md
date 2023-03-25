@@ -9,19 +9,19 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 
 ```
 ├─app --------------------------------------------------------- 应用程序目录
-│  ├─command -------------------------------------------------- 命令管理目录
 │  ├─constants ------------------------------------------------ 常量存放目录
 │  ├─controllers ---------------------------------------------- 控制器目录
-│  ├─jobs ----------------------------------------------------- 队列作业目录
-│  ├─middlewares ---------------------------------------------- 中间件目录
 │  ├─models --------------------------------------------------- 数据模型目录
 │  ├─repositories --------------------------------------------- 仓储层目录
 │  ├─services ------------------------------------------------- 服务处理目录
 │  ├─utils ---------------------------------------------------- 工具类目录
 │  ├─validates ------------------------------------------------ 验证器目录
-│  ├─Request.go ----------------------------------------------- 请求对象库
-│  └─Response.go ---------------------------------------------- 响应对象库
+│  ├─request.go ----------------------------------------------- 请求对象库
+│  └─response.go ---------------------------------------------- 响应对象库
+├─cmd --------------------------------------------------------- 命令管理目录
+├─jobs -------------------------------------------------------- 队列作业目录
 ├─kernel ------------------------------------------------------ 框架核心目录
+├─middlewares ------------------------------------------------- 中间件目录
 ├─config ------------------------------------------------------ 配置文件目录
 ├─database ---------------------------------------------------- 数据库相关目录
 │  ├─migrations ----------------------------------------------- 数据迁移目录
@@ -60,11 +60,9 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 #### （1）目录与文件命名
 
 - 目录名称采用小驼峰命名（首字母小写）
-- .go文件采用大驼峰命名（首字母大写），例如：`User`，`UserController`
-- 配置文件采用大驼峰命名（首字母大写），例如：`SmsConfig.go`
+- .go文件采用下划线命名，例如：`user`，`user_login`
 - 数据库迁移文件采用下划线命名，例如：`1_init.down.sql`，`1_init.up.sql`，1为版本号，init为自定义名称，down代表回滚，up代表迁移。
 - 资源文件(图片，CSS文件，JS文件等)均采用蛇形命名，例如CSS文件：`test.css`，`test_user.css`，以此类推。
-- 测试文件命名根据控制器文件加`_test.go`，例如：`UserController_test.go`，`_test.go`是Golang强制遵循的规范。
 
 #### （2）函数、方法、结构体
 
@@ -282,7 +280,7 @@ var (
 
 ### 中间件
 
-中间件分为**前置中间件**和**后置中间件**的，主要存放在`/app/middlewares`，比如以下定义的中间件：
+中间件分为**前置中间件**和**后置中间件**的，主要存放在`/middlewares`，比如以下定义的中间件：
 
 ```go
 // ServerHandler 服务管理中间件
@@ -352,7 +350,7 @@ adminRouter := api.Group("/admin", middlewares.Jwt("admin"), middlewares.CheckPe
 
 ### 命令行
 
-命令行核心采用cobra实现，主要存放在`/app/command`，命令注册在`/kernel/casbin/Casbin.go`文件，比如以下例子：
+命令行核心采用cobra实现，主要存放在`cmd`目录，命令注册在`/kernel/cobra/cobra.go`文件，比如以下例子：
 
 ```go
 // HermanVersionCmd 获取herman版本号
@@ -450,7 +448,7 @@ cobra扩展文档：https://cobra.dev/
 
 ### 队列
 
-队列采用kafka，主要存放在`/app/jobs`，比如以下短信发送例子：
+队列采用kafka，主要存放在`jobs`目录，比如以下短信发送例子：
 
 ```go
 // SendSms 发送短信队列
@@ -494,7 +492,7 @@ jobs.Dispatch(data,jobs.SendSms)
 
 ### 缓存
 
-目前框架只支持Redis缓存，对象挂载在`/kernel/core/Container.go`中，使用前要先设置上下文：
+目前框架只支持Redis缓存，对象挂载在`/kernel/core/container.go`中，使用前要先设置上下文：
 
 ```go
 // 设置上下文
@@ -586,7 +584,7 @@ func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验
 
 ### 权限模型
 
-Casbin是一种轻量级的开源访问控制框架，支持多种访问控制模型，如RBAC, ABAC和ACL。框架中已经采用了RBAC，适配GORM来做角色资源管理，可以灵活管理角色的权限。核心封装代码在`/kernel/casbin/Casbin.go`。框架Casbin的对象挂载在容器`/kernel/core/Container.go`，调用：
+Casbin是一种轻量级的开源访问控制框架，支持多种访问控制模型，如RBAC, ABAC和ACL。框架中已经采用了RBAC，适配GORM来做角色资源管理，可以灵活管理角色的权限。核心封装代码在`/kernel/casbin/casbin.go`。框架Casbin的对象挂载在容器`/kernel/core/container.go`，调用：
 
 ```go
 success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
@@ -596,7 +594,7 @@ success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.M
 
 ### 配置
 
-框架的所有配置都是通过读取根目录下的`config.yaml`文件所得，并且存放在`/config`目录中，调用方式：
+框架的所有配置都是通过读取根目录下的`config.yaml`文件所得，并且存放在`config`目录中，调用方式：
 
 ```go
 settings.Config
@@ -616,7 +614,7 @@ viper.Get("app")
 
 ## 3. 路由
 
-路由沿用了Gin集成的功能，所有路由定义都在`/routers/Router.go`，例子：
+路由沿用了Gin集成的功能，所有路由定义都在`/routers/router.go`，例子：
 
 ```go
 func InitRouter(rootEngine *gin.Engine) *gin.Engine {
@@ -1167,7 +1165,7 @@ func (Admin) TableName() string {
 
 ## 9. 响应
 
-统一响应方法在`/app/Response.go`，代码如下：
+统一响应方法在`/app/response.go`，代码如下：
 
 ```go
 package app
@@ -1295,7 +1293,7 @@ func Login(ctx *gin.Context) {
 
 ## 10. 测试
 
-单元测试核心代码位于`/kernel/core/test/TestSuite.go`，单元测试比较推荐使用套件测试，每个模块需要在`/tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/kernel/core/test/TestSuite.go`中，比如框架中的管理员登录：
+单元测试核心代码位于`/kernel/core/test/test_suite.go`，单元测试比较推荐使用套件测试，每个模块需要在`/tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/kernel/core/test/test_suite.go`中，比如框架中的管理员登录：
 
 ```go
 // AdminLogin 管理员登录

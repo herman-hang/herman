@@ -3,7 +3,6 @@ package system
 import (
 	SystemConstant "github.com/herman-hang/herman/app/constants/system"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/kernel/core"
 )
 
 // Find 获取系统设置信息
@@ -25,7 +24,6 @@ func Find() map[string]interface{} {
 	}
 	info, err := repositories.System().Find(map[string]interface{}{"id": SystemConstant.Id}, fields)
 	if err != nil {
-		core.Debug(err)
 		panic(SystemConstant.FindFail)
 	}
 	return info

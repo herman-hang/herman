@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
 	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
-	"github.com/herman-hang/herman/app/middlewares"
 	"github.com/herman-hang/herman/kernel/core"
+	middlewares2 "github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers"
 	"github.com/herman-hang/herman/servers"
 	"github.com/herman-hang/herman/servers/settings"
@@ -32,8 +32,9 @@ type Case struct {
 	Params  map[string]interface{} // 请求参数
 	Code    int                    // 响应自定义状态码
 	Message string                 // 响应自定义信息
-	IsList  bool                   // 是否是列表
+	List    bool                   // 是否是列表
 	Fields  []string               // 断言字段
+	Print   bool                   // 是否打印
 }
 
 // SetupSuite 测试套件前置函数
@@ -41,10 +42,10 @@ type Case struct {
 func (s *SuiteCase) SetupSuite() {
 	settings.InitConfig()
 	servers.ZapLogs()
-	middlewares.Reload()
+	middlewares2.Reload()
 	gin.SetMode(settings.Config.Mode)
 	e := gin.Default()
-	e.Use(middlewares.CatchError())
+	e.Use(middlewares2.CatchError())
 	core.Engine = routers.InitRouter(e)
 	s.AppPrefix = settings.Config.AppPrefix
 	switch s.Guard {
@@ -64,12 +65,14 @@ func (s *SuiteCase) Assert(testCase []Case) {
 		_, _, w := s.Request(v.Method, v.Uri, v.Params)
 		// json转struct
 		err := json.Unmarshal(w.Body.Bytes(), &response)
-		s.T().Logf("Response: %s", w.Body.String())
+		if v.Print {
+			s.T().Logf("Response: %s", w.Body.String())
+		}
 		assert.Equal(s.T(), err, nil)
 		assert.Equal(s.T(), v.Code, response.Code)
 		assert.Equal(s.T(), v.Message, response.Message)
 		// 是否为列表
-		if !v.IsList {
+		if !v.List {
 			switch response.Data.(type) {
 			case map[string]interface{}: // 非数组
 				for _, field := range v.Fields {
@@ -139,5 +142,5 @@ func (s *SuiteCase) AdminLogin() {
 // TearDownSuite 测试套件后置函数
 // @return void
 func (s *SuiteCase) TearDownSuite() {
-	middlewares.Close()
+	middlewares2.Close()
 }
