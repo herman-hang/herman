@@ -7,14 +7,14 @@ import (
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/database/seeders/dictionary"
 	"github.com/herman-hang/herman/kernel/core"
-	"github.com/herman-hang/herman/kernel/core/test"
+	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 // DictionaryTestSuite 数据字典测试套件结构体
 type DictionaryTestSuite struct {
-	test.SuiteCase
+	tests.SuiteCase
 }
 
 var (
@@ -25,7 +25,7 @@ var (
 // TestAddDictionary 测试添加数据字典
 // @return void
 func (base *DictionaryTestSuite) TestAddDictionary() {
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "POST",
 			Uri:     base.AppPrefix + DictionaryUri,
@@ -40,7 +40,7 @@ func (base *DictionaryTestSuite) TestAddDictionary() {
 // @return void
 func (base *DictionaryTestSuite) TestModifyDictionary() {
 	info, _ := repositories.Dictionary().Insert(dictionary.Dictionary())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "PUT",
 			Uri:    base.AppPrefix + DictionaryUri,
@@ -61,7 +61,7 @@ func (base *DictionaryTestSuite) TestModifyDictionary() {
 // @return void
 func (base *DictionaryTestSuite) TestFindDictionary() {
 	info, _ := repositories.Dictionary().Insert(dictionary.Dictionary())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + DictionaryUri + "/" + fmt.Sprintf("%d", info["id"]),
@@ -78,7 +78,7 @@ func (base *DictionaryTestSuite) TestFindDictionary() {
 func (base *DictionaryTestSuite) TestRemoveDictionary() {
 	info, _ := repositories.Dictionary().Insert(dictionary.Dictionary())
 	core.Log.Debug("infoId:", info["id"])
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "DELETE",
 			Uri:     base.AppPrefix + DictionaryUri,
@@ -93,7 +93,7 @@ func (base *DictionaryTestSuite) TestRemoveDictionary() {
 // @return void
 func (base *DictionaryTestSuite) TestListDictionary() {
 	_, _ = repositories.Dictionary().Insert(dictionary.Dictionary())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + DictionaryUri,
@@ -113,7 +113,7 @@ func (base *DictionaryTestSuite) TestDetailsByDictionary() {
 	DetailInfo := dictionary.Detail()
 	DetailInfo["dictionaryId"] = dictionaryInfo["id"]
 	_, _ = repositories.DictionaryDetail().Insert(DetailInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + DictionaryDetailUri,
@@ -129,5 +129,5 @@ func (base *DictionaryTestSuite) TestDetailsByDictionary() {
 // @param *testing.T t 测试对象
 // @return void
 func TestDictionaryTestSuite(t *testing.T) {
-	suite.Run(t, &DictionaryTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+	suite.Run(t, &DictionaryTestSuite{SuiteCase: tests.SuiteCase{Guard: "admin"}})
 }

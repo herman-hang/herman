@@ -3,14 +3,14 @@ package admin
 import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/kernel/core/test"
+	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 // 管理员日志测试套件结构体
 type AdminLogTestSuite struct {
-	test.SuiteCase
+	tests.SuiteCase
 }
 
 var AdminLogUri = "/admin/admin/logs" // 管理员日志列表URI
@@ -26,7 +26,7 @@ func (base *AdminLogTestSuite) TestLogList() {
 		"method":  gofakeit.RandomString([]string{"POST", "GET", "PUT", "DELETE"}),
 		"remark":  gofakeit.Sentence(1),
 	})
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "GET",
 			Uri:    base.AppPrefix + AdminLogUri,
@@ -45,5 +45,5 @@ func (base *AdminLogTestSuite) TestLogList() {
 // TestAdminLogTestSuite 管理员测试套件
 // @return void
 func TestAdminLogTestSuite(t *testing.T) {
-	suite.Run(t, &AdminLogTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+	suite.Run(t, &AdminLogTestSuite{SuiteCase: tests.SuiteCase{Guard: "admin"}})
 }

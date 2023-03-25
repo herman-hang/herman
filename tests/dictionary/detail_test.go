@@ -5,7 +5,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/database/seeders/dictionary"
-	"github.com/herman-hang/herman/kernel/core/test"
+	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
@@ -14,14 +14,14 @@ var DetailUri = "/admin/dictionaries/details"
 
 // 数据字典明细测试套件结构体
 type DetailTestSuite struct {
-	test.SuiteCase
+	tests.SuiteCase
 }
 
 // TestAddDetail 测试添加数据字典明细
 // @return void
 func (base *DetailTestSuite) TestAddDetail() {
 	dictionaryInfo, _ := repositories.Dictionary().Insert(dictionary.Dictionary())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "POST",
 			Uri:    base.AppPrefix + DetailUri,
@@ -47,7 +47,7 @@ func (base *DetailTestSuite) TestModifyDetail() {
 	detailInfo := dictionary.Detail()
 	detailInfo["dictionaryId"] = dictionaryInfo["id"]
 	detail, _ := repositories.DictionaryDetail().Insert(detailInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "PUT",
 			Uri:    base.AppPrefix + DetailUri,
@@ -74,7 +74,7 @@ func (base *DetailTestSuite) TestRemoveDetail() {
 	detailInfo := dictionary.Detail()
 	detailInfo["dictionaryId"] = dictionaryInfo["id"]
 	detail, _ := repositories.DictionaryDetail().Insert(detailInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "DELETE",
 			Uri:    base.AppPrefix + DetailUri,
@@ -94,7 +94,7 @@ func (base *DetailTestSuite) TestFindDetail() {
 	detailInfo := dictionary.Detail()
 	detailInfo["dictionaryId"] = dictionaryInfo["id"]
 	detail, _ := repositories.DictionaryDetail().Insert(detailInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + DetailUri + "/" + fmt.Sprintf("%d", detail["id"]),
@@ -110,5 +110,5 @@ func (base *DetailTestSuite) TestFindDetail() {
 // @param *testing.T t 测试对象
 // @return void
 func TestDetailTestSuite(t *testing.T) {
-	suite.Run(t, &DetailTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+	suite.Run(t, &DetailTestSuite{SuiteCase: tests.SuiteCase{Guard: "admin"}})
 }

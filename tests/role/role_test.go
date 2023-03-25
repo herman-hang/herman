@@ -5,14 +5,14 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/database/seeders/role"
-	"github.com/herman-hang/herman/kernel/core/test"
+	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 // RoleTestSuite 角色测试套件结构体
 type RoleTestSuite struct {
-	test.SuiteCase
+	tests.SuiteCase
 }
 
 var RoleUri = "/admin/roles"
@@ -20,7 +20,7 @@ var RoleUri = "/admin/roles"
 // TestAddRole 测试添加角色
 // @return void
 func (base *RoleTestSuite) TestAddRole() {
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "POST",
 			Uri:     base.AppPrefix + RoleUri,
@@ -35,7 +35,7 @@ func (base *RoleTestSuite) TestAddRole() {
 // @return void
 func (base *RoleTestSuite) TestModifyRole() {
 	roleInfo, _ := repositories.Role().Insert(role.Role())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "PUT",
 			Uri:    base.AppPrefix + RoleUri,
@@ -63,7 +63,7 @@ func (base *RoleTestSuite) TestModifyRole() {
 // @return void
 func (base *RoleTestSuite) TestFindRole() {
 	roleInfo, _ := repositories.Role().Insert(role.Role())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + RoleUri + "/" + fmt.Sprintf("%d", roleInfo["id"]),
@@ -85,7 +85,7 @@ func (base *RoleTestSuite) TestFindRole() {
 // @return void
 func (base *RoleTestSuite) TestRemoveRole() {
 	roleInfo, _ := repositories.Role().Insert(role.Role())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "DELETE",
 			Uri:    base.AppPrefix + RoleUri,
@@ -102,7 +102,7 @@ func (base *RoleTestSuite) TestRemoveRole() {
 // @return void
 func (base *RoleTestSuite) TestListRole() {
 	_, _ = repositories.Role().Insert(role.Role())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + RoleUri,
@@ -126,5 +126,5 @@ func (base *RoleTestSuite) TestListRole() {
 // TestAdminTestSuite 角色测试套件
 // @return void
 func TestRoleTestSuite(t *testing.T) {
-	suite.Run(t, &RoleTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+	suite.Run(t, &RoleTestSuite{SuiteCase: tests.SuiteCase{Guard: "admin"}})
 }

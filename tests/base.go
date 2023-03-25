@@ -1,4 +1,4 @@
-package test
+package tests
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"github.com/herman-hang/herman/app"
 	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
 	"github.com/herman-hang/herman/kernel/core"
-	middlewares2 "github.com/herman-hang/herman/middlewares"
+	"github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers"
 	"github.com/herman-hang/herman/servers"
 	"github.com/herman-hang/herman/servers/settings"
@@ -37,15 +37,32 @@ type Case struct {
 	Print   bool                   // 是否打印
 }
 
+// AdminLogin 管理员登录
+// @return void
+func (s *SuiteCase) AdminLogin() {
+	var (
+		response app.Response
+		loginUri = s.AppPrefix + "/admin/login"
+	)
+	// map转json
+	_, _, w := s.Request("POST", loginUri, map[string]interface{}{
+		"user":     "admin",
+		"password": "123456",
+	})
+	// json转struct
+	_ = json.Unmarshal(w.Body.Bytes(), &response)
+	s.Authorization = response.Data.(string)
+}
+
 // SetupSuite 测试套件前置函数
 // @return void
 func (s *SuiteCase) SetupSuite() {
 	settings.InitConfig()
 	servers.ZapLogs()
-	middlewares2.Reload()
+	middlewares.Reload()
 	gin.SetMode(settings.Config.Mode)
 	e := gin.Default()
-	e.Use(middlewares2.CatchError())
+	e.Use(middlewares.CatchError())
 	core.Engine = routers.InitRouter(e)
 	s.AppPrefix = settings.Config.AppPrefix
 	switch s.Guard {
@@ -122,25 +139,8 @@ func (s *SuiteCase) Request(method string, uri string, body map[string]interface
 	return
 }
 
-// AdminLogin 管理员登录
-// @return void
-func (s *SuiteCase) AdminLogin() {
-	var (
-		response app.Response
-		loginUri = s.AppPrefix + "/admin/login"
-	)
-	// map转json
-	_, _, w := s.Request("POST", loginUri, map[string]interface{}{
-		"user":     "admin",
-		"password": "123456",
-	})
-	// json转struct
-	_ = json.Unmarshal(w.Body.Bytes(), &response)
-	s.Authorization = response.Data.(string)
-}
-
 // TearDownSuite 测试套件后置函数
 // @return void
 func (s *SuiteCase) TearDownSuite() {
-	middlewares2.Close()
+	middlewares.Close()
 }

@@ -6,14 +6,14 @@ import (
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/database/seeders/admin"
 	"github.com/herman-hang/herman/database/seeders/role"
-	"github.com/herman-hang/herman/kernel/core/test"
+	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 // 管理员测试套件结构体
 type AdminTestSuite struct {
-	test.SuiteCase
+	tests.SuiteCase
 }
 
 var (
@@ -24,7 +24,7 @@ var (
 // TestLogin 测试管理员登录
 // @return void
 func (base *AdminTestSuite) TestLogin() {
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "POST",
 			Uri:     base.AppPrefix + AdminLoginUri,
@@ -46,7 +46,7 @@ func (base *AdminTestSuite) TestAddAdmin() {
 			"role": roleInfo["role"].(string),
 		},
 	}
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "POST",
 			Uri:     base.AppPrefix + AdminUri,
@@ -69,7 +69,7 @@ func (base *AdminTestSuite) TestModifyAdmin() {
 		},
 	}
 	info, _ := repositories.Admin().Insert(adminInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "PUT",
 			Uri:    base.AppPrefix + AdminUri,
@@ -108,7 +108,7 @@ func (base *AdminTestSuite) TestFindAdmin() {
 		},
 	}
 	info, _ := repositories.Admin().Insert(adminInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + AdminUri + "/" + fmt.Sprintf("%d", info["id"]),
@@ -131,7 +131,7 @@ func (base *AdminTestSuite) TestRemoveAdmin() {
 		},
 	}
 	info, _ := repositories.Admin().Insert(adminInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "DELETE",
 			Uri:    base.AppPrefix + AdminUri,
@@ -156,7 +156,7 @@ func (base *AdminTestSuite) TestListAdmin() {
 		},
 	}
 	_, _ = repositories.Admin().Insert(adminInfo)
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + AdminUri,
@@ -187,5 +187,5 @@ func (base *AdminTestSuite) TestListAdmin() {
 // TestAdminTestSuite 管理员测试套件
 // @return void
 func TestAdminTestSuite(t *testing.T) {
-	suite.Run(t, &AdminTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+	suite.Run(t, &AdminTestSuite{SuiteCase: tests.SuiteCase{Guard: "admin"}})
 }

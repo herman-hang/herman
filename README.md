@@ -1293,7 +1293,7 @@ func Login(ctx *gin.Context) {
 
 ## 10. 测试
 
-单元测试核心代码位于`/kernel/core/test/test_suite.go`，单元测试比较推荐使用套件测试，每个模块需要在`/tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/kernel/core/test/test_suite.go`中，比如框架中的管理员登录：
+单元测试核心代码位于`/tests/base.go`，单元测试比较推荐使用套件测试，每个模块需要在`tests`目录下进行创建，这个模块建议和控制器一一对应。值得注意的是，单元测试支持多应用测试，在做HTTP测试的时候，登录方法都需要封装在`/tests/base.go`中，比如框架中的管理员登录：
 
 ```go
 // AdminLogin 管理员登录

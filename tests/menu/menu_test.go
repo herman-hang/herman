@@ -5,14 +5,14 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/database/seeders/menu"
-	"github.com/herman-hang/herman/kernel/core/test"
+	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 // TestSuite 菜单测试套件
 type MenuTestSuite struct {
-	test.SuiteCase
+	tests.SuiteCase
 }
 
 var MenuUri = "/admin/menus"
@@ -20,7 +20,7 @@ var MenuUri = "/admin/menus"
 // TestAddMenu 测试添加菜单
 // @return void
 func (base *MenuTestSuite) TestAddMenu() {
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "POST",
 			Uri:     base.AppPrefix + MenuUri,
@@ -35,7 +35,7 @@ func (base *MenuTestSuite) TestAddMenu() {
 // @return void
 func (base *MenuTestSuite) TestModifyMenu() {
 	menuInfo, _ := repositories.Menu().Insert(menu.Menu())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "PUT",
 			Uri:    base.AppPrefix + MenuUri,
@@ -59,7 +59,7 @@ func (base *MenuTestSuite) TestModifyMenu() {
 // @return void
 func (base *MenuTestSuite) TestFindMenu() {
 	menuInfo, _ := repositories.Menu().Insert(menu.Menu())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + MenuUri + "/" + fmt.Sprintf("%d", menuInfo["id"]),
@@ -74,7 +74,7 @@ func (base *MenuTestSuite) TestFindMenu() {
 // @return void
 func (base *MenuTestSuite) TestRemoveMenu() {
 	menuInfo, _ := repositories.Menu().Insert(menu.Menu())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method: "DELETE",
 			Uri:    base.AppPrefix + MenuUri,
@@ -91,7 +91,7 @@ func (base *MenuTestSuite) TestRemoveMenu() {
 // @return void
 func (base *MenuTestSuite) TestListMenu() {
 	_, _ = repositories.Menu().Insert(menu.Menu())
-	base.Assert([]test.Case{
+	base.Assert([]tests.Case{
 		{
 			Method:  "GET",
 			Uri:     base.AppPrefix + MenuUri,
@@ -115,5 +115,5 @@ func (base *MenuTestSuite) TestListMenu() {
 // TestAdminTestSuite 角色测试套件
 // @return void
 func TestRoleTestSuite(t *testing.T) {
-	suite.Run(t, &MenuTestSuite{SuiteCase: test.SuiteCase{Guard: "admin"}})
+	suite.Run(t, &MenuTestSuite{SuiteCase: tests.SuiteCase{Guard: "admin"}})
 }
