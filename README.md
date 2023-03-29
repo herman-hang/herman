@@ -94,10 +94,11 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 - 全局变量和函数方法规范相似，如果需要跨包调用，则采用大驼峰（首字母大写），否则采用小驼峰（首字母小写）
 - 常量使用大驼峰命名（首字母大写），例如：`Success`，`TokenNotExit`
 
-#### （4）数据表与字段
+#### （4）数据库
 
 - 数据表名没有前缀，表名不能出现大写字母，建议以蛇形定义，例如：`user`，`user_role`
 - 字段名称采用蛇形命名，不能出现大写字母，例如：`user_id`，`user_name`
+- 推荐主键索引名为 pk_字段名，唯一索引名为 uk_字段名，普通索引名则为 idx_字段名，例如：`pk_user_id`，`uk_user_name`，`idx_user_age`
 
 ### 安装
 

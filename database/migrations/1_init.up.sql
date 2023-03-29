@@ -45,7 +45,7 @@ CREATE TABLE `admin`
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `idx_user`(`user`) USING BTREE COMMENT '管理员用户名索引'
+    UNIQUE INDEX `uk_user`(`user`) USING BTREE COMMENT '管理员用户名索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -96,8 +96,8 @@ CREATE TABLE `roles`
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `role_index`(`role`) USING BTREE COMMENT '角色名索引',
-    INDEX          `id`(`id`, `role`) USING BTREE
+    UNIQUE INDEX `uk_role`(`role`) USING BTREE COMMENT '角色名索引',
+    INDEX          `idx_id_role`(`id`, `role`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -131,7 +131,7 @@ CREATE TABLE `users`
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `user`(`user`) USING BTREE COMMENT '用户索引'
+    UNIQUE INDEX `uk_user`(`user`) USING BTREE COMMENT '用户索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -154,7 +154,7 @@ CREATE TABLE `casbin_rule`
     `v4`    varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `v5`    varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `idx_casbin_rule`(`ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) USING BTREE
+    UNIQUE INDEX `uk_casbin_rule`(`ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'Casbin表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -175,7 +175,7 @@ CREATE TABLE `dictionary`
     `updated_at` datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at` datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `idx_code` (`code`) USING BTREE COMMENT '唯一标识码索引'
+    UNIQUE KEY `uk_code` (`code`) USING BTREE COMMENT '唯一标识码索引'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='数据字典表';
 
 -- ----------------------------
@@ -199,7 +199,7 @@ CREATE TABLE `dictionary_detail`
     `updated_at`    datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`    datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY             `idx_dictionary_id` (`dictionary_id`,`code`) USING BTREE COMMENT '数据字典索引',
+    INDEX           `idx_dictionary_id` (`dictionary_id`,`code`) USING BTREE COMMENT '数据字典索引',
     CONSTRAINT `数据字典外键` FOREIGN KEY (`dictionary_id`) REFERENCES `dictionary` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='数据字典明细表';
 
@@ -251,7 +251,7 @@ CREATE TABLE `files`
     `updated_at` datetime                                                NOT NULL COMMENT '更新时间',
     `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    KEY          `idx_files` (`creator_id`,`hash`) USING BTREE COMMENT '用户索引'
+    INDEX        `idx_files` (`creator_id`,`hash`) USING BTREE COMMENT '用户索引'
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='文件信息表';
 
 -- ----------------------------
@@ -349,7 +349,7 @@ CREATE TABLE `admin_log`
     `updated_at` datetime     NOT NULL COMMENT '更新时间',
     `deleted_at` datetime    DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`),
-    KEY          `idx_admin_id` (`admin_id`) USING BTREE COMMENT '管理员索引'
+    INDEX        `idx_admin_id` (`admin_id`) USING BTREE COMMENT '管理员索引'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员日志表';
 
 -- ----------------------------
