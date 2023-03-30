@@ -1659,6 +1659,108 @@ func Admin() map[string]interface{} {
 
 更多规则：https://github.com/brianvoe/gofakeit
 
-## 13. License
+## 13. 验证码
+
+目前支持的验证码有两种方式，1：滑动验证码，2：文字点选验证码，Herman已经集成接口的形式，可以直接使用，当然，你也可以自己扩展，例子：
+
+- 配置
+
+```go
+// WatermarkConfig 水印设置
+type WatermarkConfig struct {
+	FontSize int   // 水印字体大小
+	Color    color.RGBA  // 水印rgba颜色
+	Text     string // 水印文字
+}
+
+type BlockPuzzleConfig struct {
+	Offset int // 校验时 容错偏移量
+}
+
+type ClickWordConfig struct {
+	FontSize int // 点击验证文字的大小
+	FontNum  int // 点击验证的文字的随机数量 
+}
+
+type Config struct {
+	Watermark      *WatermarkConfig
+	ClickWord      *ClickWordConfig
+	BlockPuzzle    *BlockPuzzleConfig
+	CacheType      string // 验证码使用的缓存类型
+	CacheExpireSec int
+}
+
+func NewConfig() *Config {
+	return &Config{
+		CacheType: "redis",  // 注册的缓存类型
+		Watermark: &WatermarkConfig{
+			FontSize: 12,
+			Color:    color.RGBA{R: 255, G: 255, B: 255, A: 255},
+			Text:     "我的水印",
+		},
+		ClickWord: &ClickWordConfig{
+			FontSize: 25,
+			FontNum:  5,
+		},
+		BlockPuzzle:    &BlockPuzzleConfig{Offset: 10},
+		CacheExpireSec: 2 * 60, // 缓存有效时间
+	}
+}
+```
+
+- 使用
+
+```go
+package main
+
+import (
+	config2 "github.com/TestsLing/aj-captcha-go/config"
+	"github.com/TestsLing/aj-captcha-go/service"
+	"github.com/TestsLing/aj-captcha-go/const"
+	"github.com/gin-gonic/gin"
+)
+
+// 客户端参数 看自身业务构建即可
+type clientParams struct {
+	Token       string `json:"token"`
+	PointJson   string `json:"pointJson"`
+	CaptchaType string `json:"captchaType"`
+}
+
+// 默认配置，可以根据项目自行配置，将其他类型配置序列化上去
+var config = config2.NewConfig()
+// 服务工厂，主要用户注册 获取 缓存和验证服务
+var factory = service.NewCaptchaServiceFactory(config)
+
+func main() {
+
+	// 这里默认是注册了 内存缓存，但是不足以应对生产环境，希望自行注册缓存驱动 实现缓存接口即可替换（CacheType就是注册进去的 key）
+	factory.RegisterCache(constant.MemCacheKey, service.NewMemCacheService(20)) // 这里20指的是缓存阈值
+	
+	// 注册了两种验证码服务 可以自行实现更多的验证
+	factory.RegisterService(constant.ClickWordCaptcha, service.NewClickWordCaptchaService(factory))
+	factory.RegisterService(constant.BlockPuzzleCaptcha, service.NewBlockPuzzleCaptchaService(factory))
+
+	//Default返回一个默认的路由引擎
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		//输出json结果给调用方
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.GET("/captcha/get", func(c *gin.Context) {
+		// 根据参数类型获取不同服务即可
+		data := factory.GetService(config2.BlockPuzzleCaptcha).Get()
+		//输出json结果给调用方
+		c.JSON(200, data)
+	})
+	r.Run("0.0.0.0:888") // listen and serve on 0.0.0.0:888
+}
+```
+
+更多开发文档：https://ajcaptcha.beliefteam.cn/captcha-doc/
+
+## 14. License
 
 Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html
