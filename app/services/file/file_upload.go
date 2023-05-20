@@ -1,7 +1,7 @@
 package file
 
 import (
-	"crypto/sha256"
+	"crypto/md5"
 	"encoding/hex"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/herman-hang/herman/app/repositories"
@@ -67,7 +67,7 @@ func calculateHash(file *multipart.FileHeader) (hash string, content []byte) {
 	if err != nil {
 		panic(FileConstant.ReadFileFail)
 	}
-	hashed := sha256.New()
+	hashed := md5.New()
 	hashed.Write(content)
 	return hex.EncodeToString(hashed.Sum(nil)), content
 }

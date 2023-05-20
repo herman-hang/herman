@@ -50,7 +50,7 @@ func (t *TencentCOS) Upload(key string, content []byte) error {
 func (t *TencentCOS) Download(key string) ([]byte, error) {
 	res, err := t.client.Object.Get(context.Background(), key, nil)
 	if err != nil {
-		panic(FileConstant.Download)
+		panic(FileConstant.DownloadFail)
 	}
 	return ioutil.ReadAll(res.Body)
 }

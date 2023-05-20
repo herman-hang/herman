@@ -62,7 +62,7 @@ func (q *Qiniu) Download(key string) ([]byte, error) {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil || res.StatusCode != http.StatusOK {
-		panic(FileConstant.Download)
+		panic(FileConstant.DownloadFail)
 	}
 	defer func(Body io.ReadCloser) {
 		if err := Body.Close(); err != nil {

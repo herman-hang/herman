@@ -45,7 +45,7 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 		panic(AdminConstant.PasswordError)
 	}
 	// 登录总数自增
-	if err = repositories.Admin().Update([]uint{admin.Id}, map[string]interface{}{"login_total": admin.LoginTotal + 1}); err != nil {
+	if err = repositories.Admin().Update([]uint{admin.Id}, map[string]interface{}{"loginTotal": admin.LoginTotal + 1}); err != nil {
 		return nil
 	}
 	LogWriter(data["user"].(string), http.StatusOK, AdminConstant.LoginSuccess, c)
@@ -139,10 +139,13 @@ func Find(data map[string]interface{}) map[string]interface{} {
 		"created_at",
 	}
 	info, err := repositories.Admin().Find(map[string]interface{}{"id": id}, fields)
-	info["roles"] = FindRole(id)
+	if len(info) == 0 {
+		panic(AdminConstant.UserNotExist)
+	}
 	if err != nil {
 		panic(AdminConstant.GetAdminInfoFail)
 	}
+	info["roles"] = FindRole(id)
 	return info
 }
 

@@ -32,6 +32,9 @@ func FindDetail(data map[string]interface{}) map[string]interface{} {
 	info, err := repositories.DictionaryDetail().Find(map[string]interface{}{"id": data["id"]}, []string{
 		"id", "dictionary_id", "name", "code", "value", "remark", "sort", "state", "created_at",
 	})
+	if len(info) == 0 {
+		panic(DictionaryConstant.DetailNotExist)
+	}
 	if err != nil {
 		panic(DictionaryConstant.FindFail)
 	}

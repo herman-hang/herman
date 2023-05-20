@@ -34,10 +34,13 @@ func Find(data map[string]interface{}) map[string]interface{} {
 	info, err := repositories.Menu().Find(map[string]interface{}{"id": data["id"]},
 		[]string{"id", "pid", "name", "path", "method", "sort", "created_at"},
 	)
+	if len(info) == 0 {
+		panic(MenuConstant.NotExist)
+	}
 	if info["pid"] != MenuConstant.TopChild {
 		topChild, err := repositories.Menu().Find(map[string]interface{}{"id": info["pid"]}, []string{"name"})
 		if err != nil {
-			return nil
+			panic(MenuConstant.ParentFail)
 		}
 		info["pname"] = topChild["name"]
 	}

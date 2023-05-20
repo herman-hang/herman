@@ -217,10 +217,10 @@ CREATE TABLE `file_chunks`
     `file_id`      int(11) UNSIGNED NOT NULL COMMENT '文件ID',
     `chunk_number` int(11) UNSIGNED NOT NULL COMMENT '分片编号',
     `chunk_size`   bigint(20) UNSIGNED NOT NULL COMMENT '分片大小(单位byte)',
-    `chunk_path`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分片路径',
-    `hash`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分片hash值',
+    `chunk_path`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分片路径',
+    `hash`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分片hash值',
     `state`        tinyint(4) NOT NULL DEFAULT 1 COMMENT '上传状态，1表示未上传，2表示已上传',
-    `progress`     bigint(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '上传进度',
+    `progress`     tinyint(4) NOT NULL DEFAULT 0 COMMENT '上传进度',
     `created_at`   datetime                                                NOT NULL COMMENT '创建时间',
     `updated_at`   datetime                                                NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
@@ -243,8 +243,8 @@ CREATE TABLE `files`
     `creator_id` int(11) unsigned NOT NULL COMMENT '创建者ID',
     `file_name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名',
     `file_ext`   varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '文件扩展',
-    `file_type`  varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '文件类型',
-    `file_path`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',
+    `file_type`  varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '文件MIME类型',
+    `file_path`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '文件路径名',
     `hash`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件hash值',
     `file_size`  bigint(20) unsigned NOT NULL COMMENT '文件大小(单位byte)',
     `created_at` datetime                                                NOT NULL COMMENT '创建时间',
@@ -252,7 +252,7 @@ CREATE TABLE `files`
     `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX        `idx_files` (`creator_id`,`hash`) USING BTREE COMMENT '用户索引'
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='文件信息表';
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of files

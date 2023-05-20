@@ -86,6 +86,9 @@ func Find(data map[string]interface{}) map[string]interface{} {
 	// 查询角色信息
 	fields := []string{"id", "name", "role", "state", "introduction"}
 	roleInfo, err := repositories.Role().Find(map[string]interface{}{"id": data["id"]}, fields)
+	if len(roleInfo) == constants.LengthByZero {
+		panic(RoleConstant.NotExist)
+	}
 	if err != nil {
 		panic(RoleConstant.FindFail)
 	}
@@ -124,6 +127,9 @@ func Remove(data map[string]interface{}) {
 		// 查询角色信息
 		for _, id := range data["id"].([]uint) {
 			roleInfo, err := repositories.Role(tx).Find(map[string]interface{}{"id": id}, []string{"id", "role"})
+			if len(roleInfo) == constants.LengthByZero {
+				return errors.New(RoleConstant.NotExist)
+			}
 			if err != nil {
 				return errors.New(RoleConstant.DeleteFail)
 			}

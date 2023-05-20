@@ -5,6 +5,7 @@ import (
 	"github.com/herman-hang/herman/app/utils"
 	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
+	"time"
 )
 
 // BaseRepository 公共仓储层
@@ -22,7 +23,7 @@ type PageInfo struct {
 
 // Insert 新增
 // @param map[string]interface{} data 待添加数据
-// @return toMap err 查询数据，错误信息
+// @return toMap err 新增的数据，错误信息
 func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[string]interface{}, err error) {
 	// 初始化ID，让ID持续自增
 	data["id"] = constants.InitId
@@ -39,6 +40,22 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 		return nil, err
 	}
 	return toMap, nil
+}
+
+// Create 批量新增
+// @param []map[string]interface{} data 待添加切片数据
+// @return err 错误信息
+func (base *BaseRepository) Create(data []map[string]interface{}) error {
+	for i := range data {
+		nowTime := time.Now().Format("2006-01-02 15:04:05")
+		data[i]["created_at"] = nowTime
+		data[i]["updated_at"] = nowTime
+	}
+	err := base.Db.Model(base.Model).Create(data).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Find 根据查询条件获取详情

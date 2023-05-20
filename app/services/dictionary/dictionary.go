@@ -34,6 +34,9 @@ func FindDictionary(data map[string]interface{}) map[string]interface{} {
 	info, err := repositories.Dictionary().Find(map[string]interface{}{"id": data["id"]}, []string{
 		"id", "name", "code", "remark", "state", "created_at",
 	})
+	if len(info) == 0 {
+		panic(DictionaryConstant.NotExist)
+	}
 	if err != nil {
 		panic(DictionaryConstant.FindFail)
 	}
@@ -93,6 +96,9 @@ func DetailsDictionary(data map[string]interface{}) (dictionary []map[string]int
 			dictionary, err := repositories.Dictionary().Find(map[string]interface{}{"code": key}, []string{
 				"id", "name", "code", "remark",
 			})
+			if len(dictionary) == 0 {
+				panic(DictionaryConstant.NotExist)
+			}
 			if err != nil {
 				panic(DictionaryConstant.FindFail)
 			}

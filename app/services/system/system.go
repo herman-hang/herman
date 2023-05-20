@@ -23,6 +23,9 @@ func Find() map[string]interface{} {
 		"address",
 	}
 	info, err := repositories.System().Find(map[string]interface{}{"id": SystemConstant.Id}, fields)
+	if len(info) == 0 {
+		panic(SystemConstant.NotExist)
+	}
 	if err != nil {
 		panic(SystemConstant.FindFail)
 	}

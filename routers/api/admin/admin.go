@@ -79,6 +79,12 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/files/download/:id", FileController.DownloadFile)
 	// 图片预览
 	router.GET("/files/preview/:id", FileController.PreviewFile)
+	// 获取分片上传方案
+	router.POST("/files/prepare", FileController.Prepare)
+	// 分片上传
+	router.POST("/files/chunk", FileController.ChunkUpload)
+	// 文件合并
+	router.POST("/files/merge", FileController.MergeFile)
 
 	// 系统设置信息
 	router.GET("/system", SystemController.FindSystem)

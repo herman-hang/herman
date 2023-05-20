@@ -14,6 +14,7 @@ type FileChunk struct {
 	ChunkPath   string         `json:"chunkPath" gorm:"column:chunk_path;comment:分片路径"`
 	Hash        string         `json:"hash" gorm:"column:hash;comment:分片Hash值"`
 	State       uint8          `json:"state" gorm:"column:hash;comment:上传状态(1未上传，2已上传)"`
+	Progress    uint8          `json:"progress" gorm:"column:progress;comment:上传进度"`
 	CreatedAt   time.Time      `json:"createdAt" gorm:"column:created_at;comment:创建时间"`
 	UpdatedAt   time.Time      `json:"updatedAt" gorm:"column:updated_at;comment:更新时间"`
 	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"column:deleted_at;index;comment:删除时间"`

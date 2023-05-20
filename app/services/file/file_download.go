@@ -38,7 +38,7 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 		}
 		data, err = fileDrive.Download(info["filePath"].(string))
 		if err != nil {
-			panic(FileConstant.Download)
+			panic(FileConstant.DownloadFail)
 		}
 	case "cos": // 腾讯云cos
 		cos := settings.Config.FileStorage.Cos
@@ -48,7 +48,7 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 		}
 		data, err = fileDrive.Download(info["filePath"].(string))
 		if err != nil {
-			panic(FileConstant.Download)
+			panic(FileConstant.DownloadFail)
 		}
 	case "qiniu": // 七牛云
 		var err error
@@ -56,10 +56,10 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 		fileDrive := NewQiniu(qiniu.SecretKey, qiniu.SecretKey, qiniu.Bucket, qiniu.Domain)
 		data, err = fileDrive.Download(info["filePath"].(string))
 		if err != nil {
-			panic(FileConstant.Download)
+			panic(FileConstant.DownloadFail)
 		}
 	default:
-		panic(FileConstant.Download)
+		panic(FileConstant.DownloadFail)
 	}
 	return data
 }

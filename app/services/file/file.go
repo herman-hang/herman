@@ -1,11 +1,17 @@
 package file
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/herman-hang/herman/app/models"
 	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/kernel/core"
+	"github.com/herman-hang/herman/servers/settings"
+	"gorm.io/gorm"
+	"io/ioutil"
 	"mime/multipart"
+	"os"
 )
 
 // Upload 文件上传
@@ -43,8 +49,11 @@ func Download(ctx *gin.Context, data map[string]interface{}) {
 	info, err := repositories.File().Find(map[string]interface{}{
 		"id": data["id"],
 	}, []string{"id", "drive", "file_name", "file_path", "hash"})
-	if err != nil {
+	if len(info) == 0 {
 		panic(FileConstant.NotExist)
+	}
+	if err != nil {
+		panic(FileConstant.DownloadFail)
 	}
 	// 返回文件流
 	stream := adaptiveDownload(info)
@@ -60,8 +69,11 @@ func Preview(ctx *gin.Context, data map[string]interface{}) {
 	info, err := repositories.File().Find(map[string]interface{}{
 		"id": data["id"],
 	}, []string{"id", "drive", "file_name", "file_type", "file_ext", "file_path", "file_size", "hash"})
-	if err != nil {
+	if len(info) == 0 {
 		panic(FileConstant.NotExist)
+	}
+	if err != nil {
+		panic(FileConstant.PreviewFail)
 	}
 	// 判断是否为图片
 	if info["fileType"].(string) != "image/jpeg" &&
@@ -75,4 +87,107 @@ func Preview(ctx *gin.Context, data map[string]interface{}) {
 	ctx.Header("Content-Type", info["fileType"].(string))
 	ctx.Header("Connection", "keep-alive")
 	response(ctx, stream, info["fileName"].(string))
+}
+
+// Prepare 生成分片上传方案
+// @param ctx *gin.Context 上下文
+// @param data map[string]interface{} 请求参数
+// @return info []map[string]interface{} 文件切片信息
+func Prepare(ctx *gin.Context, data map[string]interface{}) []map[string]interface{} {
+	var info []map[string]interface{}
+	if settings.Config.FileStorage.Drive != "local" {
+		panic(FileConstant.NotSupport)
+	}
+	// 判断是否已经存在
+	info, err := IsExist(data)
+	if err == nil && len(info) > 0 {
+		return info
+	}
+	// 不存在，则进行方案制作
+	err = core.Db.Transaction(func(tx *gorm.DB) error {
+		// 获取登录信息
+		origin, _ := ctx.Get("admin")
+		admin := origin.(*models.Admin)
+		data["drive"] = settings.Config.FileStorage.Drive
+		data["creatorId"] = admin.Id
+		file, err := repositories.File(tx).Insert(data)
+		if err != nil {
+			return errors.New(FileConstant.PrepareFail)
+		}
+		// 进行分片
+		mapSlice := Chunk(data, file["id"].(uint))
+		if err := repositories.FileChunk(tx).Create(mapSlice); err != nil {
+			return errors.New(FileConstant.CreateFail)
+		}
+		// 数据加工
+		info = DataFactory(mapSlice)
+		return nil
+	})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return info
+}
+
+// ChunkUpload 分片上传
+// @param data map[string]interface{} 请求参数
+// @param file *multipart.FileHeader 文件对象
+// @return void
+func ChunkUpload(data map[string]interface{}, file *multipart.FileHeader) {
+	data["state"] = FileConstant.UploadState
+	// 判断分片是否已经上传
+	info, _ := repositories.FileChunk().Find(data, []string{"id", "hash"})
+	if len(info) > 0 {
+		panic(FileConstant.ChunkExist)
+	}
+	fp, err := file.Open()
+	if err != nil {
+		panic(FileConstant.OpenFileFail)
+	}
+	content, err := ioutil.ReadAll(fp)
+	if err != nil {
+		panic(FileConstant.ReadFileFail)
+	}
+	// 上传分片
+	filePath := adaptiveUpload(info["hash"].(string), content)
+	err = repositories.FileChunk().Update([]uint{info["id"].(uint)}, map[string]interface{}{
+		"filePath": filePath,
+		"state":    FileConstant.UploadState,
+	})
+	if err != nil {
+		panic(FileConstant.UploadFail)
+	}
+}
+
+// Merge 分片合并
+// @param data map[string]interface{} 请求参数
+// @return void
+func Merge(data map[string]interface{}) {
+	fileInfo, _ := repositories.File().Find(map[string]interface{}{
+		"id": data["id"],
+	}, []string{"id", "hash"})
+	if len(fileInfo) == 0 {
+		panic(FileConstant.NotExist)
+	}
+	chunkFile, _ := repositories.FileChunk().FindChunk(data["id"].(uint))
+	if len(chunkFile) == 0 {
+		panic(FileConstant.ChunkNotExist)
+	}
+	filePath := createFile(fileInfo["hash"].(string))
+	// 创建目标文件
+	file, err := os.Create(filePath)
+	if err != nil {
+		panic(FileConstant.CreateFileFail)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(FileConstant.CloseFileFail)
+		}
+	}(file)
+	// 合并文件
+	go execMerge(chunkFile, file)
+	// 删除分片文件
+	go removeChunkFile(chunkFile)
 }
