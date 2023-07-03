@@ -491,6 +491,15 @@ jobs.Dispatch(data,jobs.SendSms)
 	}
 ```
 
+如果是延时队列则在Dispatch方法data参数中加入time参数即可，延时队列会根据time时间执行，如：
+
+```go
+var data map[string]interface{}
+data["topic"] = "sms_send"
+data["time"] = time.Now().Add(time.Second * 60) // 设置时间戳为60秒之后
+jobs.Dispatch(data,jobs.SendSms)
+```
+
 ### 缓存
 
 目前框架只支持Redis缓存，对象挂载在`/kernel/core/container.go`中，使用前要先设置上下文：
