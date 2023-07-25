@@ -2,7 +2,6 @@ package captcha
 
 import (
 	"github.com/herman-hang/herman/app/constants"
-	captchaConstant "github.com/herman-hang/herman/app/constants/captcha"
 	"github.com/herman-hang/herman/app/utils"
 	"github.com/herman-hang/herman/app/validates"
 	"github.com/mitchellh/mapstructure"
@@ -10,7 +9,7 @@ import (
 
 // GetCaptchaValidate 获取验证码验证结构体
 type GetCaptchaValidate struct {
-	CaptchaType int `json:"captchaType" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
+	CaptchaType string `json:"captchaType" validate:"required" label:"验证码类型"`
 }
 
 // CheckCaptchaValidate 检查验证码正确性结构体
@@ -24,14 +23,7 @@ type CheckCaptchaValidate struct {
 // @param map[string]interface{} data 待验证数据
 // @return toMap 返回验证通过的数据
 func GetCaptcha(data map[string]interface{}) (toMap map[string]interface{}) {
-	var (
-		captcha     GetCaptchaValidate
-		CaptchaType = map[int]string{
-			captchaConstant.BlockPuzzle: "blockPuzzle",
-			captchaConstant.ClickWord:   "clickWord",
-		}
-	)
-
+	var captcha GetCaptchaValidate
 	// map赋值给结构体
 	if err := mapstructure.WeakDecode(data, &captcha); err != nil {
 		panic(constants.MapToStruct)
@@ -46,8 +38,6 @@ func GetCaptcha(data map[string]interface{}) (toMap map[string]interface{}) {
 		panic(constants.StructToMap)
 	}
 
-	// 从interface{}转为int类型
-	toMap["captchaType"] = CaptchaType[captcha.CaptchaType]
 	return toMap
 }
 
