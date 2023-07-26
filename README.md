@@ -512,14 +512,14 @@ ctx := context.Background()
 设置一个key值
 
 ```go
-val, err := core.Redis.Get(ctx, "key").Result()
+val, err := core.Redis.Set(ctx, "key", 1)
 fmt.Println(val)
 ```
 
 取出一个key值
 
 ```go
-get := core.Redis.Get(ctx, "key")
+get := core.Redis.Get(ctx, "key").Result()
 fmt.Println(get.Val(), get.Err())
 ```
 
