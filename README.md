@@ -99,6 +99,7 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 - 数据表名没有前缀，表名不能出现大写字母，建议以蛇形定义，例如：`user`，`user_role`
 - 字段名称采用蛇形命名，不能出现大写字母，例如：`user_id`，`user_name`
 - 推荐主键索引名为 pk_字段名，唯一索引名为 uk_字段名，普通索引名则为 idx_字段名，例如：`pk_user_id`，`uk_user_name`，`idx_user_age`
+- 主键和外键创建则推荐`pk+表名`（主键），如：pk_main，`fk+从表+主表名`（外键），如：fk_sub_main
 
 ### 安装
 
