@@ -31,14 +31,6 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 		return nil, err
 	}
 
-	// 关闭连接
-	defer func(producer sarama.SyncProducer) {
-		if err := producer.Close(); err != nil {
-			zap.S().Error(color.RedString(fmt.Sprintf("Close producer err: %v", err)))
-			return
-		}
-	}(producer)
-
 	return producer, nil
 }
 
@@ -52,6 +44,14 @@ func Send(topic string, data map[string]interface{}) {
 		zap.S().Error(color.RedString(fmt.Sprintf("New sync producer failed, err:%v", err)))
 		return
 	}
+
+	// 关闭连接
+	defer func(producer sarama.SyncProducer) {
+		if err := producer.Close(); err != nil {
+			zap.S().Error(color.RedString(fmt.Sprintf("Close producer err: %v", err)))
+			return
+		}
+	}(syncProducer)
 
 	// SendMessage：该方法是生产者生产给定的消息
 	// 生产成功的时候返回该消息的分区和所在的偏移量

@@ -10,7 +10,7 @@ type Users struct {
 	Id           uint           `json:"id" gorm:"column:id;primary_key;comment:用户ID"`
 	User         string         `json:"user" gorm:"column:user;comment:用户名"`
 	Password     string         `json:"password" gorm:"column:password;comment:用户密码"`
-	Photo        string         `json:"photo" gorm:"column:photo;comment:用户头像"`
+	PhotoId      uint           `json:"photoId" gorm:"column:photo_id;comment:用户头像ID"`
 	Nickname     string         `json:"nickname" gorm:"column:nickname;comment:昵称"`
 	Name         string         `json:"name" gorm:"column:name;comment:真实姓名"`
 	Card         string         `json:"card" gorm:"column:card;comment:身份证号码"`
@@ -23,7 +23,7 @@ type Users struct {
 	State        uint8          `json:"state" gorm:"column:state;default:2;comment:状态(1已停用,2已启用)"`
 	Sort         uint           `json:"sort" gorm:"column:sort;default:0;comment:排序"`
 	LoginOutIp   string         `json:"loginOutIp" gorm:"column:login_out_ip;comment:上一次登录IP地址"`
-	LoginTotal   string         `json:"loginTotal" gorm:"column:login_total;default:0;comment:登录总数"`
+	LoginTotal   uint           `json:"loginTotal" gorm:"column:login_total;default:0;comment:登录总数"`
 	LoginOutAt   string         `json:"loginOutAt" gorm:"column:login_out_at;comment:上一次登录时间"`
 	CreatedAt    time.Time      `json:"createdAt" gorm:"column:created_at;comment:创建时间"`
 	UpdatedAt    time.Time      `json:"updatedAt" gorm:"column:updated_at;comment:更新时间"`

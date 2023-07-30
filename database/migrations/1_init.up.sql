@@ -110,29 +110,29 @@ CREATE TABLE `roles`
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`
 (
-    `id`           int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户id',
+    `id`           int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户id',
     `user`         varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
     `password`     char(60) CHARACTER SET utf8 COLLATE utf8_general_ci    NOT NULL COMMENT '用户密码',
-    `photo`        varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户头像',
-    `nickname`     varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '昵称',
-    `name`         varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '真实姓名',
-    `card`         char(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '身份证号码',
-    `sex`          tinyint(4) NOT NULL DEFAULT 3 COMMENT '性别(1为女，2为男，3为保密)',
-    `age`          tinyint(4) NOT NULL DEFAULT 0 COMMENT '年龄',
-    `region`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '地区',
-    `phone`        varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号码',
-    `email`        varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮箱',
-    `introduction` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '简介',
-    `state`        tinyint(4) NOT NULL DEFAULT 2 COMMENT '状态(1已停用,2已启用)',
-    `login_out_ip` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '最后登录IP地址',
-    `login_total`  int(11) NOT NULL DEFAULT 0 COMMENT '登录总数',
-    `login_out_at` datetime NULL DEFAULT NULL COMMENT '最后登录时间',
+    `photo_id`     int(10) unsigned DEFAULT NULL COMMENT '用户头像ID',
+    `nickname`     varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '昵称',
+    `name`         varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '真实姓名',
+    `card`         char(20) CHARACTER SET utf8 COLLATE utf8_general_ci     DEFAULT NULL COMMENT '身份证号码',
+    `sex`          tinyint(4) NOT NULL DEFAULT '3' COMMENT '性别(1为女，2为男，3为保密)',
+    `age`          tinyint(4) NOT NULL DEFAULT '0' COMMENT '年龄',
+    `region`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '地区',
+    `phone`        varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '手机号码',
+    `email`        varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '邮箱',
+    `introduction` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '简介',
+    `state`        tinyint(4) NOT NULL DEFAULT '2' COMMENT '状态(1已停用,2已启用)',
+    `login_out_ip` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '最后登录IP地址',
+    `login_total`  int(11) unsigned NOT NULL DEFAULT '0' COMMENT '登录总数',
+    `login_out_at` datetime                                                DEFAULT NULL COMMENT '最后登录时间',
     `created_at`   datetime                                               NOT NULL COMMENT '创建时间',
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
-    `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
+    `deleted_at`   datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `uk_user`(`user`) USING BTREE COMMENT '用户索引'
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+    UNIQUE KEY `idx_user` (`user`) USING BTREE COMMENT '用户索引'
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户表';
 
 -- ----------------------------
 -- Records of users
@@ -221,8 +221,8 @@ CREATE TABLE `file_chunks`
     `hash`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '分片hash值',
     `state`        tinyint(4) NOT NULL DEFAULT 1 COMMENT '上传状态，1表示未上传，2表示已上传',
     `progress`     tinyint(4) NOT NULL DEFAULT 0 COMMENT '上传进度',
-    `created_at`   datetime                                                NOT NULL COMMENT '创建时间',
-    `updated_at`   datetime                                                NOT NULL COMMENT '更新时间',
+    `created_at`   datetime NOT NULL COMMENT '创建时间',
+    `updated_at`   datetime NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX          `idx_file_chunks`(`file_id`, `chunk_number`, `hash`) USING BTREE COMMENT '用户索引',
@@ -249,7 +249,7 @@ CREATE TABLE `files`
     `file_size`  bigint(20) unsigned NOT NULL COMMENT '文件大小(单位byte)',
     `created_at` datetime                                                NOT NULL COMMENT '创建时间',
     `updated_at` datetime                                                NOT NULL COMMENT '更新时间',
-    `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+    `deleted_at` datetime                                                DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX        `idx_files` (`creator_id`,`hash`) USING BTREE COMMENT '用户索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
