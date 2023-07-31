@@ -116,7 +116,7 @@ func (base *BaseRepository) Delete(ids []uint) error {
 func (base *BaseRepository) IsExist(condition map[string]interface{}) bool {
 	data := make(map[string]interface{})
 	err := base.Db.Model(&base.Model).Where(condition).Find(&data).Error
-	if err != nil && len(data) > constants.LengthByZero {
+	if err == nil && len(data) > constants.LengthByZero {
 		return true
 	}
 	return false
