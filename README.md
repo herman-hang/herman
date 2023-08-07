@@ -8,38 +8,35 @@ Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，�
 ### 项目结构
 
 ```
-├─app --------------------------------------------------------- 应用程序目录
+├─application ------------------------------------------------- 应用程序目录
 │  ├─constants ------------------------------------------------ 常量存放目录
 │  ├─controllers ---------------------------------------------- 控制器目录
 │  ├─models --------------------------------------------------- 数据模型目录
 │  ├─repositories --------------------------------------------- 仓储层目录
 │  ├─services ------------------------------------------------- 服务处理目录
-│  ├─utils ---------------------------------------------------- 工具类目录
 │  ├─validates ------------------------------------------------ 验证器目录
 │  ├─request.go ----------------------------------------------- 请求对象库
 │  └─response.go ---------------------------------------------- 响应对象库
 ├─cmd --------------------------------------------------------- 命令管理目录
-├─jobs -------------------------------------------------------- 队列作业目录
-├─kernel ------------------------------------------------------ 框架核心目录
-├─middlewares ------------------------------------------------- 中间件目录
 ├─config ------------------------------------------------------ 配置文件目录
 ├─database ---------------------------------------------------- 数据库相关目录
 │  ├─migrations ----------------------------------------------- 数据迁移目录
 │  └─seeders -------------------------------------------------- 数据填充目录
+├─jobs -------------------------------------------------------- 队列作业目录
+├─kernel ------------------------------------------------------ 框架核心目录
+│  ├─app ------------------------------------------------------ 程序容器目录
+│  ├─casbin --------------------------------------------------- Casbin核心目录
+│  ├─cobra ---------------------------------------------------- 命令核心目录
+│  ├─core ----------------------------------------------------- 自定义核心类目录
+│  ├─kafka ---------------------------------------------------- kafka核心目录
+│  ├─log ------------------------------------------------------ 日志核心目录
+│  ├─mysql ---------------------------------------------------- Mysql核心目录
+│  ├─redis ---------------------------------------------------- Redis核心目录
+│  └─servers -------------------------------------------------- 程序启动管理目录
 ├─runtime ----------------------------------------------------- 运行目录
 │  └─logs ----------------------------------------------------- 日志记录目录
-├─resources --------------------------------------------------- 资源目录
-│  ├─css ------------------------------------------------------ CSS文件目录
-│  ├─defaultImages -------------------------------------------- 验证码资源目录
-│  ├─fonts ---------------------------------------------------- 验证码字体目录
-│  ├─images --------------------------------------------------- 图片文件目录
-│  ├─js ------------------------------------------------------- JS文件目录
-│  └─views ---------------------------------------------------- 视图文件目录
-├─routers ----------------------------------------------------- 路由文件目录
-├─server ------------------------------------------------------ GO服务目录
-│  └─settings ------------------------------------------------- 核心配置目录
-├─storages ---------------------------------------------------- 文件存储目录
-├─tests ------------------------------------------------------- 测试目录
+├─storages ---------------------------------------------------- 存储目录
+├─tests ------------------------------------------------------- 单元测试目录
 ├─.air.toml --------------------------------------------------- Air热重载配置文件
 ├─.gitignore -------------------------------------------------- gitignore文件
 ├─go.mod ------------------------------------------------------ go.mod文件
@@ -301,7 +298,7 @@ func ServerHandler() gin.HandlerFunc {
 ```go
 func NewServer(host string, port uint) {
 	// 设置gin框架运行模式
-	gin.SetMode(settings.Config.Mode)
+	gin.SetMode(app.Config.Mode)
 	// 启动gin框架
 	engine := gin.New()
 	// 注册中间件
@@ -363,7 +360,7 @@ var (
 		Example:      "herman version",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf(`Herman version: %v`, color.GreenString(settings.Version))
+			fmt.Printf(`Herman version: %v`, color.GreenString(app.Version))
 			return nil
 		},
 	}
@@ -379,7 +376,7 @@ var rootCmd = &cobra.Command{Use: "herman"}
 // 注册命令行
 func init() {
 	// 执行命令前初始化操作
-	cobra.OnInitialize(settings.InitConfig, servers.ZapLogs, func() {
+	cobra.OnInitialize(app.InitConfig, servers.ZapLogs, func() {
 		if command.IsMigrate {
 			// 数据库迁移
 			_ = command.Migrate("up")
@@ -465,7 +462,7 @@ func SendSms(topic string) {
 		message := <-kafkaConsumer.MessageQueue
 		// 将取出的JSON数据转为map
 		if err := json.Unmarshal(message, &data); err != nil {
-			core.Log.Errorf("Consumer sms json data failed, err:%v", err)
+			app.Log.Errorf("Consumer sms json data failed, err:%v", err)
 		}
 		execSend(data)
 	}
@@ -486,7 +483,7 @@ jobs.Dispatch(data,jobs.SendSms)
 		message := <-kafkaConsumer.MessageQueue
 		// 将取出的JSON数据转为map
 		if err := json.Unmarshal(message, &data); err != nil {
-			core.Log.Errorf("Consumer sms json data failed, err:%v", err)
+			app.Log.Errorf("Consumer sms json data failed, err:%v", err)
 		}
 		execSend(data)
 	}
@@ -538,17 +535,17 @@ core.Redis.Set(ctx, "key", 1, time.Minute*30)
 
 ```go
 // 记录一个日志
-core.Log.info(data)
+app.Log.info(data)
 // 记录一个日志并换行
-core.Log.infoln(data)
+app.Log.infoln(data)
 // 调式
-core.Log.Debug(data)
+app.Log.Debug(data)
 // 记录一个错误
-core.Log.Error(data)
+app.Log.Error(data)
 // 记录一个错误并换行
-core.Log.Errorln(data)
+app.Log.Errorln(data)
 // 记录一个错误并终止进程
-core.Log.Fatal(data)
+app.Log.Fatal(data)
 ```
 
 更多API文档：https://pkg.go.dev/go.uber.org/zap
@@ -563,23 +560,23 @@ core.Log.Fatal(data)
 func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验配置模块（具体参数可从业务系统配置文件自定义）
 	// 行为校验初始化
 	factory = CaptchaService.NewCaptchaServiceFactory(
-		CaptchaConfig.BuildConfig(settings.Config.Captcha.CacheType,
-			settings.Config.Captcha.ResourcePath,
+		CaptchaConfig.BuildConfig(app.Config.Captcha.CacheType,
+			app.Config.Captcha.ResourcePath,
 			&CaptchaConfig.WatermarkConfig{
-				Text: settings.Config.Captcha.Text,
+				Text: app.Config.Captcha.Text,
 			},
-			nil, nil, settings.Config.Captcha.CacheExpireSec))
+			nil, nil, app.Config.Captcha.CacheExpireSec))
 	// 注册内存缓存
 	factory.RegisterCache(Constant.MemCacheKey, CaptchaService.NewMemCacheService(CaptchaConstant.CacheMaxNumber))
 	// 注册自定义配置redis数据库
 	factory.RegisterCache(Constant.RedisCacheKey, CaptchaService.NewConfigRedisCacheService([]string{fmt.Sprintf("%s:%d",
-		settings.Config.Redis.Host,
-		settings.Config.Redis.Port,
+		app.Config.Redis.Host,
+		app.Config.Redis.Port,
 	)},
-		settings.Config.Redis.UserName,
-		settings.Config.Redis.Password,
+		app.Config.Redis.UserName,
+		app.Config.Redis.Password,
 		false,
-		settings.Config.Redis.Db,
+		app.Config.Redis.Db,
 	))
 	// 注册文字点选验证码服务
 	factory.RegisterService(Constant.ClickWordCaptcha, CaptchaService.NewClickWordCaptchaService(factory))
@@ -608,13 +605,13 @@ success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.M
 框架的所有配置都是通过读取根目录下的`config.yaml`文件所得，并且存放在`config`目录中，调用方式：
 
 ```go
-settings.Config
+app.Config
 ```
 
 比如获取MySQL的配置
 
 ```go
-settings.Config.Mysql
+app.Config.Mysql
 ```
 
 当然，如果你不想创建配置文件作映射，也可以直接获取环境文件`config.yaml`的配置，但是不建议这么操作。
@@ -637,7 +634,7 @@ func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 		}))
 	})
 	// 设置路由前缀
-	api := rootEngine.Group(settings.Config.AppPrefix)
+	api := rootEngine.Group(app.Config.AppPrefix)
 	// 获取验证码
 	api.GET("/captcha", CaptchaController.GetCaptcha)
 	// 检查验证码正确性
@@ -765,7 +762,7 @@ type ExcludeCaptchaLoginValidate struct {
 // @return toMap 返回验证通过的数据
 func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	// 判断是否需要验证码
-	if !settings.Config.Captcha.Switch {
+	if !app.Config.Captcha.Switch {
 		return excludeCaptchaLogin(data)
 	}
 	return captchaLogin(data)
@@ -831,7 +828,7 @@ func excludeCaptchaLogin(data map[string]interface{}) (toMap map[string]interfac
 服务层主要责任是逻辑处理，服务层没有什么约束，可以调用仓储层，工具类等等，但是这里值得注意的是，如果需要开启数据库事务的，必须要在这一层开启，然后在事务中进行多维度调用。例子如下：
 
 ```go
-err := core.Db.Transaction(func(tx *gorm.DB) error {
+err := core.Db().Transaction(func(tx *gorm.DB) error {
    // casbin重新初始化
    _, _ = casbin.InitEnforcer(casbin.GetAdminPolicy(), tx)
    // 判断角色Key是否存在
@@ -1331,14 +1328,14 @@ func (s *SuiteCase) AdminLogin() {
 // SetupSuite 测试套件前置函数
 // @return void
 func (s *SuiteCase) SetupSuite() {
-	settings.InitConfig()
+	app.InitConfig()
 	servers.ZapLogs()
 	middlewares.Reload()
-	gin.SetMode(settings.Config.Mode)
+	gin.SetMode(app.Config.Mode)
 	e := gin.Default()
 	e.Use(middlewares.CatchError())
 	core.Engine = routers.InitRouter(e)
-	s.AppPrefix = settings.Config.AppPrefix
+	s.AppPrefix = app.Config.AppPrefix
 	switch s.Guard {
 	case "admin":
 		s.AdminLogin()

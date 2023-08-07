@@ -10,3 +10,6 @@ drop table file_chunks;
 drop table files;
 drop table system;
 drop table admin_log;
+drop table chatroom;
+drop table chatroom_messages;
+drop table user_chatroom;

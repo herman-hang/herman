@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	middlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
-	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/application/constants/admin/middleware"
+	"github.com/herman-hang/herman/application/models"
 	"github.com/herman-hang/herman/kernel/core"
 )
 
@@ -12,20 +12,20 @@ import (
 func CheckPermission() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// 合并两个map
-		for k, v := range middlewareConstant.ExcludeRoute {
-			middlewareConstant.ExcludeAuth[k] = v
+		for k, v := range middleware.ExcludeRoute {
+			middleware.ExcludeAuth[k] = v
 		}
-		if VerifyRoute(ctx.Request.URL.Path, ctx.Request.Method, middlewareConstant.ExcludeAuth) {
+		if VerifyRoute(ctx.Request.URL.Path, ctx.Request.Method, middleware.ExcludeAuth) {
 			return
 		}
 		admin, _ := ctx.Get("admin")
 		info := admin.(*models.Admin)
-		if info.Id == middlewareConstant.IsSuperAdmin {
+		if info.Id == middleware.IsSuperAdmin {
 			return
 		}
-		success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
+		success, _ := core.Casbin().Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
 		if !success {
-			panic(middlewareConstant.PermissionDenied)
+			panic(middleware.PermissionDenied)
 		}
 
 		ctx.Next()

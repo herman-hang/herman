@@ -28,4 +28,8 @@ type App struct {
 	*Sms `mapstructure:"sms"`
 	// 文件存储配置
 	*FileStorage `mapstructure:"storage"`
+	// openAI配置
+	*OpenAi `mapstructure:"openai"`
+	// 跨域配置
+	*Cores `mapstructure:"cors"`
 }

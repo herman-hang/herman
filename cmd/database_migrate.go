@@ -8,8 +8,8 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	commandConstant "github.com/herman-hang/herman/app/constants/command"
-	"github.com/herman-hang/herman/servers/settings"
+	commandConstant "github.com/herman-hang/herman/application/constants/common/command"
+	"github.com/herman-hang/herman/kernel/app"
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -55,11 +55,11 @@ func init() {
 // @return error 错误信息
 func Migrate(direction string) error {
 	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?multiStatements=true",
-		settings.Config.Mysql.User,
-		settings.Config.Mysql.Password,
-		settings.Config.Mysql.Host,
-		settings.Config.Mysql.Port,
-		settings.Config.Mysql.Dbname,
+		app.Config.Mysql.User,
+		app.Config.Mysql.Password,
+		app.Config.Mysql.Host,
+		app.Config.Mysql.Port,
+		app.Config.Mysql.Dbname,
 	))
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {

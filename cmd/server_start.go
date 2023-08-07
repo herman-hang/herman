@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/herman-hang/herman/servers"
+	"github.com/herman-hang/herman/kernel/servers"
 	"github.com/spf13/cobra"
 )
 

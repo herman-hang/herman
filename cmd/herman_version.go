@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/servers/settings"
+	"github.com/herman-hang/herman/kernel/app"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ var (
 		Example:      "herman version",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf(`Herman version: %v`, color.GreenString(settings.Version))
+			fmt.Printf(`Herman version: %v`, color.GreenString(app.Version))
 			return nil
 		},
 	}

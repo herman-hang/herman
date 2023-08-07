@@ -2,12 +2,12 @@ package admin
 
 import (
 	"github.com/gin-gonic/gin"
-	AdminController "github.com/herman-hang/herman/app/controllers/admin"
-	DictionaryController "github.com/herman-hang/herman/app/controllers/dictionary"
-	FileController "github.com/herman-hang/herman/app/controllers/file"
-	MenuController "github.com/herman-hang/herman/app/controllers/menu"
-	RoleController "github.com/herman-hang/herman/app/controllers/role"
-	SystemController "github.com/herman-hang/herman/app/controllers/system"
+	"github.com/herman-hang/herman/application/controllers/admin/admin"
+	"github.com/herman-hang/herman/application/controllers/admin/dictionary"
+	FileController "github.com/herman-hang/herman/application/controllers/admin/file"
+	MenuController "github.com/herman-hang/herman/application/controllers/admin/menu"
+	RoleController "github.com/herman-hang/herman/application/controllers/admin/role"
+	SystemController "github.com/herman-hang/herman/application/controllers/admin/system"
 )
 
 // Router 后台相关路由
@@ -15,19 +15,19 @@ import (
 // @return void
 func Router(router *gin.RouterGroup) {
 	// 管理员登录
-	router.POST("/login", AdminController.Login)
+	router.POST("/login", admin.Login)
 	// 管理员添加
-	router.POST("/admins", AdminController.AddAdmin)
+	router.POST("/admins", admin.AddAdmin)
 	// 管理员修改
-	router.PUT("/admins", AdminController.ModifyAdmin)
+	router.PUT("/admins", admin.ModifyAdmin)
 	// 根据ID查询管理员详情
-	router.GET("/admins/:id", AdminController.FindAdmin)
+	router.GET("/admins/:id", admin.FindAdmin)
 	// 管理员删除
-	router.DELETE("/admins", AdminController.RemoveAdmin)
+	router.DELETE("/admins", admin.RemoveAdmin)
 	// 管理员列表
-	router.GET("/admins", AdminController.ListAdmin)
+	router.GET("/admins", admin.ListAdmin)
 	// 管理员日志列表
-	router.GET("/admin/logs", AdminController.LogList)
+	router.GET("/admin/logs", admin.LogList)
 
 	// 添加角色
 	router.POST("/roles", RoleController.AddRole)
@@ -52,26 +52,26 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/menus", MenuController.ListMenu)
 
 	// 添加数据字典
-	router.POST("/dictionaries", DictionaryController.AddDictionary)
+	router.POST("/dictionaries", dictionary.AddDictionary)
 	// 删除数据字典
-	router.DELETE("/dictionaries", DictionaryController.RemoveDictionary)
+	router.DELETE("/dictionaries", dictionary.RemoveDictionary)
 	// 修改数据字典
-	router.PUT("/dictionaries", DictionaryController.ModifyDictionary)
+	router.PUT("/dictionaries", dictionary.ModifyDictionary)
 	// 根据数据字典KEY获取明细值
-	router.GET("/dictionaries/details", DictionaryController.DetailsByDictionary)
+	router.GET("/dictionaries/details", dictionary.DetailsByDictionary)
 	// 根据ID获取数据字典详情
-	router.GET("/dictionaries/:id", DictionaryController.FindDictionary)
+	router.GET("/dictionaries/:id", dictionary.FindDictionary)
 	// 数据字典列表
-	router.GET("/dictionaries", DictionaryController.ListDictionary)
+	router.GET("/dictionaries", dictionary.ListDictionary)
 
 	// 添加明细值
-	router.POST("/dictionaries/details", DictionaryController.AddDetail)
+	router.POST("/dictionaries/details", dictionary.AddDetail)
 	// 删除明细值
-	router.DELETE("/dictionaries/details", DictionaryController.RemoveDetail)
+	router.DELETE("/dictionaries/details", dictionary.RemoveDetail)
 	// 根据ID获取明细值详情
-	router.GET("/dictionaries/details/:id", DictionaryController.FindDetail)
+	router.GET("/dictionaries/details/:id", dictionary.FindDetail)
 	// 修改明细值
-	router.PUT("/dictionaries/details", DictionaryController.ModifyDetail)
+	router.PUT("/dictionaries/details", dictionary.ModifyDetail)
 
 	// 文件上传
 	router.POST("/files/uploads", FileController.UploadFile)

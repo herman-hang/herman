@@ -1,11 +1,23 @@
 package core
 
 import (
+	"context"
 	"fmt"
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	GormAdapter "github.com/casbin/gorm-adapter/v3"
+	"github.com/fatih/color"
+	"github.com/go-redis/redis/v8"
+	UtilConstant "github.com/herman-hang/herman/application/constants/common/util"
+	"github.com/herman-hang/herman/kernel/app"
+	"github.com/herman-hang/herman/kernel/mysql"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 )
 
 // 初始化项目目录
@@ -74,4 +86,79 @@ func userHomeDir() string {
 		return home
 	}
 	return os.Getenv("HOME")
+}
+
+// Db 数据库对象实例
+// @return *gorm.DB
+func Db() *gorm.DB {
+	// 连接Mysql
+	db, err := mysql.InitGormDatabase(app.Config.Mysql)
+	if err != nil {
+		zap.S().Fatal(color.RedString(err.Error()))
+	}
+	return db
+}
+
+// Redis Redis实例对象
+// @return *redis.Client
+func Redis() *redis.Client {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	rdb := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%d",
+			app.Config.Redis.Host,
+			app.Config.Redis.Port,
+		),
+		Username: app.Config.Redis.UserName,
+		Password: app.Config.Redis.Password,
+		DB:       app.Config.Redis.Db,
+		PoolSize: app.Config.Redis.PoolSize,
+	})
+
+	_, err := rdb.Ping(ctx).Result()
+	if err != nil {
+		zap.S().Fatal(color.RedString(err.Error()))
+	}
+
+	return rdb
+}
+
+// Casbin Casbin对象实例化
+// @return *casbin.CachedEnforcer
+func Casbin() *casbin.CachedEnforcer {
+	db := Db()
+	// gorm适配器
+	adapter, err := GormAdapter.NewAdapterByDB(db)
+	if err != nil {
+		zap.S().Fatal(color.RedString(err.Error()))
+	}
+	policy := `
+			[request_definition]
+			r = sub, obj, act
+			
+			[policy_definition]
+			p = sub, obj, act
+			
+			[role_definition]
+			g = _, _
+			
+			[policy_effect]
+			e = some(where (p.eft == allow))
+			
+			[matchers]
+			m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+		`
+	m, err := model.NewModelFromString(policy)
+	if err != nil {
+		zap.S().Fatal(color.RedString(err.Error()))
+	}
+	cachedEnforcer, err := casbin.NewCachedEnforcer(m, adapter)
+	if err != nil {
+		zap.S().Fatal(color.RedString(err.Error()))
+	}
+	// 设置过期时间为1小时
+	cachedEnforcer.SetExpireTime(UtilConstant.ExpireTime)
+	_ = cachedEnforcer.LoadPolicy()
+
+	return cachedEnforcer
 }

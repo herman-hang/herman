@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"github.com/bmizerany/assert"
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app"
-	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
-	"github.com/herman-hang/herman/kernel/core"
+	"github.com/herman-hang/herman/application"
+	MiddlewareConstant "github.com/herman-hang/herman/application/constants/admin/middleware"
+	"github.com/herman-hang/herman/kernel/app"
+	"github.com/herman-hang/herman/kernel/cobra"
+	"github.com/herman-hang/herman/kernel/servers"
 	"github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers"
-	"github.com/herman-hang/herman/servers"
-	"github.com/herman-hang/herman/servers/settings"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
@@ -41,7 +41,7 @@ type Case struct {
 // @return void
 func (s *SuiteCase) AdminLogin() {
 	var (
-		response app.Response
+		response application.Response
 		loginUri = s.AppPrefix + "/admin/login"
 	)
 	// map转json
@@ -57,14 +57,13 @@ func (s *SuiteCase) AdminLogin() {
 // SetupSuite 测试套件前置函数
 // @return void
 func (s *SuiteCase) SetupSuite() {
-	settings.InitConfig()
+	cobra.InitConfig()
 	servers.ZapLogs()
-	middlewares.Reload()
-	gin.SetMode(settings.Config.Mode)
+	gin.SetMode(app.Config.Mode)
 	e := gin.Default()
 	e.Use(middlewares.CatchError())
-	core.Engine = routers.InitRouter(e)
-	s.AppPrefix = settings.Config.AppPrefix
+	app.Engine = routers.InitRouter(e)
+	s.AppPrefix = app.Config.AppPrefix
 	switch s.Guard {
 	case "admin":
 		s.AdminLogin()
@@ -77,7 +76,7 @@ func (s *SuiteCase) SetupSuite() {
 // @param []Case testCase 测试用例切片
 // @return void
 func (s *SuiteCase) Assert(testCase []Case) {
-	var response app.Response
+	var response application.Response
 	for _, v := range testCase {
 		_, _, w := s.Request(v.Method, v.Uri, v.Params)
 		// json转struct
@@ -135,12 +134,12 @@ func (s *SuiteCase) Request(method string, uri string, body map[string]interface
 		r.Header.Set("Authorization", s.Authorization)
 	}
 	c.Request = r
-	core.Engine.ServeHTTP(w, r)
+	app.Engine.ServeHTTP(w, r)
 	return
 }
 
 // TearDownSuite 测试套件后置函数
 // @return void
 func (s *SuiteCase) TearDownSuite() {
-	middlewares.Close()
+
 }

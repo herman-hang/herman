@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/kernel/core"
-	"github.com/herman-hang/herman/servers/settings"
+	"github.com/herman-hang/herman/kernel/app"
 	"go.uber.org/zap"
 	"time"
 )
@@ -24,8 +23,8 @@ func newSyncProducer() (producer sarama.SyncProducer, err error) {
 
 	// 使用给定代理地址和配置创建一个同步生产者
 	producer, err = sarama.NewSyncProducer([]string{fmt.Sprintf("%s:%d",
-		settings.Config.Kafka.Host,
-		settings.Config.Kafka.Port,
+		app.Config.Kafka.Host,
+		app.Config.Kafka.Port,
 	)}, config)
 	if err != nil {
 		return nil, err
@@ -46,12 +45,12 @@ func Send(topic string, data map[string]interface{}) {
 	}
 
 	// 关闭连接
-	defer func(producer sarama.SyncProducer) {
-		if err := producer.Close(); err != nil {
+	defer func() {
+		if err := syncProducer.Close(); err != nil {
 			zap.S().Error(color.RedString(fmt.Sprintf("Close producer err: %v", err)))
 			return
 		}
-	}(syncProducer)
+	}()
 
 	// SendMessage：该方法是生产者生产给定的消息
 	// 生产成功的时候返回该消息的分区和所在的偏移量
@@ -61,7 +60,7 @@ func Send(topic string, data map[string]interface{}) {
 		zap.S().Error(color.RedString(fmt.Sprintf("Producer send message failed, err:%v", err)))
 		return
 	}
-	core.Log.Infof("Partition = %d, offset=%d\n", partition, offset)
+	app.Log.Infof("Partition = %d, offset=%d\n", partition, offset)
 }
 
 // getProducerMessageStruct 构造生产者消息结构体

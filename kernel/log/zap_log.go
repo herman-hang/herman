@@ -13,7 +13,7 @@ import (
 )
 
 // InitZapLogs 初始化日志配置
-// @param *settings.Log config 日志配置信息
+// @param *app.Log config 日志配置信息
 // @param string mode 当前应用运行模式
 // @return err error 返回错误信息
 func InitZapLogs(config *config.Log, mode string) (err error) {
@@ -57,11 +57,11 @@ func InitZapLogs(config *config.Log, mode string) (err error) {
 }
 
 // GetLoggerWriter return writerSyncer
-// @param *settings.Log config 日志配置信息
+// @param *app.Log config 日志配置信息
 // @return zapcore.WriteSyncer 返回一个日志记录器
 func GetLoggerWriter(config *config.Log) zapcore.WriteSyncer {
 	lumberLoggers := &lumberjack.Logger{
-		Filename:   core.RootPath + "runtime/logs/" + config.FileName,
+		Filename:   core.RootPath + "/runtime/logs/" + config.FileName,
 		MaxSize:    config.MaxSize,
 		MaxBackups: config.MaxBackups,
 		MaxAge:     config.MaxAge,

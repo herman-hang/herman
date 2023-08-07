@@ -4,7 +4,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	GormAdapter "github.com/casbin/gorm-adapter/v3"
-	UtilConstant "github.com/herman-hang/herman/app/constants/util"
+	UtilConstant "github.com/herman-hang/herman/application/constants/common/util"
 	"gorm.io/gorm"
 )
 

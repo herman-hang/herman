@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/kernel/core"
-	"github.com/herman-hang/herman/servers/settings"
+	"github.com/herman-hang/herman/kernel/app"
 	"go.uber.org/zap"
 	"sync"
 )
@@ -16,13 +15,13 @@ type Consumer struct {
 	MessageQueue chan []byte
 }
 
-//Consume 消费者
+//Exec 消费者
 // @return void
-func (k *Consumer) Consume() {
+func (k *Consumer) Exec() {
 	config := sarama.NewConfig()
 	consumer, err := sarama.NewConsumer([]string{fmt.Sprintf("%s:%d",
-		settings.Config.Kafka.Host,
-		settings.Config.Kafka.Port,
+		app.Config.Kafka.Host,
+		app.Config.Kafka.Port,
 	)}, config)
 	if err != nil {
 		zap.S().Error(color.RedString(fmt.Sprintf("New consumer err: %v", err)))
@@ -47,8 +46,9 @@ func (k *Consumer) Consume() {
 	// 然后每个分区开一个 goroutine 来消费
 	for _, partitionId := range partitions {
 		// 不开异步会导致一个消费完才会消费另外一个
-		go k.consumeByPartition(consumer, k.Topic, partitionId, &wg)
+		k.consumeByPartition(consumer, k.Topic, partitionId, &wg)
 	}
+
 	wg.Wait()
 }
 
@@ -62,16 +62,16 @@ func (k *Consumer) consumeByPartition(consumer sarama.Consumer, topic string, pa
 	defer wg.Done()
 	partitionConsumer, err := consumer.ConsumePartition(topic, partitionId, sarama.OffsetNewest)
 	if err != nil {
-		zap.S().Error(color.RedString(fmt.Sprintf("Consume partition err: %v", err)))
+		zap.S().Error(color.RedString(err.Error()))
 		return
 	}
 	defer func(partitionConsumer sarama.PartitionConsumer) {
 		if err := partitionConsumer.Close(); err != nil {
-			zap.S().Error(color.RedString(fmt.Sprintf("Partition consumer err: %v", err)))
+			zap.S().Error(color.RedString(err.Error()))
 		}
 	}(partitionConsumer)
 	for message := range partitionConsumer.Messages() {
-		core.Log.Infof("[Consumer] partitionid: %d; offset:%d, value: %s\n", message.Partition, message.Offset, string(message.Value))
+		app.Log.Infof("[Consumer] partitionid: %d; offset:%d, value: %s\n", message.Partition, message.Offset, string(message.Value))
 		k.MessageQueue <- message.Value
 	}
 }

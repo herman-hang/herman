@@ -9,6 +9,13 @@ app_prefix: /api/v1
 # 语言
 language: zh-CN
 
+# 跨域配置
+cors:
+  # 是否支持跨域
+  is_open: true
+  # 允许跨域的域名,多个域名用','逗号隔开或者使用通配符'*',建议结尾不要带'/'
+  origins: *
+
 # 数据库配置
 mysql:
   # 连接IP地址
@@ -140,3 +147,7 @@ storage:
     region:
     # 存储路径(路径开头结尾不需要加"/")
     path:
+
+# openAI配置
+openai:
+  secret_key:

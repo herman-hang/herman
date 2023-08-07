@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/config"
-	"github.com/herman-hang/herman/servers/settings"
+	"github.com/herman-hang/herman/kernel/app"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -16,7 +16,7 @@ import (
 type Writer struct{}
 
 // InitGormDatabase 初始化gorm数据库
-// @param *settings.Mysql config Mysql配置信息
+// @param *app.Mysql config Mysql配置信息
 // @return db err 返回一个DB对象和错误信息
 func InitGormDatabase(config *config.Mysql) (db *gorm.DB, err error) {
 	dsn := fmt.Sprintf(
@@ -57,7 +57,7 @@ func InitGormDatabase(config *config.Mysql) (db *gorm.DB, err error) {
 // @param ...interface{} args
 // @return void
 func (w Writer) Printf(format string, args ...interface{}) {
-	if settings.Config.Mode == gin.DebugMode {
+	if app.Config.Mode == gin.DebugMode {
 		zap.L().Info(fmt.Sprintf(format, args...))
 	}
 }
